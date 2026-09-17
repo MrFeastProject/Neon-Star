@@ -4,10 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Неоновая звезда</title>
-
-  <!-- QuadroOS: Иконка приложения (автоопределение системой) -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,8 61,38 94,38 67,56 77,86 50,68 23,86 33,56 6,38 39,38' fill='%23b380ff' stroke='%23ffffff' stroke-width='2' stroke-linejoin='round'/></svg>">
-
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,8 61,38 94,38 67,56 77,86 50,68 23,86 33,56 6,38 39,38' fill='%23FFD700' stroke='%23fff' stroke-width='2' stroke-linejoin='round'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;900&display=swap" rel="stylesheet">
@@ -20,34 +17,10 @@
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      user-select: none;
-      outline: none;
-    }
-
-    button {
-      border: none;
-      background: none;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    button:focus, button:focus-visible {
-      outline: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; outline: none; }
+    button { border: none; background: none; cursor: pointer; font-family: inherit; }
+    button:focus, button:focus-visible { outline: none; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
 
     body {
       background:
@@ -55,624 +28,188 @@
         radial-gradient(circle at 15% 10%, rgba(130, 55, 255, 0.08), transparent 35%),
         radial-gradient(circle at 85% 90%, rgba(255, 60, 170, 0.05), transparent 35%),
         var(--bg);
-      color: #fff;
-      font-family: "Inter", sans-serif;
-      touch-action: manipulation;
+      color: #fff; font-family: "Inter", sans-serif; touch-action: manipulation;
+      transition: background 1s var(--ease);
     }
 
-    .background-glow {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: radial-gradient(ellipse at center, rgba(var(--neon-rgb), 0.045), transparent 58%);
-      transition: background 0.8s var(--ease);
+    /* Золотой режим */
+    body.gold-mode {
+      background:
+        radial-gradient(circle at 50% 42%, rgba(255, 215, 0, 0.14) 0%, rgba(180, 130, 0, 0.08) 18%, transparent 43%),
+        radial-gradient(circle at 15% 10%, rgba(255, 180, 0, 0.1), transparent 35%),
+        radial-gradient(circle at 85% 90%, rgba(255, 140, 0, 0.06), transparent 35%),
+        #0a0600;
     }
 
-    .stars-bg {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 0;
-    }
+    .background-glow { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, rgba(var(--neon-rgb), 0.045), transparent 58%); transition: background 0.8s var(--ease); }
+    .stars-bg { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+    .bg-star { position: absolute; border-radius: 50%; background: #fff; box-shadow: 0 0 5px rgba(255,255,255,.9), 0 0 12px rgba(var(--neon-rgb), .65); animation: twinkle var(--duration) ease-in-out infinite; animation-delay: var(--delay); opacity: var(--opacity); }
+    @keyframes twinkle { 0%, 100% { opacity: var(--opacity); transform: scale(.7); } 50% { opacity: 1; transform: scale(1.5); } }
 
-    .bg-star {
-      position: absolute;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 0 5px rgba(255,255,255,.9), 0 0 12px rgba(var(--neon-rgb), .65);
-      animation: twinkle var(--duration) ease-in-out infinite;
-      animation-delay: var(--delay);
-      opacity: var(--opacity);
-    }
-
-    @keyframes twinkle {
-      0%, 100% { opacity: var(--opacity); transform: scale(.7); }
-      50% { opacity: 1; transform: scale(1.5); }
-    }
-
-    .screen {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), visibility 0.6s;
-      z-index: 10;
-    }
-
-    .screen.hidden {
+    /* Плавающие золотые иконки */
+    .gold-float-icon {
+      position: fixed; pointer-events: none; z-index: 1;
+      animation: floatUp var(--float-dur) linear forwards;
       opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transform: scale(0.96);
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(0deg) scale(0.5); opacity: 0; }
+      15% { opacity: 0.7; }
+      85% { opacity: 0.5; }
+      100% { transform: translateY(-110vh) rotate(360deg) scale(1.1); opacity: 0; }
     }
 
-    .title {
-      font-family: "Playfair Display", serif;
-      font-size: clamp(42px, 7vw, 78px);
-      font-weight: 500;
-      line-height: 1.05;
-      letter-spacing: -1px;
-      color: var(--neon);
-      text-shadow: 0 0 8px rgba(var(--neon-rgb), .75), 0 0 22px rgba(var(--neon-rgb), .55), 0 0 55px rgba(var(--neon-rgb), .28);
-      transition: color .7s var(--ease), text-shadow .7s var(--ease);
-      margin-bottom: 8px;
-    }
+    .screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), visibility 0.6s; z-index: 10; }
+    .screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; transform: scale(0.96); }
 
-    .subtitle {
-      color: rgba(255,255,255,.5);
-      font-size: 11px;
-      font-weight: 400;
-      letter-spacing: 7px;
-      text-transform: lowercase;
-      margin-bottom: 40px;
-    }
+    .title { font-family: "Playfair Display", serif; font-size: clamp(42px, 7vw, 78px); font-weight: 500; line-height: 1.05; letter-spacing: -1px; color: var(--neon); text-shadow: 0 0 8px rgba(var(--neon-rgb), .75), 0 0 22px rgba(var(--neon-rgb), .55), 0 0 55px rgba(var(--neon-rgb), .28); transition: color .7s var(--ease), text-shadow .7s var(--ease); margin-bottom: 8px; }
+    .subtitle { color: rgba(255,255,255,.5); font-size: 11px; font-weight: 400; letter-spacing: 7px; text-transform: lowercase; margin-bottom: 40px; }
 
-    .menu-buttons {
-      width: min(380px, 100%);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .menu-button {
-      position: relative;
-      width: 100%;
-      height: 56px;
-      border: 1px solid rgba(var(--neon-rgb), .3);
-      border-radius: 16px;
-      background: linear-gradient(135deg, rgba(var(--neon-rgb), .08), rgba(255,255,255,.03));
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      color: rgba(255,255,255,.9);
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 2px;
-      text-transform: lowercase;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 4px 15px rgba(0,0,0,.2);
-      transition: transform .35s var(--ease), background .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease), color .35s var(--ease);
-    }
-
-    .menu-button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-      transition: left 0.6s var(--ease);
-    }
-
+    .menu-buttons { width: min(380px, 100%); display: flex; flex-direction: column; gap: 14px; }
+    .menu-button { position: relative; width: 100%; height: 56px; border: 1px solid rgba(var(--neon-rgb), .3); border-radius: 16px; background: linear-gradient(135deg, rgba(var(--neon-rgb), .08), rgba(255,255,255,.03)); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); color: rgba(255,255,255,.9); font-size: 14px; font-weight: 500; letter-spacing: 2px; text-transform: lowercase; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 4px 15px rgba(0,0,0,.2); transition: transform .35s var(--ease), background .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease), color .35s var(--ease); }
+    .menu-button::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); transition: left 0.6s var(--ease); }
     .menu-button:hover::before { left: 100%; }
-
-    .menu-button:hover {
-      transform: translateY(-3px);
-      color: #fff;
-      border-color: rgba(var(--neon-rgb), .8);
-      background: linear-gradient(135deg, rgba(var(--neon-rgb), .15), rgba(255,255,255,.05));
-      box-shadow: 0 0 20px rgba(var(--neon-rgb), .25), 0 10px 30px rgba(0,0,0,.3), inset 0 0 20px rgba(var(--neon-rgb), .05);
-    }
-
+    .menu-button:hover { transform: translateY(-3px); color: #fff; border-color: rgba(var(--neon-rgb), .8); background: linear-gradient(135deg, rgba(var(--neon-rgb), .15), rgba(255,255,255,.05)); box-shadow: 0 0 20px rgba(var(--neon-rgb), .25), 0 10px 30px rgba(0,0,0,.3), inset 0 0 20px rgba(var(--neon-rgb), .05); }
     .menu-button:active { transform: translateY(-1px) scale(.98); }
+    .menu-button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.8; }
+    .menu-button.primary { height: 62px; color: #fff; border-color: rgba(var(--neon-rgb), .6); background: linear-gradient(135deg, rgba(var(--neon-rgb), .2), rgba(var(--neon-rgb), .05)); box-shadow: 0 0 25px rgba(var(--neon-rgb), .2), inset 0 0 20px rgba(var(--neon-rgb), .08); }
+    .menu-button.primary:hover { border-color: var(--neon); box-shadow: 0 0 35px rgba(var(--neon-rgb), .4), 0 10px 30px rgba(0,0,0,.3), inset 0 0 25px rgba(var(--neon-rgb), .1); }
 
-    .menu-button svg {
-      width: 18px;
-      height: 18px;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      opacity: 0.8;
-    }
-
-    .menu-button.primary {
-      height: 62px;
-      color: #fff;
-      border-color: rgba(var(--neon-rgb), .6);
-      background: linear-gradient(135deg, rgba(var(--neon-rgb), .2), rgba(var(--neon-rgb), .05));
-      box-shadow: 0 0 25px rgba(var(--neon-rgb), .2), inset 0 0 20px rgba(var(--neon-rgb), .08);
-    }
-
-    .menu-button.primary:hover {
-      border-color: var(--neon);
-      box-shadow: 0 0 35px rgba(var(--neon-rgb), .4), 0 10px 30px rgba(0,0,0,.3), inset 0 0 25px rgba(var(--neon-rgb), .1);
-    }
-
-    .game-header {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 20;
-    }
-
-    .game-btn-small {
-      height: 42px;
-      padding: 0 20px;
-      border: 1px solid rgba(var(--neon-rgb), .25);
-      border-radius: 12px;
-      background: rgba(18, 9, 35, 0.4);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      color: rgba(255,255,255,.7);
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 1.5px;
-      text-transform: lowercase;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 15px rgba(0,0,0,.2);
-      transition: all .3s var(--ease);
-    }
-
-    .game-btn-small:hover {
-      color: #fff;
-      border-color: rgba(var(--neon-rgb), .6);
-      background: rgba(var(--neon-rgb), .1);
-      transform: translateY(-2px);
-    }
-
+    .game-header { position: absolute; top: 0; left: 0; right: 0; padding: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 20; }
+    .game-btn-small { height: 42px; padding: 0 20px; border: 1px solid rgba(var(--neon-rgb), .25); border-radius: 12px; background: rgba(18, 9, 35, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: rgba(255,255,255,.7); font-size: 12px; font-weight: 500; letter-spacing: 1.5px; text-transform: lowercase; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,.2); transition: all .3s var(--ease); }
+    .game-btn-small:hover { color: #fff; border-color: rgba(var(--neon-rgb), .6); background: rgba(var(--neon-rgb), .1); transform: translateY(-2px); }
     .game-btn-small:active { transform: scale(.96); }
+    .game-btn-small svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-    .game-btn-small svg {
-      width: 16px;
-      height: 16px;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .game-star-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 260px;
-      height: 260px;
-      margin-bottom: 20px;
-    }
-
-    .game-star-btn {
-      width: 180px;
-      height: 180px;
-      position: relative;
-      z-index: 5;
-      color: var(--neon);
-      transition: transform 0.15s var(--ease);
-      -webkit-tap-highlight-color: transparent;
-    }
-
+    .game-star-wrapper { position: relative; display: flex; align-items: center; justify-content: center; width: 260px; height: 260px; margin-bottom: 20px; }
+    .game-star-btn { width: 180px; height: 180px; position: relative; z-index: 5; color: var(--neon); transition: transform 0.15s var(--ease); -webkit-tap-highlight-color: transparent; }
     .game-star-btn:active { transform: scale(0.9); }
+    .game-star-svg { width: 100%; height: 100%; animation: glowPulse 3s ease-in-out infinite alternate; }
+    .game-star-shape { fill: rgba(var(--neon-rgb), .15); stroke: currentColor; stroke-width: 2; stroke-linejoin: round; transition: fill 0.4s, stroke 0.4s; }
+    @keyframes glowPulse { 0% { filter: drop-shadow(0 0 15px currentColor) drop-shadow(0 0 40px rgba(var(--neon-rgb), .4)); } 100% { filter: drop-shadow(0 0 25px currentColor) drop-shadow(0 0 60px rgba(var(--neon-rgb), .7)); } }
 
-    .game-star-svg {
-      width: 100%;
-      height: 100%;
-      animation: glowPulse 3s ease-in-out infinite alternate;
+    .aura-wrap { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+    .aura-glow { position: absolute; top: 50%; left: 50%; border-radius: 50%; transform: translate(-50%, -50%) scale(0); animation: glowExpand 0.8s ease-out forwards; pointer-events: none; }
+    @keyframes glowExpand { 0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0.8; } 100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; } }
+
+    .tap-counter { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .tap-number { font-family: 'Playfair Display', serif; font-size: clamp(3.5rem, 12vw, 5rem); font-weight: 900; line-height: 1; letter-spacing: 2px; font-variant-numeric: tabular-nums; color: var(--neon); text-shadow: 0 0 30px rgba(var(--neon-rgb), .6), 0 0 60px rgba(var(--neon-rgb), .3); transition: color 0.4s ease, text-shadow 0.4s ease; }
+    .tap-number.pop { animation: counterPop 0.3s var(--ease); }
+    @keyframes counterPop { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+    .tap-label { font-size: 10px; letter-spacing: 6px; text-transform: uppercase; color: rgba(255, 255, 255, 0.3); font-weight: 400; }
+    .hint { margin-top: 12px; font-size: 11px; letter-spacing: 3px; text-transform: lowercase; color: rgba(255, 255, 255, 0.25); animation: hintPulse 3s ease-in-out infinite; }
+    @keyframes hintPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.7; } }
+
+    /* КОМБО */
+    .combo-display {
+      position: absolute; top: 75px; left: 50%; transform: translateX(-50%);
+      z-index: 20; text-align: center; transition: opacity .3s, transform .3s;
+      opacity: 0; pointer-events: none;
     }
-
-    .game-star-shape {
-      fill: rgba(var(--neon-rgb), .15);
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linejoin: round;
-      transition: fill 0.4s, stroke 0.4s;
+    .combo-display.active { opacity: 1; }
+    .combo-value {
+      font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900;
+      color: var(--neon); text-shadow: 0 0 20px rgba(var(--neon-rgb), .7);
+      transition: color .3s;
     }
+    .combo-label { font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,.35); }
+    .combo-bar { width: 120px; height: 3px; background: rgba(255,255,255,.08); border-radius: 3px; margin-top: 6px; overflow: hidden; }
+    .combo-bar-fill { height: 100%; background: var(--neon); border-radius: 3px; transition: width .1s linear; box-shadow: 0 0 8px var(--neon); }
 
-    @keyframes glowPulse {
-      0% { filter: drop-shadow(0 0 15px currentColor) drop-shadow(0 0 40px rgba(var(--neon-rgb), .4)); }
-      100% { filter: drop-shadow(0 0 25px currentColor) drop-shadow(0 0 60px rgba(var(--neon-rgb), .7)); }
-    }
+    .race-info { position: absolute; top: 80px; left: 50%; transform: translateX(-50%); display: flex; gap: 30px; align-items: center; z-index: 20; }
+    .race-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .race-stat-value { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--neon); text-shadow: 0 0 20px rgba(var(--neon-rgb), .6); }
+    .race-stat-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,.4); }
+    .race-timer.warning { color: #ff4466 !important; text-shadow: 0 0 20px rgba(255, 68, 102, .8) !important; animation: pulse 0.5s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 
-    .aura-wrap {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .aura-glow {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      border-radius: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      animation: glowExpand 0.8s ease-out forwards;
-      pointer-events: none;
-    }
-
-    @keyframes glowExpand {
-      0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0.8; }
-      100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
-    }
-
-    .tap-counter {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .tap-number {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(3.5rem, 12vw, 5rem);
-      font-weight: 900;
-      line-height: 1;
-      letter-spacing: 2px;
-      font-variant-numeric: tabular-nums;
-      color: var(--neon);
-      text-shadow: 0 0 30px rgba(var(--neon-rgb), .6), 0 0 60px rgba(var(--neon-rgb), .3);
-      transition: color 0.4s ease, text-shadow 0.4s ease;
-    }
-
-    .tap-number.pop {
-      animation: counterPop 0.3s var(--ease);
-    }
-
-    @keyframes counterPop {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.15); }
-      100% { transform: scale(1); }
-    }
-
-    .tap-label {
-      font-size: 10px;
-      letter-spacing: 6px;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.3);
-      font-weight: 400;
-    }
-
-    .hint {
-      margin-top: 12px;
-      font-size: 11px;
-      letter-spacing: 3px;
-      text-transform: lowercase;
-      color: rgba(255, 255, 255, 0.25);
-      animation: hintPulse 3s ease-in-out infinite;
-    }
-
-    @keyframes hintPulse {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 0.7; }
-    }
-
-    .race-info {
-      position: absolute;
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 30px;
-      align-items: center;
-      z-index: 20;
-    }
-
-    .race-stat {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .race-stat-value {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--neon);
-      text-shadow: 0 0 20px rgba(var(--neon-rgb), .6);
-    }
-
-    .race-stat-label {
-      font-size: 9px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.4);
-    }
-
-    .race-timer.warning {
-      color: #ff4466;
-      text-shadow: 0 0 20px rgba(255, 68, 102, .8);
-      animation: pulse 0.5s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-
-    .palette {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      padding: 16px 24px;
-      flex-wrap: wrap;
-      z-index: 30;
-      background: rgba(14, 7, 29, .75);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-radius: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      max-width: calc(100vw - 32px);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(var(--neon-rgb), .05);
-      transition: opacity .4s var(--ease), transform .4s var(--ease), visibility .4s;
-      opacity: 0;
-      visibility: hidden;
-    }
-
-    .palette.open {
-      opacity: 1;
-      visibility: visible;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .palette-title {
-      position: absolute;
-      top: -28px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(255,255,255,.4);
-      font-size: 9px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .color-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 2px solid transparent;
-      cursor: pointer;
-      transition: all 0.3s var(--ease);
-      flex-shrink: 0;
-      box-shadow: 0 0 8px currentColor, 0 0 16px color-mix(in srgb, currentColor 45%, transparent);
-    }
-
+    .palette { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); display: flex; justify-content: center; gap: 12px; padding: 16px 24px; flex-wrap: wrap; z-index: 30; background: rgba(14, 7, 29, .75); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.08); max-width: calc(100vw - 32px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(var(--neon-rgb), .05); transition: opacity .4s var(--ease), transform .4s var(--ease), visibility .4s; opacity: 0; visibility: hidden; }
+    .palette.open { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+    .palette-title { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,.4); font-size: 9px; letter-spacing: 4px; text-transform: uppercase; white-space: nowrap; }
+    .color-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: all 0.3s var(--ease); flex-shrink: 0; box-shadow: 0 0 8px currentColor, 0 0 16px color-mix(in srgb, currentColor 45%, transparent); }
     .color-btn:hover { transform: scale(1.15); }
     .color-btn:active { transform: scale(0.9); }
+    .color-btn.active { border-color: #fff; transform: scale(1.15); box-shadow: 0 0 10px #fff, 0 0 20px currentColor, 0 0 40px currentColor; }
+    .color-btn.black-white { background: linear-gradient(135deg, #000 50%, #fff 50%); }
+    .color-btn.grayscale { background: linear-gradient(135deg, #333, #666, #999, #ccc); }
+    .color-btn.gold { background: linear-gradient(135deg, #FFD700, #FFA500, #FFD700, #FFEC8B); background-size: 300% 300%; animation: goldShimmer 2s linear infinite; }
+    @keyframes goldShimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-    .color-btn.active {
-      border-color: #fff;
-      transform: scale(1.15);
-      box-shadow: 0 0 10px #fff, 0 0 20px currentColor, 0 0 40px currentColor;
-    }
+    .modal-content { width: min(550px, 100%); max-height: 85vh; overflow-y: auto; padding: 40px 36px 32px; border: 1px solid rgba(var(--neon-rgb), .25); border-radius: 28px; background: linear-gradient(145deg, rgba(var(--neon-rgb), .08), rgba(14, 7, 29, .95)); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+    .modal-title { font-family: "Playfair Display", serif; font-size: 32px; font-weight: 500; color: var(--neon); text-shadow: 0 0 12px rgba(var(--neon-rgb), .65), 0 0 28px rgba(var(--neon-rgb), .3); margin-bottom: 20px; }
+    .modal-text { color: rgba(255,255,255,.7); font-size: 15px; line-height: 1.8; margin-bottom: 30px; }
 
-    .color-btn.black-white {
-      background: linear-gradient(135deg, #000 50%, #fff 50%);
-    }
-
-    .color-btn.grayscale {
-      background: linear-gradient(135deg, #333, #666, #999, #ccc);
-    }
-
-    .modal-content {
-      width: min(550px, 100%);
-      max-height: 85vh;
-      overflow-y: auto;
-      padding: 40px 36px 32px;
-      border: 1px solid rgba(var(--neon-rgb), .25);
-      border-radius: 28px;
-      background: linear-gradient(145deg, rgba(var(--neon-rgb), .08), rgba(14, 7, 29, .95));
-      backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
-      text-align: center;
-      box-shadow: 0 30px 80px rgba(0,0,0,.6);
-    }
-
-    .modal-title {
-      font-family: "Playfair Display", serif;
-      font-size: 32px;
-      font-weight: 500;
-      color: var(--neon);
-      text-shadow: 0 0 12px rgba(var(--neon-rgb), .65), 0 0 28px rgba(var(--neon-rgb), .3);
-      margin-bottom: 20px;
-    }
-
-    .modal-text {
-      color: rgba(255,255,255,.7);
-      font-size: 15px;
-      line-height: 1.8;
-      margin-bottom: 30px;
-    }
-
-    .difficulty-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      margin: 30px 0;
-    }
-
-    .difficulty-card {
-      padding: 20px;
-      border: 1px solid rgba(var(--neon-rgb), .2);
-      border-radius: 16px;
-      background: rgba(var(--neon-rgb), .05);
-      cursor: pointer;
-      transition: all .3s var(--ease);
-      text-align: left;
-    }
-
-    .difficulty-card:hover {
-      border-color: rgba(var(--neon-rgb), .6);
-      background: rgba(var(--neon-rgb), .1);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0,0,0,.3);
-    }
-
+    .difficulty-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 30px 0; }
+    .difficulty-card { padding: 20px; border: 1px solid rgba(var(--neon-rgb), .2); border-radius: 16px; background: rgba(var(--neon-rgb), .05); cursor: pointer; transition: all .3s var(--ease); text-align: left; }
+    .difficulty-card:hover { border-color: rgba(var(--neon-rgb), .6); background: rgba(var(--neon-rgb), .1); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.3); }
     .difficulty-card:active { transform: scale(.98); }
+    .difficulty-name { font-family: "Playfair Display", serif; font-size: 20px; font-weight: 600; color: var(--neon); margin-bottom: 8px; }
+    .difficulty-desc { font-size: 13px; color: rgba(255,255,255,.5); line-height: 1.6; margin-bottom: 12px; }
+    .difficulty-stats { display: flex; gap: 20px; font-size: 12px; color: rgba(255,255,255,.6); }
+    .difficulty-stats strong { color: var(--neon); }
 
-    .difficulty-name {
-      font-family: "Playfair Display", serif;
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--neon);
-      margin-bottom: 8px;
-    }
+    .achievements-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; margin: 30px 0; }
+    .achievement-card { padding: 18px 14px; border: 1px solid rgba(var(--neon-rgb), .2); border-radius: 16px; background: rgba(var(--neon-rgb), .05); text-align: center; transition: all .3s var(--ease); }
+    .achievement-card.locked { opacity: 0.35; filter: grayscale(100%); }
+    .achievement-card.unlocked { border-color: rgba(var(--neon-rgb), .6); background: rgba(var(--neon-rgb), .1); box-shadow: 0 0 20px rgba(var(--neon-rgb), .2); }
+    .achievement-card.gold-ach.unlocked { border-color: rgba(255, 215, 0, .6); background: rgba(255, 215, 0, .08); box-shadow: 0 0 25px rgba(255, 215, 0, .25); }
+    .achievement-icon { font-size: 32px; margin-bottom: 10px; }
+    .achievement-name { font-size: 12px; font-weight: 600; color: var(--neon); margin-bottom: 5px; }
+    .achievement-desc { font-size: 10px; color: rgba(255,255,255,.5); line-height: 1.4; }
 
-    .difficulty-desc {
-      font-size: 13px;
-      color: rgba(255,255,255,.5);
-      line-height: 1.6;
-      margin-bottom: 12px;
-    }
+    .race-result { padding: 30px; border: 2px solid rgba(var(--neon-rgb), .4); border-radius: 20px; background: rgba(var(--neon-rgb), .08); margin: 20px 0; }
+    .race-result.success { border-color: #66ff99; background: rgba(102, 255, 153, .08); }
+    .race-result.failed { border-color: #ff4466; background: rgba(255, 68, 102, .08); }
+    .race-result-title { font-family: "Playfair Display", serif; font-size: 28px; font-weight: 700; margin-bottom: 16px; }
+    .race-result.success .race-result-title { color: #66ff99; text-shadow: 0 0 20px rgba(102, 255, 153, .6); }
+    .race-result.failed .race-result-title { color: #ff4466; text-shadow: 0 0 20px rgba(255, 68, 102, .6); }
+    .race-result-stats { display: flex; justify-content: center; gap: 40px; margin: 20px 0; }
 
-    .difficulty-stats {
-      display: flex;
-      gap: 20px;
-      font-size: 12px;
-      color: rgba(255,255,255,.6);
-    }
+    .footer { position: fixed; bottom: 16px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,.15); font-size: 9px; letter-spacing: 5px; pointer-events: none; z-index: 5; cursor: default; }
 
-    .difficulty-stats span {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    /* КОНСОЛЬ */
+    .console-overlay { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(3, 1, 9, .92); backdrop-filter: blur(16px); transition: opacity .4s var(--ease), visibility .4s; }
+    .console-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .console-box { width: min(480px, 90vw); max-height: 80vh; display: flex; flex-direction: column; border: 1px solid rgba(var(--neon-rgb), .4); border-radius: 20px; background: rgba(6, 3, 15, .95); box-shadow: 0 0 60px rgba(var(--neon-rgb), .2); overflow: hidden; }
+    .console-header { padding: 16px 20px; border-bottom: 1px solid rgba(var(--neon-rgb), .2); display: flex; justify-content: space-between; align-items: center; background: rgba(var(--neon-rgb), .05); }
+    .console-header-title { font-family: "Playfair Display", serif; font-size: 16px; color: var(--neon); letter-spacing: 2px; }
+    .console-close { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(var(--neon-rgb), .3); color: rgba(255,255,255,.6); font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all .3s; }
+    .console-close:hover { border-color: var(--neon); color: #fff; }
+    .console-log { flex: 1; padding: 16px 20px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.8; color: rgba(255,255,255,.7); min-height: 200px; max-height: 40vh; }
+    .log-line { margin-bottom: 4px; word-break: break-all; }
+    .log-cmd { color: var(--neon); } .log-ok { color: #66ff99; } .log-err { color: #ff4466; } .log-info { color: #66d9ff; }
+    .console-input-wrap { padding: 12px 20px; border-top: 1px solid rgba(var(--neon-rgb), .2); display: flex; align-items: center; gap: 10px; }
+    .console-prompt { color: var(--neon); font-family: 'Courier New', monospace; font-size: 14px; font-weight: bold; }
+    .console-input { flex: 1; background: transparent; border: none; color: #fff; font-family: 'Courier New', monospace; font-size: 14px; outline: none; caret-color: var(--neon); -webkit-user-select: text; user-select: text; }
 
-    .difficulty-stats strong {
-      color: var(--neon);
-    }
+    .console-fab { position: fixed; z-index: 9998; width: 48px; height: 48px; border-radius: 50%; background: rgba(6, 3, 15, .85); border: 1px solid rgba(var(--neon-rgb), .5); box-shadow: 0 0 20px rgba(var(--neon-rgb), .3); display: flex; align-items: center; justify-content: center; cursor: grab; touch-action: none; }
+    .console-fab.hidden { display: none; }
+    .console-fab svg { width: 24px; height: 24px; fill: none; stroke: var(--neon); stroke-width: 2; filter: drop-shadow(0 0 6px var(--neon)); }
 
-    .achievements-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 16px;
-      margin: 30px 0;
-    }
+    .pass-screen { position: fixed; inset: 0; z-index: 9990; display: flex; align-items: center; justify-content: center; background: rgba(3, 1, 9, .9); backdrop-filter: blur(12px); transition: opacity .4s var(--ease), visibility .4s; }
+    .pass-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .pass-box { text-align: center; padding: 40px; border: 1px solid rgba(var(--neon-rgb), .3); border-radius: 24px; background: rgba(14, 7, 29, .95); }
+    .pass-title { font-family: "Playfair Display", serif; font-size: 22px; color: var(--neon); margin-bottom: 20px; }
+    .pass-input { width: 200px; padding: 12px 16px; border: 1px solid rgba(var(--neon-rgb), .4); border-radius: 12px; background: rgba(var(--neon-rgb), .05); color: #fff; font-family: 'Courier New', monospace; font-size: 20px; text-align: center; letter-spacing: 8px; outline: none; -webkit-user-select: text; user-select: text; }
+    .pass-input:focus { border-color: var(--neon); box-shadow: 0 0 20px rgba(var(--neon-rgb), .2); }
+    .pass-error { color: #ff4466; font-size: 12px; margin-top: 12px; opacity: 0; transition: opacity .3s; }
+    .pass-error.show { opacity: 1; }
+    .pass-cancel { margin-top: 20px; color: rgba(255,255,255,.4); font-size: 12px; cursor: pointer; letter-spacing: 2px; }
 
-    .achievement-card {
-      padding: 20px 16px;
-      border: 1px solid rgba(var(--neon-rgb), .2);
-      border-radius: 16px;
-      background: rgba(var(--neon-rgb), .05);
-      text-align: center;
-      transition: all .3s var(--ease);
+    /* Уведомление о достижении */
+    .ach-toast {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+      z-index: 10000; padding: 14px 28px; border-radius: 16px;
+      background: rgba(14, 7, 29, .92); border: 1px solid rgba(var(--neon-rgb), .5);
+      backdrop-filter: blur(20px); text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,.5), 0 0 30px rgba(var(--neon-rgb), .15);
+      transition: transform .5s var(--ease), opacity .5s;
+      opacity: 0; pointer-events: none;
     }
-
-    .achievement-card.locked {
-      opacity: 0.4;
-      filter: grayscale(100%);
-    }
-
-    .achievement-card.unlocked {
-      border-color: rgba(var(--neon-rgb), .6);
-      background: rgba(var(--neon-rgb), .1);
-      box-shadow: 0 0 20px rgba(var(--neon-rgb), .2);
-    }
-
-    .achievement-icon {
-      font-size: 36px;
-      margin-bottom: 12px;
-    }
-
-    .achievement-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--neon);
-      margin-bottom: 6px;
-    }
-
-    .achievement-desc {
-      font-size: 11px;
-      color: rgba(255,255,255,.5);
-      line-height: 1.4;
-    }
-
-    .race-result {
-      padding: 30px;
-      border: 2px solid rgba(var(--neon-rgb), .4);
-      border-radius: 20px;
-      background: rgba(var(--neon-rgb), .08);
-      margin: 20px 0;
-    }
-
-    .race-result.success {
-      border-color: #66ff99;
-      background: rgba(102, 255, 153, .08);
-    }
-
-    .race-result.failed {
-      border-color: #ff4466;
-      background: rgba(255, 68, 102, .08);
-    }
-
-    .race-result-title {
-      font-family: "Playfair Display", serif;
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-
-    .race-result.success .race-result-title {
-      color: #66ff99;
-      text-shadow: 0 0 20px rgba(102, 255, 153, .6);
-    }
-
-    .race-result.failed .race-result-title {
-      color: #ff4466;
-      text-shadow: 0 0 20px rgba(255, 68, 102, .6);
-    }
-
-    .race-result-stats {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin: 20px 0;
-    }
-
-    .footer {
-      position: fixed;
-      bottom: 16px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      color: rgba(255,255,255,.15);
-      font-size: 9px;
-      letter-spacing: 5px;
-      pointer-events: none;
-      z-index: 5;
-    }
+    .ach-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .ach-toast-icon { font-size: 24px; margin-bottom: 4px; }
+    .ach-toast-title { font-size: 12px; font-weight: 600; color: var(--neon); letter-spacing: 2px; text-transform: lowercase; }
+    .ach-toast-desc { font-size: 10px; color: rgba(255,255,255,.5); margin-top: 2px; }
 
     @media (max-width: 500px) {
       .game-star-wrapper { width: 220px; height: 220px; }
@@ -680,85 +217,55 @@
       .menu-buttons { max-width: 340px; }
       .palette { gap: 10px; padding: 14px 20px; bottom: 20px; }
       .color-btn { width: 28px; height: 28px; }
-      .game-btn-small { height: 38px; padding: 0 16px; font-size: 11px; }
+      .game-btn-small { height: 38px; padding: 0 14px; font-size: 11px; }
       .race-info { gap: 20px; }
       .race-stat-value { font-size: 1.5rem; }
-      .modal-content { padding: 30px 24px 24px; }
+      .modal-content { padding: 30px 20px 24px; }
       .modal-title { font-size: 26px; }
-      .difficulty-grid { gap: 10px; }
-      .difficulty-card { padding: 16px; }
-      .difficulty-name { font-size: 17px; }
-      .achievements-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
-      .achievement-card { padding: 16px 12px; }
-      .achievement-icon { font-size: 28px; }
+      .achievements-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+      .console-box { width: 95vw; }
     }
   </style>
 </head>
-
 <body>
 
   <div class="background-glow"></div>
   <div class="stars-bg" id="starsBg"></div>
+  <div id="goldIconsContainer"></div>
 
   <!-- ГЛАВНОЕ МЕНЮ -->
   <main class="screen" id="menuScreen">
     <h1 class="title">Неоновая звезда</h1>
     <div class="subtitle">asmr · неон · покой</div>
-
     <div class="menu-buttons">
-      <button class="menu-button primary" id="playButton">
-        <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-        играть
-      </button>
-
-      <button class="menu-button" id="raceButton">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-        гонка
-      </button>
-
-      <button class="menu-button" id="achievementsButton">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
-        достижения
-      </button>
-
-      <button class="menu-button" id="paletteMenuButton">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
-        палитра
-      </button>
-
-      <button class="menu-button" id="aboutButton">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        о игре
-      </button>
+      <button class="menu-button primary" id="playButton"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>играть</button>
+      <button class="menu-button" id="raceButton"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>гонка</button>
+      <button class="menu-button" id="achievementsButton"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>достижения</button>
+      <button class="menu-button" id="paletteMenuButton"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>палитра</button>
+      <button class="menu-button" id="aboutButton"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>о игре</button>
     </div>
   </main>
 
   <!-- ЭКРАН ИГРЫ -->
   <main class="screen hidden" id="gameScreen">
     <div class="game-header">
-      <button class="game-btn-small" id="backButton">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
-        назад
-      </button>
-      <button class="game-btn-small" id="togglePaletteBtn">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
-        цвет
-      </button>
-      <button class="game-btn-small" id="resetButton">
-        <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-        сброс
-      </button>
+      <button class="game-btn-small" id="backButton"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>назад</button>
+      <button class="game-btn-small" id="togglePaletteBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>цвет</button>
+      <button class="game-btn-small" id="resetButton"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>сброс</button>
     </div>
 
-    <div class="game-star-wrapper">
+    <div class="combo-display" id="comboDisplay">
+      <div class="combo-value" id="comboValue">x0</div>
+      <div class="combo-label">комбо</div>
+      <div class="combo-bar"><div class="combo-bar-fill" id="comboBarFill"></div></div>
+    </div>
+
+    <div class="game-star-wrapper" id="gameStarWrapper">
       <div class="aura-wrap" id="auraWrap"></div>
       <button class="game-star-btn" id="gameStarBtn" aria-label="Кликни по звезде">
-        <svg class="game-star-svg" viewBox="0 0 100 100">
-          <polygon class="game-star-shape" points="50,8 61,38 94,38 67,56 77,86 50,68 23,86 33,56 6,38 39,38" />
-        </svg>
+        <svg class="game-star-svg" viewBox="0 0 100 100"><polygon class="game-star-shape" points="50,8 61,38 94,38 67,56 77,86 50,68 23,86 33,56 6,38 39,38" /></svg>
       </button>
     </div>
-
     <div class="tap-counter">
       <div class="tap-number" id="tapNumber">0</div>
       <div class="tap-label">касаний</div>
@@ -769,724 +276,684 @@
   <!-- ЭКРАН ГОНКИ -->
   <main class="screen hidden" id="raceScreen">
     <div class="game-header">
-      <button class="game-btn-small" id="raceBackButton">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
-        назад
-      </button>
-      <button class="game-btn-small" id="raceTogglePaletteBtn">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
-        цвет
-      </button>
+      <button class="game-btn-small" id="raceBackButton"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>назад</button>
+      <button class="game-btn-small" id="raceTogglePaletteBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>цвет</button>
     </div>
-
-    <div class="race-info" id="raceInfo">
-      <div class="race-stat">
-        <div class="race-stat-value" id="raceTimer">0</div>
-        <div class="race-stat-label">секунд</div>
-      </div>
-      <div class="race-stat">
-        <div class="race-stat-value" id="raceTarget">0</div>
-        <div class="race-stat-label">цель</div>
-      </div>
+    <div class="race-info">
+      <div class="race-stat"><div class="race-stat-value race-timer" id="raceTimer">0</div><div class="race-stat-label">секунд</div></div>
+      <div class="race-stat"><div class="race-stat-value" id="raceTarget">0</div><div class="race-stat-label">цель</div></div>
     </div>
-
     <div class="game-star-wrapper">
       <div class="aura-wrap" id="raceAuraWrap"></div>
-      <button class="game-star-btn" id="raceStarBtn" aria-label="Кликни по звезде">
-        <svg class="game-star-svg" viewBox="0 0 100 100">
-          <polygon class="game-star-shape" points="50,8 61,38 94,38 67,56 77,86 50,68 23,86 33,56 6,38 39,38" />
-        </svg>
-      </button>
+      <button class="game-star-btn" id="raceStarBtn"><svg class="game-star-svg" viewBox="0 0 100 100"><polygon class="game-star-shape" points="50,8 61,38 94,38 67,56 77,86 50,68 23,86 33,56 6,38 39,38" /></svg></button>
     </div>
-
-    <div class="tap-counter">
-      <div class="tap-number" id="raceTapNumber">0</div>
-      <div class="tap-label">касаний</div>
-    </div>
+    <div class="tap-counter"><div class="tap-number" id="raceTapNumber">0</div><div class="tap-label">касаний</div></div>
   </main>
 
-  <div class="palette" id="palette">
-    <div class="palette-title">цвет свечения</div>
-  </div>
+  <div class="palette" id="palette"><div class="palette-title">цвет свечения</div></div>
 
-  <div class="screen hidden" id="raceSelectModal" style="background: rgba(3, 1, 9, .85); backdrop-filter: blur(12px); z-index: 50;">
+  <!-- МОДАЛКИ -->
+  <div class="screen hidden" id="raceSelectModal" style="background:rgba(3,1,9,.85);backdrop-filter:blur(12px);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Выбери сложность</h2>
-      <p class="modal-text">У тебя есть ограниченное время, чтобы достичь цели. Готов?</p>
+      <p class="modal-text">У тебя есть ограниченное время, чтобы достичь цели.</p>
       <div class="difficulty-grid" id="difficultyGrid"></div>
-      <button class="menu-button" id="closeRaceSelectBtn" style="max-width: 200px; margin: 0 auto;">назад</button>
+      <button class="menu-button" id="closeRaceSelectBtn" style="max-width:200px;margin:0 auto;">назад</button>
     </div>
   </div>
 
-  <div class="screen hidden" id="raceResultModal" style="background: rgba(3, 1, 9, .85); backdrop-filter: blur(12px); z-index: 50;">
+  <div class="screen hidden" id="raceResultModal" style="background:rgba(3,1,9,.85);backdrop-filter:blur(12px);z-index:50;">
     <div class="modal-content">
       <div class="race-result" id="raceResult">
         <div class="race-result-title" id="raceResultTitle"></div>
         <div class="race-result-stats">
-          <div class="race-stat">
-            <div class="race-stat-value" id="resultTaps">0</div>
-            <div class="race-stat-label">касаний</div>
-          </div>
-          <div class="race-stat">
-            <div class="race-stat-value" id="resultTime">0</div>
-            <div class="race-stat-label">секунд</div>
-          </div>
+          <div class="race-stat"><div class="race-stat-value" id="resultTaps">0</div><div class="race-stat-label">касаний</div></div>
+          <div class="race-stat"><div class="race-stat-value" id="resultTime">0</div><div class="race-stat-label">секунд</div></div>
         </div>
       </div>
       <div class="modal-text" id="raceResultDescription"></div>
-      <button class="menu-button" id="raceResultCloseBtn" style="max-width: 200px; margin: 0 auto;">продолжить</button>
+      <button class="menu-button" id="raceResultCloseBtn" style="max-width:200px;margin:0 auto;">продолжить</button>
     </div>
   </div>
 
-  <div class="screen hidden" id="achievementsModal" style="background: rgba(3, 1, 9, .85); backdrop-filter: blur(12px); z-index: 50;">
+  <div class="screen hidden" id="achievementsModal" style="background:rgba(3,1,9,.85);backdrop-filter:blur(12px);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Достижения</h2>
       <p class="modal-text">Твои награды за победы в гонках</p>
       <div class="achievements-grid" id="achievementsGrid"></div>
-      <button class="menu-button" id="closeAchievementsBtn" style="max-width: 200px; margin: 0 auto;">назад</button>
+      <button class="menu-button" id="closeAchievementsBtn" style="max-width:200px;margin:0 auto;">назад</button>
     </div>
   </div>
 
-  <div class="screen hidden" id="aboutModal" style="background: rgba(3, 1, 9, .85); backdrop-filter: blur(12px); z-index: 50;">
+  <div class="screen hidden" id="aboutModal" style="background:rgba(3,1,9,.85);backdrop-filter:blur(12px);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">О игре</h2>
       <p class="modal-text">
         Неоновая звезда — это ASMR-пространство для расслабления.<br>
-        Наблюдайте за свечением, меняйте цвета, проходите гонки и получайте достижения.<br><br>
-        ✦ Интеграция QuadroOS: FastFPS · AppStorage
+        Наблюдайте за свечением, меняйте цвета, проходите гонки.<br><br>
+        ✦ Интеграция <span id="quadroTrigger" style="cursor:pointer;color:var(--neon);text-decoration:underline;text-underline-offset:4px;">QuadroOS</span>: FastFPS · AppStorage<br><br>
+        <span style="font-size:12px;opacity:.5;">версия 2.0 «Золотая эра»</span>
       </p>
-      <button class="menu-button" id="closeAboutButton" style="max-width: 200px; margin: 0 auto;">закрыть</button>
+      <button class="menu-button" id="closeAboutButton" style="max-width:200px;margin:0 auto;">закрыть</button>
     </div>
   </div>
 
-  <footer class="footer">неон · звёзды · asmr</footer>
+  <!-- ПАРОЛЬ -->
+  <div class="pass-screen hidden" id="passScreen">
+    <div class="pass-box">
+      <div class="pass-title">✦ Введите код ✦</div>
+      <input type="password" class="pass-input" id="passInput" maxlength="6" autocomplete="off" inputmode="numeric">
+      <div class="pass-error" id="passError">Неверный код</div>
+      <div class="pass-cancel" id="passCancel">отмена</div>
+    </div>
+  </div>
+
+  <!-- ЗВЁЗДОЧКА КОНСОЛИ -->
+  <div class="console-fab hidden" id="consoleFab">
+    <svg viewBox="0 0 100 100"><polygon points="50,8 61,38 94,38 67,56 77,86 50,68 23,86 33,56 6,38 39,38" stroke-linejoin="round"/></svg>
+  </div>
+
+  <!-- КОНСОЛЬ -->
+  <div class="console-overlay hidden" id="consoleOverlay">
+    <div class="console-box">
+      <div class="console-header">
+        <div class="console-header-title">✦ dev console ✦</div>
+        <button class="console-close" id="consoleClose">✕</button>
+      </div>
+      <div class="console-log" id="consoleLog"></div>
+      <div class="console-input-wrap">
+        <span class="console-prompt">❯</span>
+        <input type="text" class="console-input" id="consoleInput" placeholder="help — список команд" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+  </div>
+
+  <!-- ТОСТ ДОСТИЖЕНИЯ -->
+  <div class="ach-toast" id="achToast">
+    <div class="ach-toast-icon" id="achToastIcon">🏆</div>
+    <div class="ach-toast-title" id="achToastTitle">Достижение!</div>
+    <div class="ach-toast-desc" id="achToastDesc"></div>
+  </div>
+
+  <footer class="footer" id="footer">неон · звёзды · asmr</footer>
 
   <script>
-    (function() {
-      'use strict';
+  (function() {
+    'use strict';
 
-      /* ============================================================
-         QuadroOS: FastFPS + AppStorage интеграция
-         ============================================================ */
+    /* ============ QuadroOS FastFPS ============ */
+    let currentFps = 60, frameCount = 0, lastFpsTime = performance.now();
+    function fpsLoop(now) { frameCount++; if (now - lastFpsTime >= 1000) { currentFps = Math.round(frameCount * 1000 / (now - lastFpsTime)); frameCount = 0; lastFpsTime = now; } requestAnimationFrame(fpsLoop); }
+    requestAnimationFrame(fpsLoop);
 
-      // Реальный подсчёт FPS через requestAnimationFrame
-      let currentFps = 60;
-      let frameCount = 0;
-      let lastFpsTime = performance.now();
-
-      function fpsLoop(now) {
-        frameCount++;
-        if (now - lastFpsTime >= 1000) {
-          currentFps = Math.round(frameCount * 1000 / (now - lastFpsTime));
-          frameCount = 0;
-          lastFpsTime = now;
-        }
-        requestAnimationFrame(fpsLoop);
+    let handshakeDone = false;
+    window.addEventListener('message', (e) => {
+      if (!handshakeDone && e.data && e.data.ftai === 'handshake') {
+        handshakeDone = true;
+        try { window.parent.postMessage({ ftai: 'hello', fps: currentFps }, '*'); } catch(_){}
+        setInterval(() => { try { window.parent.postMessage({ ftai: 'fps', fps: currentFps }, '*'); } catch(_){} }, 500);
       }
-      requestAnimationFrame(fpsLoop);
+    });
+    setTimeout(() => {
+      if (!handshakeDone) {
+        try { window.parent.postMessage({ ftai: 'hello', fps: currentFps }, '*'); } catch(_){}
+        setInterval(() => { try { window.parent.postMessage({ ftai: 'fps', fps: currentFps }, '*'); } catch(_){} }, 500);
+      }
+    }, 200);
 
-      // Handshake + отправка FPS каждые 500мс
-      let handshakeDone = false;
+    /* ============ QuadroOS Storage ============ */
+    const STORAGE_KEY = 'app_neon_star_progress';
+    async function storageSave(key, data) { try { if (window.QOSAppStorage?.save) { await window.QOSAppStorage.save(key, data); return; } } catch(_){} try { localStorage.setItem(key, JSON.stringify(data)); } catch(_){} }
+    async function storageLoad(key) { try { if (window.QOSAppStorage?.load) { const d = await window.QOSAppStorage.load(key); if (d) return d; } } catch(_){} try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; } catch(_) { return null; } }
 
-      window.addEventListener('message', (e) => {
-        if (!handshakeDone && e.data && e.data.ftai === 'handshake') {
-          handshakeDone = true;
-          console.log('[QuadroOS] Handshake получен. Отправляю hello.');
-          try {
-            window.parent.postMessage({ ftai: 'hello', fps: currentFps }, '*');
-          } catch (_) {}
+    /* ============ ДАННЫЕ ============ */
+    const COLORS = [
+      { name: 'Фиолетовый', hex: '#b380ff' },
+      { name: 'Розовый', hex: '#ff66b2' },
+      { name: 'Голубой', hex: '#66d9ff' },
+      { name: 'Зелёный', hex: '#66ff99' },
+      { name: 'Жёлтый', hex: '#ffe066' },
+      { name: 'Оранжевый', hex: '#ff9966' },
+      { name: 'Красный', hex: '#ff4466' },
+      { name: 'Бирюзовый', hex: '#66ffcc' },
+      { name: 'Золотой', hex: '#FFD700', special: 'gold' },
+      { name: 'Белый', hex: '#ffffff', special: 'white' },
+      { name: 'Чёрный', hex: '#0a0a0a', special: 'black' },
+      { name: 'Чёрно-белый', hex: '#808080', special: 'black-white' },
+      { name: 'Оттенки серого', hex: '#666666', special: 'grayscale' }
+    ];
 
-          setInterval(() => {
-            try {
-              window.parent.postMessage({ ftai: 'fps', fps: currentFps }, '*');
-            } catch (_) {}
-          }, 500);
-        }
+    const DIFFICULTIES = [
+      { id: 'super_noob', name: 'Супер нуб', desc: 'Для тех, кто только начал. Расслабься.', time: 30, target: 30, achievementId: 'race_super_noob' },
+      { id: 'noob', name: 'Нуб', desc: 'Лёгкая разминка. Попробуй свои силы.', time: 25, target: 40, achievementId: 'race_noob' },
+      { id: 'easy', name: 'Лёгкий', desc: 'Настоящее испытание. Соберись!', time: 20, target: 50, achievementId: 'race_easy' },
+      { id: 'medium', name: 'Средний', desc: 'Покажи мастерство.', time: 20, target: 75, achievementId: 'race_medium' },
+      { id: 'hard', name: 'Сложный', desc: 'Для опытных таперов.', time: 15, target: 80, achievementId: 'race_hard' },
+      { id: 'extreme', name: 'Экстремально сложный', desc: 'Границы возможного.', time: 12, target: 100, achievementId: 'race_extreme' },
+      { id: 'hell', name: 'Адски сложный', desc: 'Мало кто сможет.', time: 10, target: 120, achievementId: 'race_hell' }
+    ];
+
+    const ACHIEVEMENTS = {
+      race_super_noob: { icon: '🌱', name: 'Первые шаги', desc: 'Пройди "Супер нуб"' },
+      race_noob: { icon: '⭐', name: 'Новичок', desc: 'Пройди "Нуб"' },
+      race_easy: { icon: '🔥', name: 'Уверенный', desc: 'Пройди "Лёгкий"' },
+      race_medium: { icon: '💎', name: 'Мастер', desc: 'Пройди "Средний"' },
+      race_hard: { icon: '⚡', name: 'Эксперт', desc: 'Пройди "Сложный"' },
+      race_extreme: { icon: '🌟', name: 'Легенда', desc: 'Пройди "Экстремально сложный"' },
+      race_hell: { icon: '👑', name: 'Бог тапов', desc: 'Пройди "Адски сложный"' },
+      collector: { icon: '🏆', name: 'Коллектор', desc: 'Получи ВСЕ достижения', gold: true },
+      combo_50: { icon: '💫', name: 'Комбо x50', desc: 'Набери комбо 50 подряд' },
+      combo_100: { icon: '🌠', name: 'Комбо x100', desc: 'Набери комбо 100 подряд' },
+      taps_1000: { icon: '✨', name: 'Тысячник', desc: 'Набери 1000 касаний' },
+      taps_10000: { icon: '🔮', name: 'Десятитысячник', desc: 'Набери 10 000 касаний' }
+    };
+
+    /* ============ DOM ============ */
+    const $ = id => document.getElementById(id);
+    const screens = ['menuScreen','gameScreen','raceScreen','aboutModal','raceSelectModal','raceResultModal','achievementsModal'];
+    function showScreen(id) { screens.forEach(s => $(s).classList.add('hidden')); $(id).classList.remove('hidden'); }
+
+    /* ============ СОСТОЯНИЕ ============ */
+    let state = {
+      count: 0,
+      currentColor: '#b380ff',
+      achievements: {},
+      racesCompleted: {},
+      maxCombo: 0,
+      totalTapsAllTime: 0,
+      consoleUnlocked: false,
+      goldSelected: false
+    };
+
+    let audioCtx = null, raceActive = false, raceInterval = null, raceTimeLeft = 0, raceTargetCount = 0, raceTaps = 0, currentDiff = null;
+    let godMode = false, discoInterval = null;
+    let goldFloatInterval = null;
+
+    // Комбо
+    let comboCount = 0, comboTimer = null, comboBarInterval = null;
+    const COMBO_WINDOW = 1200; // мс между тапами
+
+    async function saveState() { await storageSave(STORAGE_KEY, state); }
+    async function loadState() { const d = await storageLoad(STORAGE_KEY); if (d) Object.assign(state, d); }
+
+    /* ============ ЦВЕТ ============ */
+    function hexToRgb(hex) { const c = hex.replace('#',''), b = parseInt(c,16); return `${(b>>16)&255},${(b>>8)&255},${b&255}`; }
+
+    function setColor(hex) {
+      state.currentColor = hex;
+      document.documentElement.style.setProperty('--neon', hex);
+      document.documentElement.style.setProperty('--neon-rgb', hexToRgb(hex));
+      document.querySelectorAll('.color-btn').forEach(b => b.classList.toggle('active', b.dataset.color === hex));
+
+      // Золотой режим
+      const isGold = hex === '#FFD700';
+      document.body.classList.toggle('gold-mode', isGold);
+      state.goldSelected = isGold;
+
+      if (isGold) startGoldFloats();
+      else stopGoldFloats();
+    }
+
+    /* ============ ЗОЛОТЫЕ ПЛАВУЩИЕ ИКОНКИ ============ */
+    const goldIcons = [
+      // Корона
+      `<svg viewBox="0 0 100 100" fill="none"><path d="M15 75 L10 35 L30 55 L50 20 L70 55 L90 35 L85 75 Z" stroke="#FFD700" stroke-width="3" fill="rgba(255,215,0,0.15)"/><circle cx="50" cy="20" r="4" fill="#FFD700"/><circle cx="10" cy="35" r="4" fill="#FFD700"/><circle cx="90" cy="35" r="4" fill="#FFD700"/></svg>`,
+      // Бриллиант
+      `<svg viewBox="0 0 100 100" fill="none"><polygon points="50,85 10,40 25,15 75,15 90,40" stroke="#FFD700" stroke-width="3" fill="rgba(255,215,0,0.12)"/><line x1="10" y1="40" x2="90" y2="40" stroke="#FFD700" stroke-width="2"/><line x1="25" y1="15" x2="40" y2="40" stroke="#FFD700" stroke-width="1.5"/><line x1="75" y1="15" x2="60" y2="40" stroke="#FFD700" stroke-width="1.5"/><line x1="40" y1="40" x2="50" y2="85" stroke="#FFD700" stroke-width="1.5"/><line x1="60" y1="40" x2="50" y2="85" stroke="#FFD700" stroke-width="1.5"/></svg>`,
+      // Звезда
+      `<svg viewBox="0 0 100 100" fill="none"><polygon points="50,8 61,38 94,38 67,56 77,86 50,68 23,86 33,56 6,38 39,38" stroke="#FFD700" stroke-width="3" fill="rgba(255,215,0,0.12)" stroke-linejoin="round"/></svg>`,
+      // Монета
+      `<svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="38" stroke="#FFD700" stroke-width="3" fill="rgba(255,215,0,0.1)"/><circle cx="50" cy="50" r="28" stroke="#FFD700" stroke-width="1.5"/><text x="50" y="58" text-anchor="middle" font-size="24" fill="#FFD700" font-family="serif">$</text></svg>`,
+      // Кольцо
+      `<svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="55" r="28" stroke="#FFD700" stroke-width="4" fill="none"/><polygon points="50,12 42,27 58,27" stroke="#FFD700" stroke-width="2" fill="rgba(255,215,0,0.3)"/></svg>`,
+      // Слиток
+      `<svg viewBox="0 0 100 100" fill="none"><path d="M25 60 L35 35 L65 35 L75 60 Z" stroke="#FFD700" stroke-width="3" fill="rgba(255,215,0,0.15)"/><path d="M30 60 L40 35" stroke="#FFD700" stroke-width="1"/><text x="50" y="53" text-anchor="middle" font-size="12" fill="#FFD700">Au</text></svg>`
+    ];
+
+    function startGoldFloats() {
+      stopGoldFloats();
+      spawnGoldIcon();
+      goldFloatInterval = setInterval(spawnGoldIcon, 2500);
+    }
+
+    function stopGoldFloats() {
+      if (goldFloatInterval) { clearInterval(goldFloatInterval); goldFloatInterval = null; }
+    }
+
+    function spawnGoldIcon() {
+      if (!state.goldSelected) return;
+      const container = $('goldIconsContainer');
+      const div = document.createElement('div');
+      div.className = 'gold-float-icon';
+      const size = 25 + Math.random() * 35;
+      div.style.width = size + 'px';
+      div.style.height = size + 'px';
+      div.style.left = (5 + Math.random() * 85) + 'vw';
+      div.style.top = '105vh';
+      div.style.setProperty('--float-dur', (8 + Math.random() * 10) + 's');
+      div.innerHTML = goldIcons[Math.floor(Math.random() * goldIcons.length)];
+      container.appendChild(div);
+      setTimeout(() => div.remove(), 20000);
+    }
+
+    /* ============ ПАЛИТРА ============ */
+    function buildPalette() {
+      const p = $('palette'); p.innerHTML = '<div class="palette-title">цвет свечения</div>';
+      COLORS.forEach(c => {
+        const b = document.createElement('button'); b.className = 'color-btn';
+        if (c.special === 'black-white') b.classList.add('black-white');
+        if (c.special === 'grayscale') b.classList.add('grayscale');
+        if (c.special === 'gold') b.classList.add('gold');
+        if (c.special === 'white') b.style.backgroundColor = '#fff';
+        if (c.special === 'black') b.style.backgroundColor = '#0a0a0a';
+        if (!c.special) b.style.backgroundColor = c.hex;
+        if (c.special === 'gold') b.style.backgroundColor = '';
+        b.style.color = c.hex; b.dataset.color = c.hex; b.title = c.name;
+        if (c.hex === state.currentColor) b.classList.add('active');
+        const h = e => { e.preventDefault(); setColor(c.hex); saveState(); navigator.vibrate?.(5); };
+        b.addEventListener('click', h);
+        b.addEventListener('touchstart', h, { passive: false });
+        p.appendChild(b);
       });
+    }
 
-      // Fallback: если система не успела послать handshake за 2 сек, шлём hello сами
+    /* ============ НАВИГАЦИЯ ============ */
+    $('playButton').onclick = () => { initAudio(); showScreen('gameScreen'); };
+    $('paletteMenuButton').onclick = () => { showScreen('gameScreen'); setTimeout(() => $('palette').classList.add('open'), 300); };
+    $('aboutButton').onclick = () => showScreen('aboutModal');
+    $('closeAboutButton').onclick = () => showScreen('menuScreen');
+    $('backButton').onclick = () => { $('palette').classList.remove('open'); showScreen('menuScreen'); };
+    $('togglePaletteBtn').onclick = () => $('palette').classList.toggle('open');
+    $('raceButton').onclick = () => { showScreen('raceSelectModal'); buildDiffGrid(); };
+    $('closeRaceSelectBtn').onclick = () => showScreen('menuScreen');
+    $('raceBackButton').onclick = () => { stopRace(); showScreen('menuScreen'); };
+    $('raceTogglePaletteBtn').onclick = () => $('palette').classList.toggle('open');
+    $('raceResultCloseBtn').onclick = () => showScreen('menuScreen');
+    $('achievementsButton').onclick = () => { showScreen('achievementsModal'); buildAchGrid(); };
+    $('closeAchievementsBtn').onclick = () => showScreen('menuScreen');
+
+    /* ============ СЕКРЕТНАЯ КОНСОЛЬ ============ */
+    let footerClicks = 0, footerTimer = null, footerReady = false;
+    let quadroClicks = 0, quadroTimer = null;
+
+    $('footer').addEventListener('click', (e) => {
+      e.preventDefault();
+      footerClicks++;
+      clearTimeout(footerTimer);
+      if (footerClicks >= 2) {
+        footerClicks = 0; footerReady = true;
+        $('aboutButton').style.boxShadow = '0 0 30px var(--neon)';
+        setTimeout(() => { $('aboutButton').style.boxShadow = ''; }, 2000);
+        return;
+      }
+      footerTimer = setTimeout(() => { footerClicks = 0; }, 600);
+    });
+
+    $('quadroTrigger').addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!footerReady) return;
+      quadroClicks++;
+      clearTimeout(quadroTimer);
+      if (quadroClicks >= 2) {
+        quadroClicks = 0; footerReady = false;
+        openPassScreen();
+        return;
+      }
+      quadroTimer = setTimeout(() => { quadroClicks = 0; }, 600);
+    });
+
+    function openPassScreen() {
+      $('passScreen').classList.remove('hidden');
+      $('passInput').value = '';
+      $('passError').classList.remove('show');
+      setTimeout(() => $('passInput').focus(), 100);
+    }
+
+    $('passCancel').onclick = () => $('passScreen').classList.add('hidden');
+    $('passInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') checkPass(); });
+    $('passInput').addEventListener('input', () => { if ($('passInput').value.length >= 6) checkPass(); });
+
+    function checkPass() {
+      if ($('passInput').value === '113456') {
+        $('passScreen').classList.add('hidden');
+        state.consoleUnlocked = true;
+        saveState();
+        unlockConsole();
+      } else {
+        $('passError').classList.add('show');
+        $('passInput').value = '';
+        setTimeout(() => $('passError').classList.remove('show'), 2000);
+      }
+    }
+
+    /* ============ КОНСОЛЬ ============ */
+    const fab = $('consoleFab'), overlay = $('consoleOverlay'), logEl = $('consoleLog'), inputEl = $('consoleInput');
+    let isDragging = false, dragStartX, dragStartY, fabStartX, fabStartY;
+
+    function unlockConsole() {
+      fab.classList.remove('hidden');
+      if (!fab.style.left) { fab.style.left = '20px'; fab.style.top = '50%'; }
+    }
+
+    function logLine(type, text) {
+      const div = document.createElement('div');
+      div.className = `log-line log-${type}`;
+      div.textContent = text;
+      logEl.appendChild(div);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    fab.addEventListener('click', () => { if (!isDragging) { overlay.classList.remove('hidden'); inputEl.focus(); } });
+    $('consoleClose').onclick = () => overlay.classList.add('hidden');
+
+    function onDragStart(e) {
+      const p = e.touches ? e.touches[0] : e;
+      isDragging = false;
+      dragStartX = p.clientX; dragStartY = p.clientY;
+      const r = fab.getBoundingClientRect();
+      fabStartX = r.left; fabStartY = r.top;
+      document.addEventListener('mousemove', onDragMove);
+      document.addEventListener('mouseup', onDragEnd);
+      document.addEventListener('touchmove', onDragMove, { passive: false });
+      document.addEventListener('touchend', onDragEnd);
+    }
+    function onDragMove(e) {
+      e.preventDefault();
+      const p = e.touches ? e.touches[0] : e;
+      const dx = p.clientX - dragStartX, dy = p.clientY - dragStartY;
+      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) isDragging = true;
+      fab.style.left = Math.max(0, Math.min(window.innerWidth - 48, fabStartX + dx)) + 'px';
+      fab.style.top = Math.max(0, Math.min(window.innerHeight - 48, fabStartY + dy)) + 'px';
+    }
+    function onDragEnd() {
+      document.removeEventListener('mousemove', onDragMove);
+      document.removeEventListener('mouseup', onDragEnd);
+      document.removeEventListener('touchmove', onDragMove);
+      document.removeEventListener('touchend', onDragEnd);
+      setTimeout(() => { isDragging = false; }, 50);
+    }
+    fab.addEventListener('mousedown', onDragStart);
+    fab.addEventListener('touchstart', onDragStart, { passive: false });
+
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const cmd = inputEl.value.trim().toLowerCase();
+        if (cmd) { logLine('cmd', `❯ ${cmd}`); processCommand(cmd); }
+        inputEl.value = '';
+      }
+    });
+
+    function processCommand(cmd) {
+      const parts = cmd.split(' '), c = parts[0], arg = parts.slice(1).join(' ');
+      switch(c) {
+        case 'help':
+          logLine('info', 'help · stats · set taps <n> · set color <hex> · unlock all · reset · godmode · disco · clear');
+          break;
+        case 'stats':
+          logLine('ok', `Тапы: ${state.count} | Всего: ${state.totalTapsAllTime} | Цвет: ${state.currentColor} | Макс комбо: ${state.maxCombo} | Достижений: ${Object.keys(state.achievements).length}/${Object.keys(ACHIEVEMENTS).length}`);
+          break;
+        case 'set':
+          if (parts[1] === 'taps' && !isNaN(parts[2])) { state.count = parseInt(parts[2]); updateDisplay(false); saveState(); logLine('ok', `Тапы: ${state.count}`); }
+          else if (parts[1] === 'color' && /^#[0-9a-f]{6}$/i.test(parts[2])) { setColor(parts[2]); saveState(); logLine('ok', `Цвет: ${parts[2]}`); }
+          else logLine('err', 'set taps <n> или set color <#hex>');
+          break;
+        case 'unlock':
+          if (arg === 'all') { Object.keys(ACHIEVEMENTS).forEach(id => state.achievements[id] = Date.now()); saveState(); logLine('ok', 'Все достижения разблокированы'); }
+          break;
+        case 'reset':
+          state.count = 0; state.achievements = {}; state.racesCompleted = {}; state.maxCombo = 0; state.totalTapsAllTime = 0;
+          saveState(); updateDisplay(false); logLine('ok', 'Полный сброс');
+          break;
+        case 'godmode':
+          godMode = !godMode; logLine('ok', `Режим бога: ${godMode ? 'ВКЛ' : 'ВЫКЛ'}`);
+          break;
+        case 'disco':
+          if (discoInterval) { clearInterval(discoInterval); discoInterval = null; logLine('ok', 'Диско: ВЫКЛ'); }
+          else { discoInterval = setInterval(() => setColor(COLORS[Math.floor(Math.random()*COLORS.length)].hex), 800); logLine('ok', 'Диско: ВКЛ'); }
+          break;
+        case 'clear': logEl.innerHTML = ''; break;
+        default: logLine('err', `Неизвестно: ${c}. Введи "help".`);
+      }
+    }
+
+    /* ============ КОМБО СИСТЕМА ============ */
+    function startCombo() {
+      comboCount++;
+      clearTimeout(comboTimer);
+      comboTimer = setTimeout(() => { resetCombo(); }, COMBO_WINDOW);
+
+      if (comboCount > state.maxCombo) {
+        state.maxCombo = comboCount;
+        saveState();
+      }
+
+      $('comboDisplay').classList.add('active');
+      $('comboValue').textContent = `x${comboCount}`;
+      $('comboBarFill').style.width = '100%';
+
+      // Анимация полосы
+      clearInterval(comboBarInterval);
+      let barWidth = 100;
+      comboBarInterval = setInterval(() => {
+        barWidth -= 100 / (COMBO_WINDOW / 50);
+        if (barWidth <= 0) { barWidth = 0; clearInterval(comboBarInterval); }
+        $('comboBarFill').style.width = barWidth + '%';
+      }, 50);
+
+      // Достижения комбо
+      if (comboCount === 50) unlockAchievement('combo_50');
+      if (comboCount === 100) unlockAchievement('combo_100');
+
+      // Визуальный эффект на больших комбо
+      if (comboCount % 25 === 0 && comboCount > 0) {
+        spawnComboBurst();
+      }
+    }
+
+    function resetCombo() {
+      comboCount = 0;
+      clearTimeout(comboTimer);
+      clearInterval(comboBarInterval);
+      $('comboDisplay').classList.remove('active');
+    }
+
+    function spawnComboBurst() {
+      const wrap = $('gameStarWrapper');
+      const rgb = hexToRgb(state.currentColor);
+      for (let i = 0; i < 8; i++) {
+        const p = document.createElement('div');
+        p.style.cssText = `position:absolute;width:6px;height:6px;border-radius:50%;background:rgb(${rgb});box-shadow:0 0 10px rgb(${rgb});z-index:10;left:50%;top:50%;pointer-events:none;`;
+        const angle = (i / 8) * Math.PI * 2;
+        const dist = 80 + Math.random() * 60;
+        p.animate([
+          { transform: 'translate(-50%,-50%) scale(1)', opacity: 1 },
+          { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) scale(0)`, opacity: 0 }
+        ], { duration: 600, easing: 'ease-out' });
+        wrap.appendChild(p);
+        setTimeout(() => p.remove(), 650);
+      }
+    }
+
+    /* ============ ДОСТИЖЕНИЯ ============ */
+    function unlockAchievement(id) {
+      if (state.achievements[id]) return;
+      state.achievements[id] = Date.now();
+      saveState();
+      showAchToast(id);
+      checkCollector();
+    }
+
+    function checkCollector() {
+      const allIds = Object.keys(ACHIEVEMENTS).filter(id => id !== 'collector');
+      const allUnlocked = allIds.every(id => !!state.achievements[id]);
+      if (allUnlocked && !state.achievements['collector']) {
+        setTimeout(() => unlockAchievement('collector'), 1500);
+      }
+    }
+
+    function showAchToast(id) {
+      const a = ACHIEVEMENTS[id];
+      if (!a) return;
+      $('achToastIcon').textContent = a.icon;
+      $('achToastTitle').textContent = a.name;
+      $('achToastDesc').textContent = a.desc;
+      $('achToast').classList.add('show');
+      setTimeout(() => $('achToast').classList.remove('show'), 3500);
+    }
+
+    function buildAchGrid() {
+      $('achievementsGrid').innerHTML = '';
+      Object.keys(ACHIEVEMENTS).forEach(id => {
+        const a = ACHIEVEMENTS[id], u = !!state.achievements[id];
+        const c = document.createElement('div');
+        c.className = `achievement-card ${u?'unlocked':'locked'} ${a.gold?'gold-ach':''}`;
+        c.innerHTML = `<div class="achievement-icon">${a.icon}</div><div class="achievement-name">${a.name}</div><div class="achievement-desc">${a.desc}</div>`;
+        $('achievementsGrid').appendChild(c);
+      });
+    }
+
+    /* ============ ИГРА ============ */
+    function updateDisplay(anim) {
+      $('tapNumber').textContent = state.count.toLocaleString('ru-RU');
+      if (anim) { $('tapNumber').classList.remove('pop'); void $('tapNumber').offsetWidth; $('tapNumber').classList.add('pop'); }
+    }
+
+    function initAudio() { if (!audioCtx) try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(_){} if (audioCtx?.state === 'suspended') audioCtx.resume(); }
+
+    function playSoftTap() {
+      if (!audioCtx) return;
+      try {
+        const n = audioCtx.currentTime, o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = 'sine';
+        const baseFreq = 180 + Math.random() * 60 + (comboCount > 10 ? Math.min(comboCount, 50) : 0);
+        o.frequency.setValueAtTime(baseFreq, n);
+        o.frequency.exponentialRampToValueAtTime(90, n + .14);
+        g.gain.setValueAtTime(.0001, n);
+        g.gain.exponentialRampToValueAtTime(.06, n + .008);
+        g.gain.exponentialRampToValueAtTime(.0001, n + .18);
+        o.connect(g); g.connect(audioCtx.destination); o.start(n); o.stop(n + .2);
+      } catch(_){}
+    }
+
+    function spawnGlow(wrap) {
+      const g = document.createElement('div'); g.className = 'aura-glow';
+      const s = 200 + Math.random() * 120; g.style.width = s+'px'; g.style.height = s+'px';
+      const rgb = hexToRgb(state.currentColor);
+      g.style.background = `radial-gradient(circle, rgba(${rgb},.25), rgba(${rgb},.08) 45%, transparent 75%)`;
+      wrap.appendChild(g); setTimeout(() => g.remove(), 850);
+    }
+
+    function checkTapAchievements() {
+      if (state.count >= 1000) unlockAchievement('taps_1000');
+      if (state.count >= 10000) unlockAchievement('taps_10000');
+    }
+
+    function handleTap(e) {
+      e.preventDefault();
+      initAudio(); playSoftTap(); spawnGlow($('auraWrap'));
+      state.count++; state.totalTapsAllTime++;
+      saveState(); updateDisplay(true);
+      startCombo();
+      checkTapAchievements();
+      navigator.vibrate?.(6);
+      if (state.count === 1 && $('hint')) { $('hint').style.opacity = '0'; $('hint').style.transition = 'opacity .6s'; }
+      if (state.goldSelected) spawnGoldIcon();
+    }
+
+    $('gameStarBtn').addEventListener('click', handleTap);
+    $('gameStarBtn').addEventListener('touchstart', handleTap, { passive: false });
+
+    $('resetButton').onclick = (e) => {
+      e.preventDefault(); state.count = 0; saveState(); updateDisplay(true); resetCombo(); navigator.vibrate?.(15);
+      $('gameStarBtn').style.transition = 'transform .4s var(--ease)';
+      $('gameStarBtn').style.transform = 'scale(.85) rotate(-15deg)';
+      setTimeout(() => { $('gameStarBtn').style.transform = ''; setTimeout(() => $('gameStarBtn').style.transition = '', 400); }, 120);
+    };
+
+    /* ============ ГОНКА ============ */
+    function buildDiffGrid() {
+      $('difficultyGrid').innerHTML = '';
+      DIFFICULTIES.forEach(d => {
+        const c = document.createElement('div'); c.className = 'difficulty-card';
+        const comp = state.racesCompleted[d.id] || 0;
+        c.innerHTML = `<div class="difficulty-name">${d.name} ${comp?`<span style="font-size:11px;color:rgba(255,255,255,.5);font-weight:400;">· ${comp}×</span>`:''}</div><div class="difficulty-desc">${d.desc}</div><div class="difficulty-stats"><span>⏱ <strong>${d.time}с</strong></span><span>🎯 <strong>${d.target}</strong></span></div>`;
+        c.onclick = () => startRace(d);
+        $('difficultyGrid').appendChild(c);
+      });
+    }
+
+    function startRace(diff) {
+      currentDiff = diff; raceTimeLeft = diff.time; raceTargetCount = diff.target; raceTaps = 0; raceActive = true;
+      $('raceTimer').textContent = raceTimeLeft; $('raceTimer').classList.remove('warning');
+      $('raceTarget').textContent = raceTargetCount; $('raceTapNumber').textContent = '0';
+      showScreen('raceScreen');
+      raceInterval = setInterval(() => {
+        if (godMode) return;
+        raceTimeLeft--; $('raceTimer').textContent = raceTimeLeft;
+        if (raceTimeLeft <= 5) $('raceTimer').classList.add('warning');
+        if (raceTimeLeft <= 0) endRace(false);
+      }, 1000);
+    }
+
+    function stopRace() { raceActive = false; if (raceInterval) { clearInterval(raceInterval); raceInterval = null; } }
+
+    function endRace(success) {
+      stopRace();
       setTimeout(() => {
-        if (!handshakeDone) {
-          try {
-            window.parent.postMessage({ ftai: 'hello', fps: currentFps }, '*');
-          } catch (_) {}
-          setInterval(() => {
-            try {
-              window.parent.postMessage({ ftai: 'fps', fps: currentFps }, '*');
-            } catch (_) {}
-          }, 500);
+        if (success && currentDiff) {
+          unlockAchievement(currentDiff.achievementId);
+          state.racesCompleted[currentDiff.id] = (state.racesCompleted[currentDiff.id]||0)+1;
+          saveState();
+          $('raceResult').className = 'race-result success';
+          $('raceResultTitle').textContent = '🎉 Победа!';
+          $('raceResultDescription').textContent = `Ты прошёл "${currentDiff.name}" и получил "${ACHIEVEMENTS[currentDiff.achievementId].name}"!`;
+        } else {
+          $('raceResult').className = 'race-result failed';
+          $('raceResultTitle').textContent = '💔 Не хватило';
+          $('raceResultDescription').textContent = `${raceTaps} из ${raceTargetCount} касаний.`;
         }
-      }, 200);
+        $('resultTaps').textContent = raceTaps; $('resultTime').textContent = currentDiff.time;
+        showScreen('raceResultModal');
+      }, 500);
+    }
 
-      // Универсальное хранилище: QOSAppStorage (QuadroOS) + fallback на localStorage
-      const STORAGE_KEY = 'app_neon_star_progress';
+    function handleRaceTap(e) {
+      e.preventDefault(); if (!raceActive) return;
+      initAudio(); playSoftTap(); spawnGlow($('raceAuraWrap'));
+      raceTaps++; $('raceTapNumber').textContent = raceTaps; navigator.vibrate?.(6);
+      if (raceTaps >= raceTargetCount) endRace(true);
+    }
 
-      async function storageSave(key, data) {
-        try {
-          if (window.QOSAppStorage && typeof window.QOSAppStorage.save === 'function') {
-            await window.QOSAppStorage.save(key, data);
-            console.log('[QuadroOS] Сохранено через QOSAppStorage:', key);
-            return;
-          }
-        } catch (e) {
-          console.warn('[QuadroOS] QOSAppStorage недоступен, fallback на localStorage');
-        }
-        try {
-          localStorage.setItem(key, JSON.stringify(data));
-        } catch (_) {}
+    $('raceStarBtn').addEventListener('click', handleRaceTap);
+    $('raceStarBtn').addEventListener('touchstart', handleRaceTap, { passive: false });
+
+    /* ============ ФОН ============ */
+    function createBgStars() {
+      for (let i = 0; i < 70; i++) {
+        const s = document.createElement('div'); s.className = 'bg-star';
+        s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%';
+        const sz = 1.5+Math.random()*2.5; s.style.width = sz+'px'; s.style.height = sz+'px';
+        s.style.setProperty('--duration', `${2.5+Math.random()*4}s`);
+        s.style.setProperty('--delay', `${Math.random()*5}s`);
+        s.style.setProperty('--opacity', `${.25+Math.random()*.6}`);
+        $('starsBg').appendChild(s);
       }
-
-      async function storageLoad(key) {
-        try {
-          if (window.QOSAppStorage && typeof window.QOSAppStorage.load === 'function') {
-            const data = await window.QOSAppStorage.load(key);
-            if (data) {
-              console.log('[QuadroOS] Загружено через QOSAppStorage:', key);
-              return data;
-            }
-          }
-        } catch (e) {
-          console.warn('[QuadroOS] QOSAppStorage недоступен, fallback на localStorage');
-        }
-        try {
-          const raw = localStorage.getItem(key);
-          return raw ? JSON.parse(raw) : null;
-        } catch (_) {
-          return null;
-        }
-      }
-
-      /* ============================================================
-         ДАННЫЕ ИГРЫ
-         ============================================================ */
-
-      const COLORS = [
-        { name: 'Фиолетовый', hex: '#b380ff' },
-        { name: 'Розовый', hex: '#ff66b2' },
-        { name: 'Голубой', hex: '#66d9ff' },
-        { name: 'Зелёный', hex: '#66ff99' },
-        { name: 'Жёлтый', hex: '#ffe066' },
-        { name: 'Оранжевый', hex: '#ff9966' },
-        { name: 'Красный', hex: '#ff4466' },
-        { name: 'Бирюзовый', hex: '#66ffcc' },
-        { name: 'Белый', hex: '#ffffff', special: 'white' },
-        { name: 'Чёрный', hex: '#0a0a0a', special: 'black' },
-        { name: 'Чёрно-белый', hex: '#808080', special: 'black-white' },
-        { name: 'Оттенки серого', hex: '#666666', special: 'grayscale' }
-      ];
-
-      const DIFFICULTIES = [
-        { id: 'super_noob', name: 'Супер нуб', desc: 'Для тех, кто только начал. Расслабься и наслаждайся.', time: 30, target: 30, achievementId: 'race_super_noob' },
-        { id: 'noob', name: 'Нуб', desc: 'Лёгкая разминка. Попробуй свои силы.', time: 25, target: 40, achievementId: 'race_noob' },
-        { id: 'easy', name: 'Лёгкий', desc: 'Начинается настоящее испытание. Соберись!', time: 20, target: 50, achievementId: 'race_easy' },
-        { id: 'medium', name: 'Средний', desc: 'Баланс между скоростью и точностью. Покажи мастерство.', time: 20, target: 75, achievementId: 'race_medium' },
-        { id: 'hard', name: 'Сложный', desc: 'Для опытных таперов. Нужна концентрация.', time: 15, target: 80, achievementId: 'race_hard' },
-        { id: 'extreme', name: 'Экстремально сложный', desc: 'Только для самых быстрых. Границы возможного.', time: 12, target: 100, achievementId: 'race_extreme' },
-        { id: 'hell', name: 'Адски сложный', desc: 'Легендарное испытание. Мало кто сможет.', time: 10, target: 120, achievementId: 'race_hell' }
-      ];
-
-      const ACHIEVEMENTS = {
-        race_super_noob: { icon: '🌱', name: 'Первые шаги', desc: 'Пройди гонку на сложности "Супер нуб"' },
-        race_noob: { icon: '⭐', name: 'Новичок', desc: 'Пройди гонку на сложности "Нуб"' },
-        race_easy: { icon: '🔥', name: 'Уверенный', desc: 'Пройди гонку на сложности "Лёгкий"' },
-        race_medium: { icon: '💎', name: 'Мастер', desc: 'Пройди гонку на сложности "Средний"' },
-        race_hard: { icon: '⚡', name: 'Эксперт', desc: 'Пройди гонку на сложности "Сложный"' },
-        race_extreme: { icon: '🌟', name: 'Легенда', desc: 'Пройди гонку на сложности "Экстремально сложный"' },
-        race_hell: { icon: '👑', name: 'Бог тапов', desc: 'Пройди гонку на сложности "Адски сложный"' }
-      };
-
-      /* ============================================================
-         ЭЛЕМЕНТЫ DOM
-         ============================================================ */
-
-      const menuScreen = document.getElementById('menuScreen');
-      const gameScreen = document.getElementById('gameScreen');
-      const raceScreen = document.getElementById('raceScreen');
-      const aboutModal = document.getElementById('aboutModal');
-      const palette = document.getElementById('palette');
-      const raceSelectModal = document.getElementById('raceSelectModal');
-      const raceResultModal = document.getElementById('raceResultModal');
-      const achievementsModal = document.getElementById('achievementsModal');
-
-      const playButton = document.getElementById('playButton');
-      const raceButton = document.getElementById('raceButton');
-      const achievementsButton = document.getElementById('achievementsButton');
-      const paletteMenuButton = document.getElementById('paletteMenuButton');
-      const aboutButton = document.getElementById('aboutButton');
-      const closeAboutButton = document.getElementById('closeAboutButton');
-
-      const backButton = document.getElementById('backButton');
-      const togglePaletteBtn = document.getElementById('togglePaletteBtn');
-      const resetButton = document.getElementById('resetButton');
-      const gameStarBtn = document.getElementById('gameStarBtn');
-      const tapNumber = document.getElementById('tapNumber');
-      const auraWrap = document.getElementById('auraWrap');
-      const hint = document.getElementById('hint');
-      const starsBg = document.getElementById('starsBg');
-
-      const raceBackButton = document.getElementById('raceBackButton');
-      const raceTogglePaletteBtn = document.getElementById('raceTogglePaletteBtn');
-      const raceStarBtn = document.getElementById('raceStarBtn');
-      const raceTapNumber = document.getElementById('raceTapNumber');
-      const raceAuraWrap = document.getElementById('raceAuraWrap');
-      const raceTimer = document.getElementById('raceTimer');
-      const raceTarget = document.getElementById('raceTarget');
-
-      const closeRaceSelectBtn = document.getElementById('closeRaceSelectBtn');
-      const difficultyGrid = document.getElementById('difficultyGrid');
-
-      const raceResultCloseBtn = document.getElementById('raceResultCloseBtn');
-      const raceResult = document.getElementById('raceResult');
-      const raceResultTitle = document.getElementById('raceResultTitle');
-      const raceResultDescription = document.getElementById('raceResultDescription');
-      const resultTaps = document.getElementById('resultTaps');
-      const resultTime = document.getElementById('resultTime');
-
-      const closeAchievementsBtn = document.getElementById('closeAchievementsBtn');
-      const achievementsGrid = document.getElementById('achievementsGrid');
-
-      /* ============================================================
-         СОСТОЯНИЕ
-         ============================================================ */
-
-      let gameState = {
-        count: 0,
-        currentColor: '#b380ff',
-        achievements: {},
-        racesCompleted: {}
-      };
-
-      let audioCtx = null;
-      let raceActive = false;
-      let raceTimerInterval = null;
-      let raceTimeLeft = 0;
-      let raceTargetCount = 0;
-      let raceTaps = 0;
-      let currentDifficulty = null;
-
-      /* ============================================================
-         ЦВЕТ
-         ============================================================ */
-
-      function hexToRgb(hex) {
-        const clean = hex.replace("#", "");
-        const bigint = parseInt(clean, 16);
-        return `${(bigint >> 16) & 255}, ${(bigint >> 8) & 255}, ${bigint & 255}`;
-      }
-
-      function setNeonColor(hex) {
-        gameState.currentColor = hex;
-        const rgbString = hexToRgb(hex);
-        document.documentElement.style.setProperty('--neon', hex);
-        document.documentElement.style.setProperty('--neon-rgb', rgbString);
-
-        document.querySelectorAll('.color-btn').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.color === hex);
-        });
-      }
-
-      function buildPalette() {
-        palette.innerHTML = '<div class="palette-title">цвет свечения</div>';
-        COLORS.forEach(color => {
-          const btn = document.createElement('button');
-          btn.className = 'color-btn';
-          if (color.special === 'black-white') btn.classList.add('black-white');
-          if (color.special === 'grayscale') btn.classList.add('grayscale');
-          if (color.special === 'white') btn.style.backgroundColor = '#ffffff';
-          if (color.special === 'black') btn.style.backgroundColor = '#0a0a0a';
-          if (!color.special) btn.style.backgroundColor = color.hex;
-
-          btn.style.color = color.hex;
-          btn.dataset.color = color.hex;
-          btn.title = color.name;
-
-          if (color.hex === gameState.currentColor) btn.classList.add('active');
-
-          const handler = (e) => {
-            e.preventDefault();
-            setNeonColor(color.hex);
-            saveGameState();
-            if (navigator.vibrate) navigator.vibrate(5);
-          };
-          btn.addEventListener('click', handler);
-          btn.addEventListener('touchstart', handler, { passive: false });
-          palette.appendChild(btn);
-        });
-      }
-
-      /* ============================================================
-         НАВИГАЦИЯ
-         ============================================================ */
-
-      function showScreen(screen) {
-        [menuScreen, gameScreen, raceScreen, aboutModal, raceSelectModal, raceResultModal, achievementsModal].forEach(s => s.classList.add('hidden'));
-        screen.classList.remove('hidden');
-      }
-
-      playButton.addEventListener('click', () => {
-        initAudio();
-        showScreen(gameScreen);
-      });
-
-      paletteMenuButton.addEventListener('click', () => {
-        showScreen(gameScreen);
-        setTimeout(() => palette.classList.add('open'), 300);
-      });
-
-      aboutButton.addEventListener('click', () => showScreen(aboutModal));
-      closeAboutButton.addEventListener('click', () => showScreen(menuScreen));
-
-      backButton.addEventListener('click', () => {
-        palette.classList.remove('open');
-        showScreen(menuScreen);
-      });
-
-      togglePaletteBtn.addEventListener('click', () => {
-        palette.classList.toggle('open');
-      });
-
-      /* ============================================================
-         ГОНКА
-         ============================================================ */
-
-      raceButton.addEventListener('click', () => {
-        showScreen(raceSelectModal);
-        buildDifficultyGrid();
-      });
-
-      closeRaceSelectBtn.addEventListener('click', () => {
-        showScreen(menuScreen);
-      });
-
-      raceBackButton.addEventListener('click', () => {
-        stopRace();
-        showScreen(menuScreen);
-      });
-
-      raceTogglePaletteBtn.addEventListener('click', () => {
-        palette.classList.toggle('open');
-      });
-
-      function buildDifficultyGrid() {
-        difficultyGrid.innerHTML = '';
-        DIFFICULTIES.forEach(diff => {
-          const card = document.createElement('div');
-          card.className = 'difficulty-card';
-          const completed = gameState.racesCompleted[diff.id] || 0;
-          card.innerHTML = `
-            <div class="difficulty-name">${diff.name} ${completed > 0 ? `<span style="font-size:11px;color:rgba(255,255,255,.5);font-weight:400;">· пройдено ${completed}×</span>` : ''}</div>
-            <div class="difficulty-desc">${diff.desc}</div>
-            <div class="difficulty-stats">
-              <span>⏱ <strong>${diff.time}с</strong></span>
-              <span>🎯 <strong>${diff.target} касаний</strong></span>
-            </div>
-          `;
-          card.addEventListener('click', () => startRace(diff));
-          difficultyGrid.appendChild(card);
-        });
-      }
-
-      function startRace(difficulty) {
-        currentDifficulty = difficulty;
-        raceTimeLeft = difficulty.time;
-        raceTargetCount = difficulty.target;
-        raceTaps = 0;
-        raceActive = true;
-
-        raceTimer.textContent = raceTimeLeft;
-        raceTimer.classList.remove('warning');
-        raceTarget.textContent = raceTargetCount;
-        raceTapNumber.textContent = '0';
-
-        showScreen(raceScreen);
-
-        raceTimerInterval = setInterval(() => {
-          raceTimeLeft--;
-          raceTimer.textContent = raceTimeLeft;
-
-          if (raceTimeLeft <= 5) {
-            raceTimer.classList.add('warning');
-          }
-
-          if (raceTimeLeft <= 0) {
-            endRace(false);
-          }
-        }, 1000);
-      }
-
-      function stopRace() {
-        raceActive = false;
-        if (raceTimerInterval) {
-          clearInterval(raceTimerInterval);
-          raceTimerInterval = null;
-        }
-      }
-
-      function endRace(success) {
-        stopRace();
-
-        setTimeout(() => {
-          if (success && currentDifficulty) {
-            unlockAchievement(currentDifficulty.achievementId);
-            gameState.racesCompleted[currentDifficulty.id] = (gameState.racesCompleted[currentDifficulty.id] || 0) + 1;
-            saveGameState();
-
-            raceResult.className = 'race-result success';
-            raceResultTitle.textContent = '🎉 Победа!';
-            raceResultDescription.textContent = `Поздравляем! Ты прошёл "${currentDifficulty.name}" и получил достижение "${ACHIEVEMENTS[currentDifficulty.achievementId].name}"!`;
-          } else {
-            raceResult.className = 'race-result failed';
-            raceResultTitle.textContent = '💔 Не хватило';
-            raceResultDescription.textContent = `Ты набрал ${raceTaps} из ${raceTargetCount} касаний. Попробуй ещё раз!`;
-          }
-
-          resultTaps.textContent = raceTaps;
-          resultTime.textContent = currentDifficulty.time;
-
-          showScreen(raceResultModal);
-        }, 500);
-      }
-
-      raceResultCloseBtn.addEventListener('click', () => {
-        showScreen(menuScreen);
-      });
-
-      function handleRaceTap(e) {
-        e.preventDefault();
-        if (!raceActive) return;
-
-        initAudio();
-        playSoftTap();
-        spawnRaceGlow();
-        raceTaps++;
-        raceTapNumber.textContent = raceTaps;
-        if (navigator.vibrate) navigator.vibrate(6);
-
-        if (raceTaps >= raceTargetCount) {
-          endRace(true);
-        }
-      }
-
-      raceStarBtn.addEventListener('click', handleRaceTap);
-      raceStarBtn.addEventListener('touchstart', handleRaceTap, { passive: false });
-
-      /* ============================================================
-         ДОСТИЖЕНИЯ
-         ============================================================ */
-
-      achievementsButton.addEventListener('click', () => {
-        showScreen(achievementsModal);
-        buildAchievementsGrid();
-      });
-
-      closeAchievementsBtn.addEventListener('click', () => {
-        showScreen(menuScreen);
-      });
-
-      function unlockAchievement(achievementId) {
-        if (!gameState.achievements[achievementId]) {
-          gameState.achievements[achievementId] = Date.now();
-          saveGameState();
-          console.log('[Игра] Достижение разблокировано:', achievementId);
-        }
-      }
-
-      function buildAchievementsGrid() {
-        achievementsGrid.innerHTML = '';
-
-        Object.keys(ACHIEVEMENTS).forEach(id => {
-          const ach = ACHIEVEMENTS[id];
-          const isUnlocked = !!gameState.achievements[id];
-
-          const card = document.createElement('div');
-          card.className = `achievement-card ${isUnlocked ? 'unlocked' : 'locked'}`;
-          card.innerHTML = `
-            <div class="achievement-icon">${ach.icon}</div>
-            <div class="achievement-name">${ach.name}</div>
-            <div class="achievement-desc">${ach.desc}</div>
-          `;
-          achievementsGrid.appendChild(card);
-        });
-      }
-
-      /* ============================================================
-         СОХРАНЕНИЕ / ЗАГРУЗКА (QuadroOS QOSAppStorage + fallback)
-         ============================================================ */
-
-      async function saveGameState() {
-        await storageSave(STORAGE_KEY, {
-          count: gameState.count,
-          currentColor: gameState.currentColor,
-          achievements: gameState.achievements,
-          racesCompleted: gameState.racesCompleted
-        });
-      }
-
-      async function loadGameState() {
-        const data = await storageLoad(STORAGE_KEY);
-        if (data) {
-          gameState.count = data.count || 0;
-          gameState.currentColor = data.currentColor || '#b380ff';
-          gameState.achievements = data.achievements || {};
-          gameState.racesCompleted = data.racesCompleted || {};
-          console.log('[Игра] Состояние загружено. Тапов:', gameState.count, 'Достижений:', Object.keys(gameState.achievements).length);
-        }
-      }
-
-      /* ============================================================
-         ИГРОВАЯ ЛОГИКА
-         ============================================================ */
-
-      function updateDisplay(animate) {
-        tapNumber.textContent = gameState.count.toLocaleString('ru-RU');
-        if (animate) {
-          tapNumber.classList.remove('pop');
-          void tapNumber.offsetWidth;
-          tapNumber.classList.add('pop');
-        }
-      }
-
-      function resetCounter() {
-        gameState.count = 0;
-        saveGameState();
-        updateDisplay(true);
-        if (navigator.vibrate) navigator.vibrate(15);
-
-        gameStarBtn.style.transition = 'transform 0.4s var(--ease)';
-        gameStarBtn.style.transform = 'scale(0.85) rotate(-15deg)';
-        setTimeout(() => {
-          gameStarBtn.style.transform = '';
-          setTimeout(() => { gameStarBtn.style.transition = ''; }, 400);
-        }, 120);
-      }
-
-      /* ============================================================
-         ASMR ЗВУК
-         ============================================================ */
-
-      function initAudio() {
-        if (!audioCtx) {
-          try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (_) {}
-        }
-        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-      }
-
-      function playSoftTap() {
-        if (!audioCtx) return;
-        try {
-          const now = audioCtx.currentTime;
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(180 + Math.random() * 60, now);
-          osc.frequency.exponentialRampToValueAtTime(90, now + 0.14);
-
-          gain.gain.setValueAtTime(0.0001, now);
-          gain.gain.exponentialRampToValueAtTime(0.06, now + 0.008);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
-
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(now);
-          osc.stop(now + 0.2);
-        } catch (_) {}
-      }
-
-      /* ============================================================
-         ВИЗУАЛЬНЫЕ ЭФФЕКТЫ
-         ============================================================ */
-
-      function spawnGlow() {
-        const glow = document.createElement('div');
-        glow.className = 'aura-glow';
-        const size = 200 + Math.random() * 120;
-        glow.style.width = size + 'px';
-        glow.style.height = size + 'px';
-
-        const rgb = hexToRgb(gameState.currentColor);
-        glow.style.background = `radial-gradient(circle, rgba(${rgb},0.25), rgba(${rgb},0.08) 45%, transparent 75%)`;
-
-        auraWrap.appendChild(glow);
-        setTimeout(() => { if (glow.parentNode) glow.remove(); }, 850);
-      }
-
-      function spawnRaceGlow() {
-        const glow = document.createElement('div');
-        glow.className = 'aura-glow';
-        const size = 200 + Math.random() * 120;
-        glow.style.width = size + 'px';
-        glow.style.height = size + 'px';
-
-        const rgb = hexToRgb(gameState.currentColor);
-        glow.style.background = `radial-gradient(circle, rgba(${rgb},0.25), rgba(${rgb},0.08) 45%, transparent 75%)`;
-
-        raceAuraWrap.appendChild(glow);
-        setTimeout(() => { if (glow.parentNode) glow.remove(); }, 850);
-      }
-
-      function handleTap(e) {
-        e.preventDefault();
-        initAudio();
-        playSoftTap();
-        spawnGlow();
-        gameState.count++;
-        saveGameState();
-        updateDisplay(true);
-        if (navigator.vibrate) navigator.vibrate(6);
-
-        if (gameState.count === 1 && hint) {
-          hint.style.opacity = '0';
-          hint.style.transition = 'opacity 0.6s ease';
-        }
-      }
-
-      gameStarBtn.addEventListener('click', handleTap);
-      gameStarBtn.addEventListener('touchstart', handleTap, { passive: false });
-
-      resetButton.addEventListener('click', (e) => { e.preventDefault(); resetCounter(); });
-      resetButton.addEventListener('touchstart', (e) => { e.preventDefault(); resetCounter(); }, { passive: false });
-
+    }
+
+    /* ============ СТАРТ ============ */
+    async function init() {
+      await loadState();
+      buildPalette();
+      setColor(state.currentColor);
+      updateDisplay(false);
+      createBgStars();
+      if (state.consoleUnlocked) unlockConsole();
       document.addEventListener('touchstart', initAudio, { once: true });
       document.addEventListener('mousedown', initAudio, { once: true });
+    }
+    init();
 
-      /* ============================================================
-         ФОНОВЫЕ ЗВЁЗДЫ
-         ============================================================ */
-
-      function createBgStars() {
-        for (let i = 0; i < 70; i++) {
-          const s = document.createElement('div');
-          s.className = 'bg-star';
-          s.style.left = Math.random() * 100 + '%';
-          s.style.top = Math.random() * 100 + '%';
-          const size = 1.5 + Math.random() * 2.5;
-          s.style.width = size + 'px';
-          s.style.height = size + 'px';
-          s.style.setProperty('--duration', `${2.5 + Math.random() * 4}s`);
-          s.style.setProperty('--delay', `${Math.random() * 5}s`);
-          s.style.setProperty('--opacity', `${0.25 + Math.random() * 0.6}`);
-          starsBg.appendChild(s);
-        }
-      }
-
-      /* ============================================================
-         ИНИЦИАЛИЗАЦИЯ
-         ============================================================ */
-
-      async function init() {
-        await loadGameState();
-        buildPalette();
-        setNeonColor(gameState.currentColor);
-        updateDisplay(false);
-        createBgStars();
-        console.log('✦ Неоновая звезда ✦ загружена с интеграцией QuadroOS');
-        console.log('✦ FastFPS готов · QOSAppStorage:', !!window.QOSAppStorage ? 'доступен' : 'fallback на localStorage');
-      }
-
-      init();
-
-    })();
+  })();
   </script>
 </body>
 </html>
