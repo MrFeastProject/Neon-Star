@@ -18,6 +18,7 @@
       --font-head: "Unbounded", sans-serif;
       --font-body: "Manrope", sans-serif;
       --font-pixel: "Press Start 2P", monospace;
+      --visual-filter: none;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; outline: none; }
     button { border: none; background: none; cursor: pointer; font-family: inherit; }
@@ -30,10 +31,29 @@
         var(--bg);
       color: #fff; font-family: var(--font-body); touch-action: manipulation;
       transition: background 1s var(--ease);
+      filter: var(--visual-filter);
     }
     .icon-svg { display: inline-block; vertical-align: middle; flex-shrink: 0; }
 
-    /* ЗАГРУЗКА */
+    /* ОПТИМИЗАЦИЯ: отключение стекла / звёзд / анимаций */
+    body.no-blur * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+    body.no-stars .stars-bg { display: none; }
+    body.no-anim .menu-button::before,
+    body.no-anim .coin-badge svg,
+    body.no-anim .color-wheel,
+    body.no-anim .player-cover,
+    body.no-anim .title::after,
+    body.no-anim .background-glow,
+    body.no-anim .load-bar,
+    body.no-anim .game-btn-small,
+    body.no-anim .skin-aura { animation: none !important; }
+    body.no-anim .menu-button, body.no-anim .game-btn-small { transition: none !important; }
+
+    /* QuadroOS Visual Modes */
+    body.visual-fps { filter: brightness(1.05) contrast(1.02); }
+    body.visual-visualplus { filter: saturate(1.15) contrast(1.08) brightness(1.03); }
+    body.visual-cinema { filter: saturate(1.1) contrast(1.05) brightness(0.98); }
+
     #loadScreen { position: fixed; inset: 0; z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg); transition: opacity .8s var(--ease); }
     #loadScreen.done { opacity: 0; pointer-events: none; }
     .load-bg { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(var(--neon-rgb), 0.15), transparent 60%); pointer-events: none; }
@@ -58,24 +78,31 @@
     .load-skip { position: relative; margin-top: 24px; font-family: var(--font-head); font-size: 10px; letter-spacing: 3px; color: rgba(255,255,255,.5); padding: 12px 28px; border: 1px solid rgba(255,255,255,.15); border-radius: 24px; transition: all .3s var(--ease); z-index: 3; font-weight: 500; }
     .load-skip:hover { color: var(--neon); border-color: var(--neon); box-shadow: 0 0 20px rgba(var(--neon-rgb), .3); transform: translateY(-2px); }
 
-    /* FPS */
-    .fps-badge { position: fixed; top: 12px; right: 12px; z-index: 15000; padding: 5px 12px; border-radius: 10px; background: rgba(6,3,15,.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.08); font-family: var(--font-head); font-size: 11px; font-weight: 600; letter-spacing: 1px; pointer-events: none; display: none; align-items: center; gap: 6px; }
+    #adminLoad { position: fixed; inset: 0; z-index: 20001; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; background: rgba(3,1,9,.98); opacity: 0; pointer-events: none; transition: opacity .6s var(--ease); }
+    #adminLoad.active { opacity: 1; pointer-events: auto; }
+    .admin-spinner { width: 80px; height: 80px; border-radius: 50%; border: 4px solid rgba(255,255,255,.12); border-top-color: #fff; animation: secretSpin .9s linear infinite, hueSpin 3s linear infinite; box-shadow: 0 0 40px rgba(255,255,255,.15); }
+    @keyframes hueSpin { to { filter: hue-rotate(360deg); } }
+    .admin-load-text { font-family: var(--font-head); font-size: 12px; font-weight: 500; letter-spacing: 2px; color: rgba(255,255,255,.75); text-align: center; max-width: 320px; line-height: 1.7; transition: opacity .3s; padding: 0 20px; }
+    .admin-load-percent { font-family: var(--font-head); font-size: 22px; font-weight: 700; background: linear-gradient(90deg,#ff3b3b,#ffe93b,#54ff3b,#3bd4ff,#7a3bff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+    .fps-badge { position: fixed; top: 12px; right: 12px; z-index: 15000; padding: 5px 12px; border-radius: 10px; background: rgba(6,3,15,.7); border: 1px solid rgba(255,255,255,.08); font-family: var(--font-head); font-size: 11px; font-weight: 600; letter-spacing: 1px; pointer-events: none; display: none; align-items: center; gap: 6px; }
     .fps-badge.visible { display: flex; }
     .fps-dot { width: 7px; height: 7px; border-radius: 50%; }
     .fps-good { color: #66ff99; } .fps-good .fps-dot { background: #66ff99; box-shadow: 0 0 6px #66ff99; }
     .fps-mid { color: #ffe066; } .fps-mid .fps-dot { background: #ffe066; box-shadow: 0 0 6px #ffe066; }
     .fps-bad { color: #ff4466; } .fps-bad .fps-dot { background: #ff4466; box-shadow: 0 0 6px #ff4466; }
 
-    .background-glow { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, rgba(var(--neon-rgb), 0.045), transparent 58%); }
+    .background-glow { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, rgba(var(--neon-rgb), 0.045), transparent 58%); animation: bgBreathe 6s ease-in-out infinite; }
+    @keyframes bgBreathe { 0%,100% { opacity: .8; } 50% { opacity: 1; } }
     .stars-bg { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
-    .bg-star { position: absolute; border-radius: 50%; background: #fff; box-shadow: 0 0 5px rgba(255,255,255,.9), 0 0 12px rgba(var(--neon-rgb), .65); animation: twinkle var(--duration) ease-in-out infinite; animation-delay: var(--delay); opacity: var(--opacity); }
-    @keyframes twinkle { 0%,100% { opacity: var(--opacity); transform: scale(.7); } 50% { opacity: 1; transform: scale(1.5); } }
+    .bg-star { position: absolute; border-radius: 50%; background: radial-gradient(circle, #fff 0%, rgba(255,255,255,.9) 35%, rgba(var(--neon-rgb),.3) 70%, transparent 75%); animation: twinkle var(--duration) ease-in-out infinite; animation-delay: var(--delay); opacity: var(--opacity); will-change: opacity; }
+    @keyframes twinkle { 0%,100% { opacity: var(--opacity); } 50% { opacity: 1; } }
     .gold-float-icon { position: fixed; pointer-events: none; z-index: 1; animation: floatUp var(--float-dur) linear forwards; opacity: 0; }
     @keyframes floatUp { 0% { transform: translateY(0) rotate(0deg) scale(.5); opacity: 0; } 15% { opacity: .6; } 85% { opacity: .4; } 100% { transform: translateY(-110vh) rotate(360deg) scale(1.1); opacity: 0; } }
 
     body.no-glow .title, body.no-glow .tap-number, body.no-glow .player-level, body.no-glow .modal-title, body.no-glow .combo-value, body.no-glow .race-stat-value, body.no-glow .load-percent, body.no-glow .load-title { text-shadow: none; }
     body.no-glow .game-star-svg { animation: none; filter: none; }
-    body.no-glow .bg-star { box-shadow: none; animation: none; }
+    body.no-glow .bg-star { animation: none; }
     body.no-glow .aura-glow { display: none; }
     body.no-glow .skin-aura { display: none; }
     body.no-glow .load-star svg { filter: none; }
@@ -86,7 +113,8 @@
     .screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; transform: scale(.96); }
 
     .title { font-family: var(--font-head); font-size: clamp(30px, 6vw, 56px); font-weight: 600; line-height: 1.1; letter-spacing: 2px; color: var(--neon); text-shadow: 0 0 8px rgba(var(--neon-rgb), .75), 0 0 22px rgba(var(--neon-rgb), .55), 0 0 55px rgba(var(--neon-rgb), .28); margin-bottom: 10px; text-align: center; }
-    .title::after { content: ''; display: block; width: 140px; height: 2px; margin: 16px auto 0; background: linear-gradient(90deg, transparent, var(--neon), transparent); box-shadow: 0 0 14px var(--neon); border-radius: 2px; }
+    .title::after { content: ''; display: block; width: 140px; height: 2px; margin: 16px auto 0; background: linear-gradient(90deg, transparent, var(--neon), transparent); box-shadow: 0 0 14px var(--neon); border-radius: 2px; animation: lineGlow 3s ease-in-out infinite; }
+    @keyframes lineGlow { 0%,100% { opacity: .6; transform: scaleX(.9); } 50% { opacity: 1; transform: scaleX(1.05); } }
     .subtitle { color: rgba(255,255,255,.5); font-family: var(--font-head); font-size: 10px; font-weight: 400; letter-spacing: 8px; text-transform: lowercase; margin-bottom: 26px; }
 
     .player-badge { display: flex; align-items: center; gap: 14px; padding: 12px 26px; border: 1px solid rgba(var(--neon-rgb), .3); border-radius: 50px; background: linear-gradient(135deg, rgba(var(--neon-rgb), .1), rgba(var(--neon-rgb), .03)); backdrop-filter: blur(12px); margin-bottom: 28px; box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 6px 20px rgba(0,0,0,.25); }
@@ -97,7 +125,8 @@
     .exp-fill { height: 100%; background: linear-gradient(90deg, var(--neon), var(--neon2)); box-shadow: 0 0 8px var(--neon); transition: width .4s var(--ease); }
     .coin-badge { display: flex; align-items: center; gap: 7px; padding-left: 14px; border-left: 1px solid rgba(255,255,255,.12); color: #FFD700; font-family: var(--font-head); font-size: 14px; font-weight: 700; transition: transform .2s var(--ease); }
     .coin-badge.pop { transform: scale(1.2); }
-    .coin-badge svg { width: 18px; height: 18px; filter: drop-shadow(0 0 6px rgba(255,215,0,.6)); }
+    .coin-badge svg { width: 18px; height: 18px; filter: drop-shadow(0 0 6px rgba(255,215,0,.6)); animation: coinSpin 4s ease-in-out infinite; }
+    @keyframes coinSpin { 0%,100% { transform: rotateY(0deg); } 50% { transform: rotateY(180deg); } }
 
     .menu-buttons { width: min(380px, 100%); display: flex; flex-direction: column; gap: 12px; }
     .menu-button { position: relative; width: 100%; height: 56px; border: 1px solid rgba(var(--neon-rgb), .3); border-radius: 18px; background: linear-gradient(135deg, rgba(var(--neon-rgb), .08), rgba(255,255,255,.03)); backdrop-filter: blur(16px); color: rgba(255,255,255,.92); font-family: var(--font-head); font-size: 13px; font-weight: 500; letter-spacing: 1.5px; text-transform: lowercase; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 4px 15px rgba(0,0,0,.2); transition: transform .35s var(--ease), background .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease), color .35s var(--ease); }
@@ -107,13 +136,19 @@
     .menu-button:active { transform: translateY(-1px) scale(.98); }
     .menu-button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: .85; }
     .menu-button.primary { height: 62px; color: #fff; font-size: 14px; border-color: rgba(var(--neon-rgb), .6); background: linear-gradient(135deg, rgba(var(--neon-rgb), .22), rgba(var(--neon-rgb), .05)); box-shadow: 0 0 25px rgba(var(--neon-rgb), .2), inset 0 0 20px rgba(var(--neon-rgb), .08); }
+    .menu-button.hidden { display: none; }
+    .menu-button.creator-btn { border-color: rgba(255,120,255,.5); background: linear-gradient(135deg, rgba(255,60,170,.14), rgba(60,200,255,.10)); color: #fff; }
+    .menu-button.creator-btn:hover { border-color: #ff78ff; box-shadow: 0 0 25px rgba(255,120,255,.35); }
+    .menu-button.music-btn-main { border-color: rgba(102,255,204,.45); background: linear-gradient(135deg, rgba(102,255,204,.12), rgba(60,150,255,.08)); color: #fff; }
+    .menu-button.music-btn-main:hover { border-color: #66ffcc; box-shadow: 0 0 25px rgba(102,255,204,.35); }
     .menu-row { display: flex; gap: 12px; width: 100%; }
     .menu-row .menu-button { flex: 1; }
 
     .game-header { position: absolute; top: 0; left: 0; right: 0; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 20; }
-    .game-btn-small { height: 42px; padding: 0 16px; border: 1px solid rgba(var(--neon-rgb), .25); border-radius: 12px; background: rgba(18, 9, 35, .4); backdrop-filter: blur(12px); color: rgba(255,255,255,.75); font-family: var(--font-head); font-size: 10px; font-weight: 500; letter-spacing: 1px; text-transform: lowercase; display: flex; align-items: center; gap: 7px; box-shadow: 0 4px 15px rgba(0,0,0,.2); transition: all .3s var(--ease); }
+    .game-btn-small { height: 42px; padding: 0 14px; border: 1px solid rgba(var(--neon-rgb), .25); border-radius: 12px; background: rgba(18, 9, 35, .4); backdrop-filter: blur(12px); color: rgba(255,255,255,.75); font-family: var(--font-head); font-size: 10px; font-weight: 500; letter-spacing: 1px; text-transform: lowercase; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0,0,0,.2); transition: all .3s var(--ease); max-width: 30vw; }
     .game-btn-small:hover { color: #fff; border-color: rgba(var(--neon-rgb), .6); background: rgba(var(--neon-rgb), .1); transform: translateY(-2px); }
-    .game-btn-small svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .game-btn-small svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+    .game-btn-small .btn-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     .game-star-wrapper { position: relative; display: flex; align-items: center; justify-content: center; width: 260px; height: 260px; margin-bottom: 20px; }
     .game-star-btn { width: 180px; height: 180px; position: relative; z-index: 5; color: var(--neon); transition: transform .15s var(--ease); }
@@ -124,13 +159,22 @@
 
     .skin-aura { position: absolute; inset: 18px; border-radius: 50%; pointer-events: none; opacity: 0; transition: opacity .6s var(--ease); z-index: 2; }
     .skin-aura::after { content: ''; position: absolute; inset: -10px; border-radius: 50%; border: 1px solid transparent; }
-    .skin-crystal .skin-aura { opacity: 1; border: 2px dashed rgba(68,170,255,.4); animation: auraSpin 9s linear infinite; box-shadow: 0 0 35px rgba(68,170,255,.25) inset, 0 0 25px rgba(68,170,255,.2); }
-    .skin-crystal .skin-aura::after { border-color: rgba(68,170,255,.15); animation: auraSpin 14s linear infinite reverse; }
-    .skin-gold .skin-aura { opacity: 1; border: 2px solid rgba(255,215,0,.35); animation: auraSpin 7s linear infinite reverse; box-shadow: 0 0 45px rgba(255,215,0,.3) inset, 0 0 30px rgba(255,215,0,.25); }
-    .skin-gold .skin-aura::after { border-color: rgba(255,215,0,.18); border-style: dashed; animation: auraSpin 11s linear infinite; }
-    .skin-nebula .skin-aura { opacity: 1; border: 2px dotted rgba(255,102,255,.45); animation: auraSpin 10s linear infinite; box-shadow: 0 0 40px rgba(255,102,255,.28) inset, 0 0 28px rgba(255,102,255,.22); }
-    .skin-nebula .skin-aura::after { border-color: rgba(255,102,255,.2); animation: auraSpin 16s linear infinite reverse; }
+    .aura-double::after { border-color: var(--aura-color, #fff); border-style: dashed; animation: auraSpinRev 14s linear infinite; }
     @keyframes auraSpin { to { transform: rotate(360deg); } }
+    @keyframes auraSpinRev { to { transform: rotate(-360deg); } }
+    @keyframes auraWobble { 0%,100% { transform: rotate(0deg) scale(1); } 25% { transform: rotate(90deg) scale(1.04); } 50% { transform: rotate(180deg) scale(1); } 75% { transform: rotate(270deg) scale(1.04); } }
+    @keyframes auraPulse { 0%,100% { transform: scale(1); opacity: .8; } 50% { transform: scale(1.08); opacity: 1; } }
+    @keyframes auraBreathe { 0%,100% { opacity: .55; transform: scale(.98); } 50% { opacity: 1; transform: scale(1.03); } }
+    @keyframes auraRays { to { transform: rotate(360deg); } }
+    @keyframes auraNeon { 0%,100% { box-shadow: 0 0 30px currentColor inset, 0 0 20px currentColor; transform: scale(1); } 50% { box-shadow: 0 0 60px currentColor inset, 0 0 40px currentColor; transform: scale(1.05); } }
+    .skin-crystal .skin-aura { opacity: 1; border: 2px dashed rgba(68,170,255,.4); animation: auraSpinRev 9s linear infinite; box-shadow: 0 0 35px rgba(68,170,255,.25) inset, 0 0 25px rgba(68,170,255,.2); }
+    .skin-crystal .skin-aura::after { border-color: rgba(68,170,255,.15); animation: auraSpin 14s linear infinite; }
+    .skin-gold .skin-aura { opacity: 1; border: 2px solid rgba(255,215,0,.35); animation: auraSpin 7s linear infinite; box-shadow: 0 0 45px rgba(255,215,0,.3) inset, 0 0 30px rgba(255,215,0,.25); }
+    .skin-gold .skin-aura::after { border-color: rgba(255,215,0,.18); border-style: dashed; animation: auraSpinRev 11s linear infinite; }
+    .skin-nebula .skin-aura { opacity: 1; border: 2px dotted rgba(255,102,255,.45); animation: auraWobble 8s ease-in-out infinite; box-shadow: 0 0 40px rgba(255,102,255,.28) inset, 0 0 28px rgba(255,102,255,.22); }
+    .skin-nebula .skin-aura::after { border-color: rgba(255,102,255,.2); animation: auraSpinRev 16s linear infinite; }
+    .skin-starry .skin-aura { opacity: 1; border: 2px dotted rgba(255,243,176,.55); animation: auraSpin 12s linear infinite; box-shadow: 0 0 40px rgba(255,243,176,.3) inset, 0 0 30px rgba(255,243,176,.28); }
+    .skin-starry .skin-aura::after { border-color: rgba(255,243,176,.25); border-style: solid; animation: auraSpinRev 18s linear infinite; }
 
     .skin-newbie .game-star-btn { color: #ff2277; }
     .skin-newbie .game-star-svg { animation: newbieGlow 2s ease-in-out infinite alternate; }
@@ -148,11 +192,23 @@
     .skin-nebula .game-star-svg { animation: nebulaGlow 2.6s ease-in-out infinite alternate; }
     @keyframes nebulaGlow { 0% { filter: drop-shadow(0 0 14px #ff66ff) drop-shadow(0 0 40px rgba(255,102,255,.4)) hue-rotate(0deg); } 100% { filter: drop-shadow(0 0 26px #ff66ff) drop-shadow(0 0 62px rgba(255,102,255,.7)) hue-rotate(-20deg); } }
     .skin-nebula .game-star-shape { fill: rgba(255,102,255,.15); stroke: #ff66ff; }
+    .skin-starry .game-star-btn { color: #fff3b0; }
+    .skin-starry .game-star-svg { animation: starryGlow 2.4s ease-in-out infinite alternate; }
+    @keyframes starryGlow { 0% { filter: drop-shadow(0 0 14px #fff3b0) drop-shadow(0 0 36px rgba(255,243,176,.5)) hue-rotate(0deg); } 100% { filter: drop-shadow(0 0 26px #fff3b0) drop-shadow(0 0 64px rgba(255,243,176,.8)) hue-rotate(10deg); } }
+    .skin-starry .game-star-shape { fill: rgba(255,243,176,.18); stroke: #fff3b0; }
+
+    @keyframes rainbowCycle { 0% { color: #ff3b3b; } 16% { color: #ff9f3b; } 33% { color: #ffe93b; } 50% { color: #54ff3b; } 66% { color: #3bd4ff; } 83% { color: #7a3bff; } 100% { color: #ff3b3b; } }
+    .skin-rainbow .game-star-btn { animation: rainbowCycle 5s linear infinite; }
+    .skin-rainbow .game-star-svg { animation: rainbowGlow 2.2s ease-in-out infinite alternate; }
+    @keyframes rainbowGlow { 0% { filter: drop-shadow(0 0 16px currentColor) drop-shadow(0 0 40px currentColor); } 100% { filter: drop-shadow(0 0 30px currentColor) drop-shadow(0 0 70px currentColor); } }
+    .skin-rainbow .game-star-shape { fill: rgba(255,255,255,.14); stroke: currentColor; }
+    .skin-rainbow .skin-aura { opacity: 1; border: 2px solid #ff3b3b; animation: auraSpin 6s linear infinite, rainbowBorder 5s linear infinite; box-shadow: 0 0 40px rgba(255,80,200,.3) inset, 0 0 28px rgba(80,200,255,.3); }
+    @keyframes rainbowBorder { 0% { border-color: #ff3b3b; } 16% { border-color: #ff9f3b; } 33% { border-color: #ffe93b; } 50% { border-color: #54ff3b; } 66% { border-color: #3bd4ff; } 83% { border-color: #7a3bff; } 100% { border-color: #ff3b3b; } }
 
     .aura-wrap { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
-    .aura-glow { position: absolute; top: 50%; left: 50%; border-radius: 50%; transform: translate(-50%,-50%) scale(0); animation: glowExpand .8s ease-out forwards; pointer-events: none; }
-    @keyframes glowExpand { 0% { transform: translate(-50%,-50%) scale(.1); opacity: .8; } 100% { transform: translate(-50%,-50%) scale(1.8); opacity: 0; } }
-    .shard { position: absolute; top: 50%; left: 50%; pointer-events: none; z-index: 6; }
+    .aura-glow { position: absolute; top: 50%; left: 50%; border-radius: 50%; transform: translate(-50%,-50%) scale(0); animation: glowExpand 1.4s ease-out forwards; pointer-events: none; }
+    @keyframes glowExpand { 0% { transform: translate(-50%,-50%) scale(.1) rotate(0deg); opacity: .8; filter: hue-rotate(0deg); } 60% { filter: hue-rotate(20deg); } 100% { transform: translate(-50%,-50%) scale(1.7) rotate(60deg); opacity: 0; filter: hue-rotate(40deg); } }
+    .shard { position: absolute; top: 50%; left: 50%; pointer-events: none; z-index: 6; opacity: 0; }
 
     .tap-counter { display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .tap-number { font-family: var(--font-head); font-size: clamp(3rem, 11vw, 4.5rem); font-weight: 900; line-height: 1; letter-spacing: 2px; color: var(--neon); text-shadow: 0 0 30px rgba(var(--neon-rgb), .6), 0 0 60px rgba(var(--neon-rgb), .3); }
@@ -167,7 +223,7 @@
     .combo-value { font-family: var(--font-head); font-size: 1.6rem; font-weight: 900; color: var(--neon); text-shadow: 0 0 20px rgba(var(--neon-rgb), .7); }
     .combo-label { font-family: var(--font-head); font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,.35); font-weight: 500; }
     .combo-bar { width: 120px; height: 3px; background: rgba(255,255,255,.08); border-radius: 3px; margin-top: 6px; overflow: hidden; }
-    .combo-bar-fill { height: 100%; background: var(--neon); border-radius: 3px; box-shadow: 0 0 8px var(--neon); }
+    .combo-bar-fill { height: 100%; width: 100%; background: var(--neon); border-radius: 3px; box-shadow: 0 0 8px var(--neon); transform-origin: left; transform: scaleX(1); }
 
     .race-info { position: absolute; top: 80px; left: 50%; transform: translateX(-50%); display: flex; gap: 30px; align-items: center; z-index: 20; }
     .race-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
@@ -194,7 +250,7 @@
 
     .settings-group { margin: 22px 0; text-align: left; }
     .settings-label { font-family: var(--font-head); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 10px; font-weight: 600; }
-    .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border: 1px solid rgba(var(--neon-rgb), .15); border-radius: 14px; background: rgba(var(--neon-rgb), .04); margin-bottom: 10px; }
+    .settings-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 14px 16px; border: 1px solid rgba(var(--neon-rgb), .15); border-radius: 14px; background: rgba(var(--neon-rgb), .04); margin-bottom: 10px; }
     .settings-row-title { font-family: var(--font-head); font-size: 11px; color: rgba(255,255,255,.88); display: flex; align-items: center; gap: 10px; font-weight: 500; }
     .settings-row-desc { font-size: 10px; color: rgba(255,255,255,.35); margin-top: 3px; }
     .toggle { position: relative; width: 48px; height: 26px; border-radius: 20px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1); cursor: pointer; transition: all .3s var(--ease); flex-shrink: 0; }
@@ -209,6 +265,8 @@
     .quality-sub { font-size: 9px; color: rgba(255,255,255,.35); letter-spacing: .5px; font-weight: 500; }
     .recommend-box { padding: 14px 16px; border: 1px solid rgba(102,255,153,.25); border-radius: 14px; background: rgba(102,255,153,.05); margin-top: 16px; font-size: 12px; color: rgba(255,255,255,.6); line-height: 1.6; display: flex; gap: 10px; align-items: flex-start; text-align: left; }
     .recommend-box svg { width: 18px; height: 18px; color: #66ff99; flex-shrink: 0; margin-top: 1px; }
+    input[type=range] { accent-color: var(--neon); }
+    .settings-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
     .secret-star-wrap { margin-top: 30px; display: flex; justify-content: center; padding: 20px 0; }
     .secret-star-btn { position: relative; width: 64px; height: 64px; border-radius: 50%; border: 1px solid rgba(var(--neon-rgb), .2); background: rgba(var(--neon-rgb), .05); display: flex; align-items: center; justify-content: center; transition: all .3s var(--ease); overflow: hidden; touch-action: none; }
@@ -248,11 +306,19 @@
     .skin-card.locked { opacity: .45; filter: grayscale(60%); }
     .skin-card.selected { border-color: var(--neon); background: rgba(var(--neon-rgb), .15); box-shadow: 0 0 25px rgba(var(--neon-rgb), .3); }
     .skin-card.event-locked { opacity: .35; }
+    .skin-card.rainbow-card { border-color: rgba(255,120,255,.5); background: linear-gradient(135deg, rgba(255,60,170,.1), rgba(60,200,255,.08)); }
+    .skin-card.rainbow-card.selected { box-shadow: 0 0 30px rgba(255,120,255,.4); }
+    .skin-card.starry-card { border-color: rgba(255,243,176,.5); background: linear-gradient(135deg, rgba(255,243,176,.1), rgba(255,255,255,.04)); }
+    .skin-card.starry-card.selected { box-shadow: 0 0 30px rgba(255,243,176,.4); }
     .skin-icon { margin-bottom: 10px; color: var(--neon); }
     .skin-name { font-family: var(--font-head); font-size: 12px; font-weight: 600; color: var(--neon); margin-bottom: 4px; }
     .skin-desc { font-size: 10px; color: rgba(255,255,255,.5); line-height: 1.4; }
     .skin-cost { font-size: 10px; color: rgba(255,215,0,.8); margin-top: 6px; font-weight: 600; }
     .skin-selected-badge { position: absolute; top: 8px; right: 8px; color: var(--neon); }
+    .skin-photo { width: 54px; height: 54px; border-radius: 14px; object-fit: cover; margin: 0 auto 10px; display: block; border: 1px solid rgba(var(--neon-rgb), .4); }
+    .skin-color-dot { width: 34px; height: 34px; border-radius: 50%; margin: 0 auto 10px; box-shadow: 0 0 12px currentColor; }
+    .skin-del { position: absolute; top: 6px; left: 6px; width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(255,68,102,.4); color: #ff4466; font-size: 11px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+    .skin-del:hover { background: rgba(255,68,102,.2); }
 
     .quests-list { display: flex; flex-direction: column; gap: 12px; margin: 24px 0; text-align: left; }
     .quest-card { padding: 16px 18px; border: 1px solid rgba(var(--neon-rgb), .2); border-radius: 14px; background: rgba(var(--neon-rgb), .05); }
@@ -269,9 +335,13 @@
     .achievement-card.locked { opacity: .35; filter: grayscale(100%); }
     .achievement-card.unlocked { border-color: rgba(var(--neon-rgb), .6); background: rgba(var(--neon-rgb), .1); box-shadow: 0 0 20px rgba(var(--neon-rgb), .2); }
     .achievement-card.gold-ach.unlocked { border-color: rgba(255,215,0,.6); background: rgba(255,215,0,.08); box-shadow: 0 0 25px rgba(255,215,0,.25); }
+    .achievement-card.admin-ach.unlocked { border-color: rgba(255,120,255,.6); background: linear-gradient(135deg, rgba(255,60,170,.12), rgba(60,200,255,.08)); box-shadow: 0 0 25px rgba(255,120,255,.3); }
+    .achievement-card.beast-ach.unlocked { border-color: rgba(255,68,68,.7); background: linear-gradient(135deg, rgba(255,68,68,.15), rgba(255,150,0,.08)); box-shadow: 0 0 30px rgba(255,68,68,.35); }
     .achievement-icon { margin-bottom: 8px; color: var(--neon); }
     .achievement-card.locked .achievement-icon { color: rgba(255,255,255,.4); }
     .achievement-card.gold-ach.unlocked .achievement-icon { color: #FFD700; }
+    .achievement-card.admin-ach.unlocked .achievement-icon { color: #ff78ff; }
+    .achievement-card.beast-ach.unlocked .achievement-icon { color: #ff4444; }
     .achievement-name { font-family: var(--font-head); font-size: 10px; font-weight: 600; color: var(--neon); margin-bottom: 4px; }
     .achievement-desc { font-size: 9px; color: rgba(255,255,255,.5); line-height: 1.4; }
 
@@ -306,7 +376,6 @@
     .ach-toast-bar { position: absolute; bottom: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--neon), var(--neon2)); border-radius: 0 0 16px 16px; box-shadow: 0 0 10px var(--neon); width: 100%; transform-origin: left; animation: achBar 3s linear forwards; }
     @keyframes achBar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 
-    /* СЕРДЕЧКИ */
     .candy { position: fixed; top: -90px; width: 58px; height: 58px; pointer-events: auto; animation-name: candyFall; animation-timing-function: linear; animation-fill-mode: forwards; z-index: 12001; cursor: pointer; }
     .candy-sway { width: 100%; height: 100%; animation: candySway 1.6s ease-in-out infinite; }
     .candy-sway svg { width: 100%; height: 100%; filter: drop-shadow(0 0 14px rgba(255,102,178,.95)); animation: heartBeat 1s ease-in-out infinite; }
@@ -315,6 +384,100 @@
     @keyframes heartBeat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.15); } 45% { transform: scale(1.05); } 60% { transform: scale(1.12); } }
     .exp-float { position: fixed; z-index: 12002; font-family: var(--font-pixel); font-size: 12px; color: #ff66b2; text-shadow: 0 0 10px rgba(255,102,178,.8); pointer-events: none; animation: expFloat 1.2s ease-out forwards; }
     @keyframes expFloat { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-60px); opacity: 0; } }
+
+    .creator-content { text-align: center; }
+    .creator-preview-wrap { width: 210px; height: 210px; margin: 0 auto; position: relative; display: flex; align-items: center; justify-content: center; }
+    .creator-preview-btn { width: 160px; height: 160px; }
+    .creator-hint { font-size: 10px; color: rgba(255,255,255,.35); margin-bottom: 18px; }
+    .creator-field { margin-bottom: 18px; text-align: left; }
+    .creator-field label { font-size: 11px; color: rgba(255,255,255,.5); display: block; margin-bottom: 6px; font-family: var(--font-head); }
+    .creator-input { background: rgba(var(--neon-rgb), .06); border: 1px solid rgba(var(--neon-rgb), .3); border-radius: 12px; padding: 10px 14px; color: #fff; font-family: var(--font-body); font-size: 14px; outline: none; -webkit-user-select: text; user-select: text; width: 100%; }
+    .creator-input:focus { border-color: var(--neon); }
+    .hex-input { font-family: 'Courier New', monospace; letter-spacing: 2px; }
+    .creator-section { margin: 20px 0; text-align: left; }
+    .creator-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .creator-opt { padding: 9px 14px; border-radius: 12px; border: 1px solid rgba(var(--neon-rgb), .2); background: rgba(var(--neon-rgb), .04); color: rgba(255,255,255,.7); font-family: var(--font-head); font-size: 10px; font-weight: 500; letter-spacing: .5px; transition: all .25s var(--ease); }
+    .creator-opt:hover { border-color: rgba(var(--neon-rgb), .5); }
+    .creator-opt.active { border-color: var(--neon); background: rgba(var(--neon-rgb), .16); color: #fff; box-shadow: 0 0 12px rgba(var(--neon-rgb), .25); }
+    .creator-color-row { display: flex; gap: 18px; align-items: center; justify-content: center; flex-wrap: wrap; }
+    .color-wheel { width: 140px; height: 140px; border-radius: 50%; background: conic-gradient(#f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); cursor: pointer; position: relative; box-shadow: 0 0 22px rgba(255,255,255,.15), inset 0 0 30px rgba(255,255,255,.25); flex-shrink: 0; animation: wheelSpin 20s linear infinite; }
+    @keyframes wheelSpin { to { transform: rotate(360deg); } }
+    .color-wheel::after { content: ''; position: absolute; inset: 36%; border-radius: 50%; background: rgba(6,3,15,.92); box-shadow: inset 0 0 12px rgba(0,0,0,.6); }
+    .creator-color-side { display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 160px; }
+    .swatches { display: grid; grid-template-columns: repeat(8, 22px); gap: 6px; }
+    .swatch { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform .2s; }
+    .swatch:hover { transform: scale(1.15); }
+    .swatch.active { border-color: #fff; }
+    .photo-row { display: flex; gap: 12px; align-items: center; }
+    .photo-thumb { width: 64px; height: 64px; border-radius: 14px; object-fit: cover; border: 1px solid rgba(var(--neon-rgb), .4); }
+    .hidden-img { display: none; }
+    .creator-actions { display: flex; gap: 10px; margin: 22px 0; }
+    .creator-list-card { position: relative; padding: 12px; border-radius: 16px; border: 1px solid rgba(var(--neon-rgb), .2); background: rgba(var(--neon-rgb), .05); display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all .25s var(--ease); min-width: 110px; }
+    .creator-list-card:hover { border-color: rgba(var(--neon-rgb), .5); }
+    .creator-list-card.selected { border-color: var(--neon); box-shadow: 0 0 18px rgba(var(--neon-rgb), .3); }
+    .creator-list-card img { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; }
+    .creator-list-name { font-family: var(--font-head); font-size: 10px; color: var(--neon); }
+
+    .music-toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+    .music-toolbar .creator-input { flex: 1; min-width: 130px; }
+    .music-upload-row { display: flex; gap: 10px; margin-bottom: 16px; }
+    .music-upload-row .creator-input { flex: 1; }
+    .music-album { margin: 14px 0; text-align: left; }
+    .music-album-title { font-family: var(--font-head); font-size: 12px; color: var(--neon); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .music-album-title .album-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .music-track { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid rgba(var(--neon-rgb), .15); border-radius: 12px; background: rgba(var(--neon-rgb), .04); margin-bottom: 6px; flex-wrap: wrap; }
+    .music-track.playing { border-color: var(--neon); background: rgba(var(--neon-rgb), .12); }
+    .music-cover { width: 38px; height: 38px; border-radius: 8px; flex-shrink: 0; background-size: cover; background-position: center; cursor: pointer; }
+    .music-track-info { flex: 1; min-width: 90px; }
+    .music-track-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.88); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .music-track-name.fav::after { content: ' ♥'; color: #ff66b2; }
+    .music-track-sub { font-size: 9px; color: rgba(255,255,255,.4); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .track-actions { display: flex; gap: 4px; flex-wrap: wrap; }
+    .music-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(var(--neon-rgb), .25); color: rgba(255,255,255,.7); display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all .2s; flex-shrink: 0; }
+    .music-btn:hover { border-color: var(--neon); color: #fff; }
+    .music-btn.on { border-color: #ff66b2; color: #ff66b2; }
+    .music-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .player-card { position: fixed; right: 14px; top: 50%; transform: translateY(-50%); z-index: 14000; width: 210px; padding: 16px 14px; border-radius: 22px; background: linear-gradient(160deg, rgba(24,14,48,.92), rgba(10,6,20,.94)); border: 1px solid rgba(var(--neon-rgb), .4); backdrop-filter: blur(24px); box-shadow: 0 20px 60px rgba(0,0,0,.6), 0 0 40px rgba(var(--neon-rgb), .2); display: flex; flex-direction: column; align-items: center; gap: 10px; transition: transform .4s var(--ease), opacity .4s; }
+    .player-card.hidden { opacity: 0; pointer-events: none; transform: translateY(-50%) translateX(120%); }
+    .player-cover { width: 120px; height: 120px; border-radius: 16px; background-size: cover; background-position: center; box-shadow: 0 8px 24px rgba(0,0,0,.5), 0 0 20px rgba(var(--neon-rgb), .25); animation: coverFloat 4s ease-in-out infinite; }
+    @keyframes coverFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    .player-title { font-family: var(--font-head); font-size: 11px; font-weight: 600; color: #fff; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .player-album { font-size: 9px; color: rgba(255,255,255,.45); letter-spacing: 1px; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .player-progress { width: 100%; height: 4px; background: rgba(255,255,255,.1); border-radius: 4px; cursor: pointer; overflow: hidden; }
+    .player-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--neon), var(--neon2)); box-shadow: 0 0 8px var(--neon); }
+    .player-times { width: 100%; display: flex; justify-content: space-between; font-size: 9px; color: rgba(255,255,255,.4); font-variant-numeric: tabular-nums; }
+    .player-controls { display: flex; align-items: center; gap: 14px; }
+    .player-controls button { color: rgba(255,255,255,.85); transition: all .2s; }
+    .player-controls button:hover { color: var(--neon); transform: scale(1.1); }
+    .player-controls svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .player-controls .player-play svg { width: 30px; height: 30px; fill: currentColor; stroke: none; filter: drop-shadow(0 0 10px rgba(var(--neon-rgb), .6)); }
+    .player-extra { display: flex; gap: 12px; }
+    .player-extra button { color: rgba(255,255,255,.4); transition: all .2s; }
+    .player-extra button.on { color: var(--neon); }
+    .player-extra button.fav-on { color: #ff66b2; }
+    .player-extra svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .player-vol { width: 100%; }
+    .player-vol input { width: 100%; }
+    .player-close { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(255,255,255,.15); color: rgba(255,255,255,.5); font-size: 11px; display: flex; align-items: center; justify-content: center; }
+    .player-fab { position: fixed; right: 14px; bottom: 90px; z-index: 14000; width: 52px; height: 52px; border-radius: 50%; background: rgba(10,6,20,.85); border: 1px solid rgba(var(--neon-rgb), .5); box-shadow: 0 0 20px rgba(var(--neon-rgb), .3); display: flex; align-items: center; justify-content: center; color: var(--neon); }
+    .player-fab.hidden { display: none; }
+    .player-fab svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .player-fab.playing svg { animation: fabPulse 1s ease-in-out infinite; }
+    @keyframes fabPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+
+    .win { position: fixed; z-index: 17000; left: 50%; top: 50%; transform: translate(-50%,-50%); width: min(420px, 92vw); max-height: 76vh; display: flex; flex-direction: column; border: 1px solid rgba(var(--neon-rgb), .45); border-radius: 16px; background: rgba(12,7,26,.94); backdrop-filter: blur(26px); box-shadow: 0 30px 90px rgba(0,0,0,.7), 0 0 50px rgba(var(--neon-rgb), .18); overflow: hidden; }
+    .win.hidden { display: none; }
+    .win-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: linear-gradient(90deg, rgba(var(--neon-rgb), .18), rgba(var(--neon-rgb), .05)); border-bottom: 1px solid rgba(var(--neon-rgb), .25); cursor: grab; touch-action: none; }
+    .win-bar:active { cursor: grabbing; }
+    .win-title { font-family: var(--font-head); font-size: 11px; font-weight: 600; color: var(--neon); letter-spacing: 1px; }
+    .win-btns { display: flex; gap: 6px; }
+    .win-btns button { width: 24px; height: 24px; border-radius: 6px; border: 1px solid rgba(255,255,255,.15); color: rgba(255,255,255,.7); font-size: 12px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+    .win-btns button:hover { border-color: var(--neon); color: #fff; }
+    .win-btns .win-x:hover { border-color: #ff4466; color: #ff4466; }
+    .win-body { padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .win-min .win-body { display: none; }
+    .win-max { left: 10px !important; top: 10px !important; transform: none !important; width: calc(100vw - 20px) !important; max-height: calc(100vh - 20px) !important; }
 
     .console-overlay { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(3,1,9,.92); backdrop-filter: blur(16px); transition: opacity .4s var(--ease), visibility .4s; }
     .console-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
@@ -329,10 +492,11 @@
     .console-prompt { color: var(--neon); font-family: 'Courier New', monospace; font-size: 14px; font-weight: bold; }
     .console-input { flex: 1; background: transparent; border: none; color: #fff; font-family: 'Courier New', monospace; font-size: 13px; outline: none; caret-color: var(--neon); -webkit-user-select: text; user-select: text; }
 
-    .console-fab { position: fixed; z-index: 9998; width: 50px; height: 50px; border-radius: 50%; background: rgba(6,3,15,.85); border: 1px solid rgba(var(--neon-rgb), .5); box-shadow: 0 0 20px rgba(var(--neon-rgb), .3); display: flex; align-items: center; justify-content: center; cursor: grab; touch-action: none; animation: fabPop .5s var(--ease); }
-    @keyframes fabPop { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    .console-fab { position: fixed; z-index: 9998; left: 0; top: 0; width: 50px; height: 50px; border-radius: 50%; background: rgba(6,3,15,.85); border: 1px solid rgba(var(--neon-rgb), .5); box-shadow: 0 0 20px rgba(var(--neon-rgb), .3); display: flex; align-items: center; justify-content: center; cursor: grab; touch-action: none; will-change: transform; transform: translate3d(20px, 50vh, 0); }
+    .console-fab:active { cursor: grabbing; }
     .console-fab.hidden { display: none; }
-    .console-fab svg { width: 26px; height: 26px; fill: none; stroke: var(--neon); stroke-width: 2; filter: drop-shadow(0 0 6px var(--neon)); }
+    .console-fab svg { width: 26px; height: 26px; fill: none; stroke: var(--neon); stroke-width: 2; filter: drop-shadow(0 0 6px var(--neon)); animation: fabPop .5s var(--ease); }
+    @keyframes fabPop { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
     .footer { position: fixed; bottom: 16px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,.15); font-family: var(--font-head); font-size: 8px; letter-spacing: 5px; z-index: 5; pointer-events: none; font-weight: 400; }
 
@@ -342,7 +506,7 @@
       .menu-buttons { max-width: 340px; }
       .palette { gap: 8px; padding: 12px 16px; bottom: 20px; }
       .color-btn { width: 28px; height: 28px; }
-      .game-btn-small { height: 38px; padding: 0 12px; font-size: 9px; }
+      .game-btn-small { height: 38px; padding: 0 8px; font-size: 9px; }
       .race-info { gap: 20px; }
       .race-stat-value { font-size: 1.5rem; }
       .modal-content { padding: 28px 20px 22px; }
@@ -357,6 +521,10 @@
       .ach-toast-header { font-size: 7px; }
       .code-box { padding: 32px 24px; margin: 0 16px; }
       .code-input { width: 200px; font-size: 20px; }
+      .color-wheel { width: 120px; height: 120px; }
+      .swatches { grid-template-columns: repeat(8, 20px); }
+      .player-card { right: 8px; width: 180px; padding: 12px 10px; }
+      .player-cover { width: 100px; height: 100px; }
     }
   </style>
 </head>
@@ -376,6 +544,12 @@
     </div>
     <div class="load-fact" id="loadFact"></div>
     <button class="load-skip" id="loadSkip">пропустить ✕</button>
+  </div>
+
+  <div id="adminLoad">
+    <div class="admin-spinner"></div>
+    <div class="admin-load-text" id="adminLoadText">Проверка занимает время... пожалуйста подождите</div>
+    <div class="admin-load-percent" id="adminLoadPercent">0%</div>
   </div>
 
   <div class="secret-load" id="secretLoad">
@@ -399,6 +573,7 @@
   <div class="stars-bg" id="starsBg"></div>
   <div id="goldIconsContainer"></div>
   <div id="candyLayer" style="position:fixed;inset:0;pointer-events:none;z-index:12000;"></div>
+  <datalist id="albumDatalist"></datalist>
 
   <!-- МЕНЮ -->
   <main class="screen hidden" id="menuScreen">
@@ -422,7 +597,11 @@
         <button class="menu-button" id="skinsButton"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>скины</button>
         <button class="menu-button" id="questsButton"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"></path><path d="M21 12v-2h-2V7h-2V5h-2V3H9v2H7v2H5v3H3v2h2v3h2v2h2v2h6v-2h2v-2h2v-3h2v-2h-2z"></path></svg>задания</button>
       </div>
-      <button class="menu-button" id="achievementsButton"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>достижения</button>
+      <div class="menu-row">
+        <button class="menu-button" id="achievementsButton"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>достижения</button>
+        <button class="menu-button music-btn-main" id="musicButton"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>музыка</button>
+      </div>
+      <button class="menu-button creator-btn" id="creatorButton"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2L12 3z"/><path d="M19 15l.7 2.3 2.3.7-2.3.7-.7 2.3-.7-2.3-2.3-.7 2.3-.7.7-2.3z"/></svg>креатор</button>
       <div class="menu-row">
         <button class="menu-button" id="paletteMenuButton"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>палитра</button>
         <button class="menu-button" id="settingsButton"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>настройки</button>
@@ -435,6 +614,8 @@
   <main class="screen hidden" id="gameScreen">
     <div class="game-header">
       <button class="game-btn-small" id="backButton"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>назад</button>
+      <button class="game-btn-small" id="windowBtn"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M8 4v5"/></svg>окно</button>
+      <button class="game-btn-small" id="gameMusicBtn"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span class="btn-label" id="gameMusicLabel">музыка</span></button>
       <button class="game-btn-small" id="gameSkinsBtn"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>скины</button>
       <button class="game-btn-small" id="togglePaletteBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>цвет</button>
       <button class="game-btn-small" id="resetButton"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>сброс</button>
@@ -446,9 +627,9 @@
     </div>
     <div class="game-star-wrapper" id="gameStarWrapper">
       <div class="aura-wrap" id="auraWrap"></div>
-      <div class="skin-aura"></div>
+      <div class="skin-aura" id="gameAura"></div>
       <button class="game-star-btn" id="gameStarBtn" aria-label="Кликни по звезде">
-        <svg class="game-star-svg" viewBox="0 0 100 100"><polygon class="game-star-shape" points="50,8 61,38 94,38 67,56 77,86 50,68 23,86 33,56 6,38 39,38" /></svg>
+        <svg class="game-star-svg" viewBox="0 0 100 100"><polygon class="game-star-shape" id="gameStarShape" points="50,8 61,38 94,38 67,56 77,86 50,68 23,86 33,56 6,38 39,38" /></svg>
       </button>
     </div>
     <div class="tap-counter">
@@ -474,6 +655,7 @@
   <main class="screen hidden" id="raceScreen">
     <div class="game-header">
       <button class="game-btn-small" id="raceBackButton"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>назад</button>
+      <button class="game-btn-small" id="raceMusicBtn"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span class="btn-label" id="raceMusicLabel">музыка</span></button>
       <button class="game-btn-small" id="raceTogglePaletteBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>цвет</button>
     </div>
     <div class="race-info">
@@ -489,22 +671,117 @@
 
   <div class="palette" id="palette"><div class="palette-title">цвет свечения</div></div>
 
+  <!-- ОКНО МЕНЮ -->
+  <div class="win hidden" id="menuWindow">
+    <div class="win-bar" id="menuWinBar">
+      <span class="win-title">✦ Меню</span>
+      <span class="win-btns">
+        <button id="winMin">–</button>
+        <button id="winMax">□</button>
+        <button id="winClose" class="win-x">✕</button>
+      </span>
+    </div>
+    <div class="win-body" id="menuWinBody">
+      <button class="menu-button" data-nav="gameScreen">играть</button>
+      <button class="menu-button" data-nav="raceSelectModal">гонка</button>
+      <button class="menu-button" data-nav="skinsModal">скины</button>
+      <button class="menu-button" data-nav="questsModal">задания</button>
+      <button class="menu-button" data-nav="achievementsModal">достижения</button>
+      <button class="menu-button" data-nav="musicModal">музыка</button>
+      <button class="menu-button" data-nav="creatorModal">креатор</button>
+      <button class="menu-button" data-nav="settingsModal">настройки</button>
+      <button class="menu-button" data-nav="aboutModal">о игре</button>
+    </div>
+  </div>
+
+  <!-- ПЛЕЕР -->
+  <div class="player-card hidden" id="playerCard">
+    <button class="player-close" id="playerClose">✕</button>
+    <div class="player-cover" id="playerCover"></div>
+    <div class="player-title" id="playerTitle">Ничего не играет</div>
+    <div class="player-album" id="playerAlbum">—</div>
+    <div class="player-progress" id="playerProgress"><div class="player-bar" id="playerBar"></div></div>
+    <div class="player-times"><span id="playerCur">0:00</span><span id="playerDur">0:00</span></div>
+    <div class="player-controls">
+      <button id="playerPrev"><svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
+      <button id="playerPlay" class="player-play"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+      <button id="playerNext"><svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>
+    </div>
+    <div class="player-extra">
+      <button id="playerShuffle" title="Перемешать"><svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg></button>
+      <button id="playerFav" title="В избранное"><svg viewBox="0 0 24 24"><path d="M12 21s-8-4.5-8-11a4 4 0 0 1 8-2 4 4 0 0 1 8 2c0 6.5-8 11-8 11z"/></svg></button>
+      <button id="playerRepeat" title="Повтор"><svg viewBox="0 0 24 24"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></button>
+    </div>
+    <div class="player-vol"><input type="range" id="playerVol" min="0" max="100"></div>
+  </div>
+  <button class="player-fab hidden" id="playerFab"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></button>
+
+  <!-- МУЗЫКА -->
+  <div class="screen hidden" id="musicModal" style="background:rgba(3,1,9,.85);z-index:50;">
+    <div class="modal-content">
+      <h2 class="modal-title">Музыка</h2>
+      <p class="modal-text">Студия: треки, исполнители, альбомы и обложки</p>
+      <div class="music-toolbar">
+        <input id="musicSearch" class="creator-input" placeholder="Поиск трека, исполнителя или альбома...">
+        <button class="creator-opt" id="musicFavFilter">♥ избранное</button>
+        <button class="creator-opt" id="musicShuffleBtn">перемешать: выкл</button>
+        <button class="creator-opt" id="musicRepeatBtn">повтор: все</button>
+      </div>
+      <div class="music-upload-row">
+        <input id="musicAlbumInput" class="creator-input" maxlength="20" placeholder="Альбом">
+        <input id="musicArtistInput" class="creator-input" maxlength="20" placeholder="Исполнитель">
+        <button class="menu-button" id="musicUploadBtn" style="height:44px;font-size:11px;width:auto;padding:0 16px;">+ треки</button>
+        <input type="file" id="musicUploadInput" accept="audio/*" multiple style="display:none">
+      </div>
+      <div id="musicLibrary"></div>
+      <button class="menu-button" id="closeMusicBtn" style="max-width:200px;margin:20px auto 0;">назад</button>
+    </div>
+  </div>
+  <input type="file" id="trackCoverInput" accept="image/*" style="display:none">
+
   <!-- НАСТРОЙКИ -->
-  <div class="screen hidden" id="settingsModal" style="background:rgba(3,1,9,.85);backdrop-filter:blur(12px);z-index:50;">
+  <div class="screen hidden" id="settingsModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Настройки</h2>
-      <p class="modal-text">Оптимизация и производительность</p>
+      <p class="modal-text">Производительность, вид, звук и музыка</p>
+
       <div class="settings-group">
         <div class="settings-label">Производительность</div>
         <div class="settings-row">
-          <div><div class="settings-row-title"><span id="fpsToggleIcon"></span> Счётчик FPS</div><div class="settings-row-desc">Показывает текущую частоту кадров</div></div>
+          <div><div class="settings-row-title"><span id="fpsToggleIcon"></span> Счётчик FPS</div><div class="settings-row-desc">Показывает частоту кадров</div></div>
           <div class="toggle" id="fpsToggle"></div>
         </div>
         <div class="settings-row">
-          <div><div class="settings-row-title"><span id="glowToggleIcon"></span> Эффекты свечения</div><div class="settings-row-desc">Отключи на слабых устройствах</div></div>
+          <div><div class="settings-row-title"><span id="adaptiveIcon"></span> Авто-оптимизация</div><div class="settings-row-desc">Снижает качество при лагах</div></div>
+          <div class="toggle" id="adaptiveToggle"></div>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-title"><span id="glowToggleIcon"></span> Эффекты свечения</div><div class="settings-row-desc">Тяжёлые тени и ореолы</div></div>
           <div class="toggle" id="glowToggle"></div>
         </div>
+        <div class="settings-row">
+          <div><div class="settings-row-title"><span id="blurToggleIcon"></span> Стекло (blur)</div><div class="settings-row-desc">Отключи если тормозит</div></div>
+          <div class="toggle" id="blurToggle"></div>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-title"><span id="starsToggleIcon"></span> Фоновые звёзды</div><div class="settings-row-desc">Мерцающий космос за меню</div></div>
+          <div class="toggle" id="starsToggle"></div>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-title"><span id="animToggleIcon"></span> Анимации интерфейса</div><div class="settings-row-desc">Блики, вращения, пульсации</div></div>
+          <div class="toggle" id="animToggle"></div>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-title"><span id="psaveToggleIcon"></span> Экономия частиц</div><div class="settings-row-desc">Вдвое меньше частиц</div></div>
+          <div class="toggle" id="psaveToggle"></div>
+        </div>
+        <div class="settings-row"><div><div class="settings-row-title">Твоё устройство</div><div class="settings-row-desc" id="deviceInfo">—</div></div></div>
+        <div class="settings-actions">
+          <button class="menu-button" id="turboBtn" style="height:44px;font-size:11px;">⚡ турбо-режим</button>
+          <button class="menu-button" id="resetSettingsBtn" style="height:44px;font-size:11px;">сброс настроек</button>
+        </div>
       </div>
+
       <div class="settings-group">
         <div class="settings-label">Качество частиц</div>
         <div class="quality-grid" id="qualityGrid">
@@ -515,6 +792,39 @@
         </div>
       </div>
       <div class="recommend-box" id="recommendInfo"><span id="recIcon"></span><span id="recText"></span></div>
+
+      <div class="settings-group">
+        <div class="settings-label">Фоновая музыка</div>
+        <div class="settings-row">
+          <div><div class="settings-row-title">Сейчас</div><div class="settings-row-desc" id="musicCurrentLabel">ничего не играет</div></div>
+          <button class="game-btn-small" id="musicPickBtn">выбрать</button>
+        </div>
+        <div class="settings-actions">
+          <button class="menu-button" id="musicCosmosBtn" style="height:44px;font-size:11px;">космос</button>
+          <button class="menu-button" id="musicStopBtn" style="height:44px;font-size:11px;">стоп</button>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-label">Звук клика</div>
+        <div class="creator-grid" id="clickPresetGrid"></div>
+        <div class="settings-row" style="margin-top:10px;">
+          <div><div class="settings-row-title">Свой звук клика</div><div class="settings-row-desc" id="clickCustomState">не установлен</div></div>
+          <button class="game-btn-small" id="clickUploadBtn">загрузить</button>
+          <input type="file" id="clickUploadInput" accept="audio/*" style="display:none">
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-label">Громкость и отклик</div>
+        <div class="settings-row"><div class="settings-row-title">Музыка</div><input type="range" id="musicVolume" min="0" max="100" style="width:140px;"></div>
+        <div class="settings-row"><div class="settings-row-title">Клик</div><input type="range" id="clickVolume" min="0" max="100" style="width:140px;"></div>
+        <div class="settings-row">
+          <div><div class="settings-row-title"><span id="vibToggleIcon"></span> Вибрация</div><div class="settings-row-desc">Отклик на касания</div></div>
+          <div class="toggle" id="vibToggle"></div>
+        </div>
+      </div>
+
       <div class="secret-star-wrap">
         <button class="secret-star-btn" id="secretStarBtn2">
           <div class="secret-star-progress" id="secretStarProgress"></div>
@@ -525,8 +835,48 @@
     </div>
   </div>
 
+  <!-- КРЕАТОР -->
+  <div class="screen hidden" id="creatorModal" style="background:rgba(3,1,9,.85);z-index:50;">
+    <div class="modal-content creator-content">
+      <h2 class="modal-title">Креатор звезды</h2>
+      <p class="modal-text">50 позиций: формы, частицы и ауры</p>
+      <div class="creator-preview-wrap" id="creatorPreviewWrap">
+        <div class="skin-aura" id="creatorAura"></div>
+        <button class="game-star-btn creator-preview-btn" id="creatorPreviewBtn">
+          <svg class="game-star-svg" viewBox="0 0 100 100"><polygon class="game-star-shape" id="creatorPreviewShape" points="50,8 61,38 94,38 67,56 77,86 50,68 23,86 33,56 6,38 39,38" /></svg>
+        </button>
+      </div>
+      <div class="creator-hint">нажми на звезду — превью частиц</div>
+      <div class="creator-field"><label>Название скина</label><input id="creatorName" class="creator-input" maxlength="18" placeholder="Моя звезда"></div>
+      <div class="creator-section"><div class="settings-label">Форма звезды (22)</div><div class="creator-grid" id="creatorShapes"></div></div>
+      <div class="creator-section"><div class="settings-label">Частицы (14)</div><div class="creator-grid" id="creatorParticles"></div></div>
+      <div class="creator-section"><div class="settings-label">Аура (14)</div><div class="creator-grid" id="creatorAuras"></div></div>
+      <div class="creator-section"><div class="settings-label">Цвет звезды</div>
+        <div class="creator-color-row">
+          <div class="color-wheel" id="colorWheel"></div>
+          <div class="creator-color-side">
+            <input id="creatorHex" class="creator-input hex-input" maxlength="7" placeholder="#b380ff">
+            <div class="swatches" id="creatorSwatches"></div>
+          </div>
+        </div>
+      </div>
+      <div class="creator-section"><div class="settings-label">Фото на карточку</div>
+        <div class="photo-row">
+          <img id="creatorPhotoPreview" class="photo-thumb hidden-img" alt="">
+          <button class="menu-button" id="creatorPhotoBtn" style="height:44px;font-size:11px;">загрузить фото</button>
+          <input type="file" id="creatorPhotoInput" accept="image/*" style="display:none">
+        </div>
+      </div>
+      <div class="creator-actions">
+        <button class="menu-button primary" id="creatorSave">сохранить скин</button>
+        <button class="menu-button" id="creatorClose">назад</button>
+      </div>
+      <div class="creator-section"><div class="settings-label">Мои скины</div><div class="creator-grid" id="creatorList"></div></div>
+    </div>
+  </div>
+
   <!-- СКИНЫ -->
-  <div class="screen hidden" id="skinsModal" style="background:rgba(3,1,9,.85);backdrop-filter:blur(12px);z-index:50;">
+  <div class="screen hidden" id="skinsModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Скины звезды</h2>
       <p class="modal-text">Выбери стиль или сними скин</p>
@@ -536,7 +886,7 @@
   </div>
 
   <!-- ЗАДАНИЯ -->
-  <div class="screen hidden" id="questsModal" style="background:rgba(3,1,9,.85);backdrop-filter:blur(12px);z-index:50;">
+  <div class="screen hidden" id="questsModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Задания дня</h2>
       <p class="modal-text">Выполняй задания и получай EXP и монеты</p>
@@ -546,7 +896,7 @@
   </div>
 
   <!-- ГОНКИ -->
-  <div class="screen hidden" id="raceSelectModal" style="background:rgba(3,1,9,.85);backdrop-filter:blur(12px);z-index:50;">
+  <div class="screen hidden" id="raceSelectModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Выбери сложность</h2>
       <p class="modal-text">У тебя есть ограниченное время, чтобы достичь цели.</p>
@@ -555,7 +905,7 @@
     </div>
   </div>
 
-  <div class="screen hidden" id="raceResultModal" style="background:rgba(3,1,9,.85);backdrop-filter:blur(12px);z-index:50;">
+  <div class="screen hidden" id="raceResultModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <div class="race-result" id="raceResult">
         <div class="race-result-title" id="raceResultTitle"></div>
@@ -570,7 +920,7 @@
   </div>
 
   <!-- ДОСТИЖЕНИЯ -->
-  <div class="screen hidden" id="achievementsModal" style="background:rgba(3,1,9,.85);backdrop-filter:blur(12px);z-index:50;">
+  <div class="screen hidden" id="achievementsModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Достижения</h2>
       <p class="modal-text">Твои награды</p>
@@ -580,7 +930,7 @@
   </div>
 
   <!-- БОНУС -->
-  <div class="screen hidden" id="dailyBonusModal" style="background:rgba(3,1,9,.85);backdrop-filter:blur(12px);z-index:50;">
+  <div class="screen hidden" id="dailyBonusModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Ежедневный бонус</h2>
       <div class="bonus-box">
@@ -593,14 +943,14 @@
   </div>
 
   <!-- О ИГРЕ -->
-  <div class="screen hidden" id="aboutModal" style="background:rgba(3,1,9,.85);backdrop-filter:blur(12px);z-index:50;">
+  <div class="screen hidden" id="aboutModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">О игре</h2>
       <p class="modal-text">
         Неоновая звезда — это ASMR-пространство для расслабления.<br>
         Наблюдайте за свечением, меняйте цвета, проходите гонки.<br><br>
-        ✦ Интеграция QuadroOS: FastFPS · AppStorage<br><br>
-        <span style="font-size:12px;opacity:.5;">версия 4.1 «Сердца и Монеты»</span>
+        ✦ Интеграция QuadroOS: FastFPS · FOS Engine · Visual Graphics<br><br>
+        <span style="font-size:12px;opacity:.5;">версия 5.4 «QuadroOS GameMode»</span>
       </p>
       <button class="menu-button" id="closeAboutButton" style="max-width:200px;margin:0 auto;">закрыть</button>
     </div>
@@ -641,7 +991,13 @@
     'use strict';
     const $ = id => document.getElementById(id);
 
-    /* ============ ИКОНКИ ============ */
+    function onTap(el, fn) {
+      let lastTouch = 0;
+      el.addEventListener('touchstart', (e) => { lastTouch = Date.now(); fn(e); }, { passive: false });
+      el.addEventListener('click', (e) => { if (Date.now() - lastTouch < 700) return; fn(e); });
+    }
+    function vib(p) { if (state.settings.vibration) navigator.vibrate?.(p); }
+
     const ICONS = {
       seedling: '<path d="M12 20v-8"/><path d="M12 12c0-4 2.5-6.5 7-6.5 0 4.5-2.5 7-7 6.5z"/><path d="M12 12c0-4-2.5-6.5-7-6.5 0 4.5 2.5 7 7 6.5z"/>',
       star: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
@@ -669,26 +1025,232 @@
       info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
       layers: '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
       cpu: '<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M1 9h3"/><path d="M1 15h3"/><path d="M20 9h3"/><path d="M20 15h3"/>',
-      coin: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><path d="M12 9.2l.9 1.9 2.1.3-1.5 1.5.35 2.1-1.85-1-1.85 1 .35-2.1-1.5-1.5 2.1-.3z"/>'
+      coin: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><path d="M12 9.2l.9 1.9 2.1.3-1.5 1.5.35 2.1-1.85-1-1.85 1 .35-2.1-1.5-1.5 2.1-.3z"/>',
+      lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+      music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+      beast: '<path d="M4 4l4 5"/><path d="M20 4l-4 5"/><path d="M8 9a8 6 0 0 1 8 0c2 2 2 6 0 8l-4 3-4-3c-2-2-2-6 0-8z"/><circle cx="9.5" cy="13" r="1.2" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13" r="1.2" fill="currentColor" stroke="none"/><path d="M10 17l2 1.5 2-1.5"/>',
+      edit: '<path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/>',
+      image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>',
+      shuffle: '<path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/>',
+      repeat: '<path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>',
+      mic: '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/>',
+      folder: '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+      eye: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+      zap: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>'
     };
     function icon(name, size = 24) {
       const paths = ICONS[name] || ICONS.star;
       return `<svg class="icon-svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
     }
 
-    /* ============ QuadroOS ============ */
+    /* ============================================================
+       QUADROOS GAMEMODE API — полная интеграция
+       ============================================================ */
+    const QUADROOS_VERSION = '1.0';
     let currentFps = 60, frameCount = 0, lastFpsTime = performance.now();
-    function fpsLoop(now) { frameCount++; if (now - lastFpsTime >= 1000) { currentFps = Math.round(frameCount * 1000 / (now - lastFpsTime)); frameCount = 0; lastFpsTime = now; } requestAnimationFrame(fpsLoop); }
+    let qoVisualMode = 'default'; // 'default' | 'fps' | 'visualplus' | 'cinema'
+    let qoBlurDisabled = false;
+    let qoSupportResponded = false;
+
+    // Отправка текущего FPS по протоколу FastFPS
+    function sendFastFPS(fps) {
+      try {
+        window.parent.postMessage({
+          qosApi: 'QuadroOS',
+          qosVersion: QUADROOS_VERSION,
+          protocol: 'FastFPS',
+          action: 'fastfps',
+          fps: Number(fps)
+        }, '*');
+      } catch(_){}
+    }
+
+    // Отправка подтверждения FOS Engine
+    function sendFOSAcknowledgement(event, enabled) {
+      try {
+        event.source?.postMessage({
+          qosApi: 'QuadroOS',
+          qosVersion: QUADROOS_VERSION,
+          protocol: 'FOS Engine',
+          action: 'fos.ack',
+          enabled: enabled,
+          blurDisabled: qoBlurDisabled
+        }, event.origin);
+      } catch(_){}
+    }
+
+    // Отключение тяжёлого blur/post-processing
+    function disableHeavyBlur() {
+      qoBlurDisabled = true;
+      state.settings.blur = false;
+      document.body.classList.add('no-blur');
+      saveState();
+    }
+
+    // Восстановление стандартного blur
+    function restoreHeavyBlur() {
+      qoBlurDisabled = false;
+      state.settings.blur = true;
+      document.body.classList.remove('no-blur');
+      saveState();
+    }
+
+    // Применение визуального режима (fps/visualplus/cinema)
+    function applyVisualMode(mode, enabled) {
+      document.body.classList.remove('visual-fps', 'visual-visualplus', 'visual-cinema');
+      if (!enabled) {
+        qoVisualMode = 'default';
+        return;
+      }
+      if (['fps', 'visualplus', 'cinema'].includes(mode)) {
+        document.body.classList.add('visual-' + mode);
+        qoVisualMode = mode;
+      }
+    }
+
+    // Отправка ответа на запрос поддержки FOS Engine
+    function sendFOSSupportResponse(event) {
+      try {
+        event.source?.postMessage({
+          qosApi: 'QuadroOS',
+          version: QUADROOS_VERSION,
+          qosVersion: QUADROOS_VERSION,
+          protocol: 'FOS Engine',
+          action: 'fos.support.response',
+          supported: true,
+          protocols: ['FastFPS', 'FOS Engine']
+        }, event.origin);
+        qoSupportResponded = true;
+      } catch(_){}
+    }
+
+    // Обработчик команд FOS Engine
+    function handleFOSCommand(data, event) {
+      if (data.action === 'fos.support.request') {
+        sendFOSSupportResponse(event);
+        return;
+      }
+
+      if (data.action === 'fos.enable') {
+        disableHeavyBlur();
+        applyVisualMode(data.mode || 'fps', data.visual === true);
+        sendFOSAcknowledgement(event, true);
+        return;
+      }
+
+      if (data.action === 'fos.disable') {
+        restoreHeavyBlur();
+        applyVisualMode('default', false);
+        sendFOSAcknowledgement(event, false);
+        return;
+      }
+
+      if (data.action === 'fos.visual') {
+        applyVisualMode(data.mode || 'fps', data.enabled === true);
+        sendFOSAcknowledgement(event, true);
+        return;
+      }
+
+      if (data.action === 'fos.visual.mode') {
+        applyVisualMode(data.mode || 'fps', data.enabled === true);
+        sendFOSAcknowledgement(event, true);
+        return;
+      }
+    }
+
+    // Основной обработчик QuadroOS API
+    window.addEventListener('message', (event) => {
+      const data = event.data;
+
+      if (!data || data.qosApi !== 'QuadroOS') return;
+      if (data.qosVersion && data.qosVersion !== QUADROOS_VERSION) return;
+
+      if (data.protocol === 'FastFPS') {
+        if (data.action === 'fastfps.request') {
+          event.source?.postMessage({
+            qosApi: 'QuadroOS',
+            qosVersion: QUADROOS_VERSION,
+            protocol: 'FastFPS',
+            action: 'fastfps.response',
+            fps: Number(currentFps)
+          }, event.origin);
+        }
+        return;
+      }
+
+      if (data.protocol === 'FOS Engine') {
+        handleFOSCommand(data, event);
+        return;
+      }
+    });
+
+    // FPS цикл и регулярная отправка FastFPS
+    function fpsLoop(now) {
+      frameCount++;
+      if (now - lastFpsTime >= 1000) {
+        currentFps = Math.round(frameCount * 1000 / (now - lastFpsTime));
+        frameCount = 0;
+        lastFpsTime = now;
+      }
+      requestAnimationFrame(fpsLoop);
+    }
     requestAnimationFrame(fpsLoop);
-    let handshakeDone = false;
-    window.addEventListener('message', (e) => { if (!handshakeDone && e.data && e.data.ftai === 'handshake') { handshakeDone = true; try { window.parent.postMessage({ ftai: 'hello', fps: currentFps }, '*'); } catch(_){} setInterval(() => { try { window.parent.postMessage({ ftai: 'fps', fps: currentFps }, '*'); } catch(_){} }, 500); } });
-    setTimeout(() => { if (!handshakeDone) { try { window.parent.postMessage({ ftai: 'hello', fps: currentFps }, '*'); } catch(_){} setInterval(() => { try { window.parent.postMessage({ ftai: 'fps', fps: currentFps }, '*'); } catch(_){} }, 500); } }, 200);
+
+    // Регулярная отправка FPS каждые 500ms
+    setInterval(() => {
+      sendFastFPS(currentFps);
+    }, 500);
+
+    // Начальный ответ на поддержку через 100ms
+    setTimeout(() => {
+      if (!qoSupportResponded) {
+        try {
+          window.parent.postMessage({
+            qosApi: 'QuadroOS',
+            version: QUADROOS_VERSION,
+            qosVersion: QUADROOS_VERSION,
+            protocol: 'FOS Engine',
+            action: 'fos.support.response',
+            supported: true,
+            protocols: ['FastFPS', 'FOS Engine']
+          }, '*');
+          qoSupportResponded = true;
+        } catch(_){}
+      }
+    }, 100);
+    /* ============================================================
+       КОНЕЦ QUADROOS GAMEMODE API
+       ============================================================ */
 
     const STORAGE_KEY = 'app_neon_star_progress';
+    const AUDIO_KEY = 'app_neon_star_audio';
     async function storageSave(key, data) { try { if (window.QOSAppStorage?.save) { await window.QOSAppStorage.save(key, data); return; } } catch(_){} try { localStorage.setItem(key, JSON.stringify(data)); } catch(_){} }
     async function storageLoad(key) { try { if (window.QOSAppStorage?.load) { const d = await window.QOSAppStorage.load(key); if (d) return d; } } catch(_){} try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; } catch(_) { return null; } }
 
-    /* ============ ДАННЫЕ ============ */
+    /* ОПТИМИЗАЦИЯ: дебаунс сохранений */
+    let saveTimer = null, saveQueued = false;
+    function saveState() {
+      saveQueued = true;
+      if (saveTimer) return;
+      saveTimer = setTimeout(flushSave, 1200);
+    }
+    async function flushSave() {
+      saveTimer = null;
+      if (!saveQueued) return;
+      saveQueued = false;
+      await storageSave(STORAGE_KEY, state);
+    }
+    document.addEventListener('visibilitychange', () => { if (document.hidden) flushSave(); });
+    window.addEventListener('pagehide', flushSave);
+
+    async function storageSaveAudio(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch(_){} }
+    async function saveAudioStore() { await storageSaveAudio(AUDIO_KEY, audioStore); }
+
+    function idbOpen() { return new Promise((res, rej) => { const rq = indexedDB.open('neonStarMusic', 1); rq.onupgradeneeded = () => { rq.result.createObjectStore('tracks', { keyPath: 'id' }); }; rq.onsuccess = () => res(rq.result); rq.onerror = () => rej(rq.error); }); }
+    async function idbPut(t) { try { const db = await idbOpen(); return new Promise(res => { const tx = db.transaction('tracks', 'readwrite'); tx.objectStore('tracks').put(t); tx.oncomplete = res; }); } catch(_) {} }
+    async function idbGet(id) { try { const db = await idbOpen(); return new Promise(res => { const rq = db.transaction('tracks', 'readonly').objectStore('tracks').get(id); rq.onsuccess = () => res(rq.result); rq.onerror = () => res(null); }); } catch(_) { return null; } }
+    async function idbDel(id) { try { const db = await idbOpen(); return new Promise(res => { const tx = db.transaction('tracks', 'readwrite'); tx.objectStore('tracks').delete(id); tx.oncomplete = res; }); } catch(_) {} }
+
     const COLORS = [
       { name: 'Фиолетовый', hex: '#b380ff' }, { name: 'Розовый', hex: '#ff66b2' },
       { name: 'Голубой', hex: '#66d9ff' }, { name: 'Зелёный', hex: '#66ff99' },
@@ -708,7 +1270,7 @@
       { id: 'noob', name: 'Нуб', desc: 'Лёгкая разминка.', time: 25, target: 40, achievementId: 'race_noob' },
       { id: 'easy', name: 'Лёгкий', desc: 'Настоящее испытание.', time: 20, target: 50, achievementId: 'race_easy' },
       { id: 'medium', name: 'Средний', desc: 'Покажи мастерство.', time: 20, target: 75, achievementId: 'race_medium' },
-      { id: 'hard', name: 'Сложный', desc: 'Для опытных таперов.', time: 15, target: 80, achievementId: 'race_hard' },
+      { id: 'hard', name: 'Сложный', desc: 'Награда: скин «Звёздный».', time: 15, target: 80, achievementId: 'race_hard' },
       { id: 'extreme', name: 'Экстремально сложный', desc: 'Границы возможного.', time: 12, target: 100, achievementId: 'race_extreme' },
       { id: 'hell', name: 'Адски сложный', desc: 'Мало кто сможет.', time: 10, target: 120, achievementId: 'race_hell' }
     ];
@@ -718,7 +1280,9 @@
       { id: 'newbie', name: 'Newbie', icon: 'sparkle', desc: 'Стартовый скин. Малиновая звёздная аура.', unlocked: true },
       { id: 'crystal', name: 'Кристалл', icon: 'gem', desc: 'Синяя звезда, кольцо осколков и вспышки.', cost: 10000 },
       { id: 'nebula', name: 'Туманность', icon: 'orb', desc: 'Магента-туманность: двойное кольцо и звёздные частицы.', cost: 50000 },
+      { id: 'starry', name: 'Звёздный', icon: 'starBright', desc: 'Эксклюзив гонки «Сложный». Звёздные частицы и аура.', race: 'hard' },
       { id: 'gold', name: 'Золотой', icon: 'crown', desc: 'Золотое кольцо, искры и корона-вспышка.', cost: 190000 },
+      { id: 'rainbow', name: 'Радужный', icon: 'starBright', desc: 'Эксклюзив админа. Радужные частицы и приятный клик.', admin: true },
       { id: 'frost', name: '?', icon: 'snowflake', desc: 'Ивентовый скин. Откроется позже.', event: true },
       { id: 'sakura', name: '?', icon: 'flower', desc: 'Ивентовый скин. Откроется позже.', event: true },
       { id: 'pumpkin', name: '?', icon: 'pumpkin', desc: 'Ивентовый скин. Откроется позже.', event: true },
@@ -734,6 +1298,7 @@
       race_extreme: { icon: 'starBright', name: 'Легенда', desc: 'Пройди "Экстремально сложный"' },
       race_hell: { icon: 'crown', name: 'Бог тапов', desc: 'Пройди "Адски сложный"' },
       race_all: { icon: 'trophy', name: 'Марафонец', desc: 'Пройди все 7 сложностей' },
+      skin_race_starry: { icon: 'starBright', name: 'Скин заслужен!', desc: 'Вы прошли гонку «Сложный» и получили скин «Звёздный»' },
       skin_newbie: { icon: 'sparkle', name: 'Первый скин', desc: 'Получи стартовый скин Newbie' },
       skin_buy_crystal: { icon: 'gem', name: 'Скин приобретён!', desc: 'Вы успешно приобрели скин «Кристалл»' },
       skin_buy_nebula: { icon: 'orb', name: 'Скин приобретён!', desc: 'Вы успешно приобрели скин «Туманность»' },
@@ -742,17 +1307,27 @@
       combo_50: { icon: 'comet', name: 'Комбо x50', desc: 'Набери комбо 50 подряд' },
       combo_75: { icon: 'shootingStar', name: 'Почти сотня', desc: 'Набери комбо x75' },
       combo_100: { icon: 'shootingStar', name: 'Комбо x100', desc: 'Набери комбо 100 подряд' },
+      combo_1000: { icon: 'shootingStar', name: 'Тысяча комбо', desc: 'Набери комбо x1000' },
       taps_1000: { icon: 'sparkles', name: 'Тысячник', desc: 'Набери 1 000 касаний' },
       taps_10000: { icon: 'orb', name: 'Десятитысячник', desc: 'Набери 10 000 касаний' },
       taps_50000: { icon: 'sparkles', name: 'Полпути к золоту', desc: 'Набери 50 000 касаний' },
       taps_190000: { icon: 'crown', name: 'Золотой майнер', desc: 'Набери 190 000 касаний' },
+      the_beast: { icon: 'beast', name: 'THE BEAST', desc: '5 000 000 кликов и все скины (кроме админских). Ты монстр.', gold: true, beast: true },
       level_10: { icon: 'starBright', name: 'Десятый уровень', desc: 'Достигни 10 уровня' },
       level_25: { icon: 'starBright', name: 'Ветеран', desc: 'Достигни 25 уровня' },
       quest_5: { icon: 'check', name: 'Трудяга', desc: 'Выполни 5 заданий' },
       candy_1: { icon: 'heart', name: 'Дождь сердец!', desc: 'Поймай первое сердце' },
       candy_3: { icon: 'heart', name: 'Сердцеед', desc: 'Поймай 3 сердца' },
-      creator: { icon: 'cpu', name: 'Создатель', desc: 'Используй кастомизацию звезды' },
-      collector: { icon: 'trophy', name: 'Коллектор', desc: 'Все скины + все основные достижения', gold: true }
+      creator_skin: { icon: 'cpu', name: 'Креатор', desc: 'Создал свой скин в креаторе' },
+      creator_photo: { icon: 'gift', name: 'С фото', desc: 'Загрузил фото на карточку скина' },
+      music_first: { icon: 'music', name: 'Меломан', desc: 'Добавил первый трек в библиотеку' },
+      music_10: { icon: 'music', name: 'Коллекционер звука', desc: '10 треков в библиотеке' },
+      collector: { icon: 'trophy', name: 'Коллектор', desc: 'Все скины + все основные достижения', gold: true },
+      ach_admin_verified: { icon: 'check', name: 'Проверка пройдена', desc: 'Система подтвердила статус админа', admin: true },
+      ach_rainbow: { icon: 'starBright', name: 'Радужный скин!', desc: 'Эксклюзивный скин админа получен', admin: true },
+      ach_rainbow_particles: { icon: 'sparkles', name: 'Радужные частицы', desc: 'Радужные частицы разблокированы', admin: true },
+      ach_exclusive: { icon: 'crown', name: 'Эксклюзив', desc: 'Обладатель эксклюзивного скина', admin: true },
+      ach_admin_elite: { icon: 'trophy', name: 'Админ-элита', desc: 'Ты в элите админов', admin: true }
     };
 
     const QUEST_POOL = [
@@ -797,7 +1372,10 @@
       { text: 'Набери комбо x55', type: 'combo', target: 55, reward: 30 },
       { text: 'Сделай 800 касаний', type: 'taps', target: 800, reward: 35 },
       { text: 'Используй градиент Закат', type: 'use_gradient', target: 1, reward: 12 },
-      { text: 'Сыграй 4 гонки', type: 'race_play', target: 4, reward: 25 }
+      { text: 'Сыграй 4 гонки', type: 'race_play', target: 4, reward: 25 },
+      { text: 'Послушай свой трек', type: 'use_music', target: 1, reward: 15 },
+      { text: 'Создай скин в креаторе', type: 'use_creator', target: 1, reward: 20 },
+      { text: 'Добавь трек в библиотеку', type: 'add_music', target: 1, reward: 15 }
     ];
 
     const LOAD_FACTS = [
@@ -809,6 +1387,7 @@
       'Комбо x50 даёт 20 EXP',
       'Скин Кристалл открывается за 10 000 касаний',
       'Скин Туманность открывается за 50 000 касаний',
+      'Скин Звёздный даётся за победу в гонке «Сложный」',
       '4 ивентовых скина откроются в особые даты',
       'Достижение Коллектор — самое сложное в игре',
       'Градиентные цвета переливаются двумя оттенками',
@@ -828,9 +1407,25 @@
       'За ежедневный вход ты получаешь бонусный EXP',
       'Титул «Создатель вселенных» даётся с 51 уровня',
       'Каждый скин имеет уникальную ауру',
-      'Кастомизация звезды доступна только админу',
-      'Задания обновляются каждые 24 часа',
-      'Достижения всплывают в стиле Minecraft'
+      'Креатор звезды доступен всем игрокам',
+      'Свой звук клика можно загрузить в настройках',
+      'Достижения всплывают в стиле Minecraft',
+      'Авто-оптимизация сама снизит качество при лагах',
+      'THE BEAST ждёт тех, кто сделает 5 000 000 кликов',
+      'Комбо x1000 — достижение для настоящих машин',
+      'Музыкальная библиотека живёт в разделе «Музыка»',
+      'Окна можно перетаскивать, сворачивать и разворачивать',
+      'У треков можно менять имя, исполнителя и обложку',
+      'Треки можно переносить между альбомами',
+      'Звук клика меняется: мягкий, глубокий, поп, радуга',
+      'Фоновая музыка играет, пока ты её не выключишь',
+      'Частицы теперь плывут медленно и плавно',
+      'В креаторе ровно 50 позиций на выбор',
+      'Турбо-режим в настройках выжимает максимум FPS',
+      'Сохранения теперь не тормозят клики',
+      'QuadroOS GameMode: FastFPS + FOS Engine + Visual Graphics',
+      'Визуальные режимы: FPS, Visual PLUS, Cinema',
+      'FOS Engine отключает тяжёлый blur при необходимости'
     ];
 
     const TITLES = [
@@ -850,23 +1445,49 @@
       crystal: '50,4 78,30 68,92 32,92 22,30',
       spike: '50,2 58,34 92,20 70,50 98,78 62,66 50,98 38,66 2,78 30,50 8,20 42,34',
       round: '50,6 76,14 92,38 92,62 76,86 50,94 24,86 8,62 8,38 24,14',
-      heart: '50,88 20,60 8,38 16,16 36,12 50,28 64,12 84,16 92,38 80,60'
+      heart: '50,88 20,60 8,38 16,16 36,12 50,28 64,12 84,16 92,38 80,60',
+      diamond: '50,2 82,30 82,70 50,98 18,70 18,30',
+      hex: '50,4 90,27 90,73 50,96 10,73 10,27',
+      burst: '50,0 60,35 95,20 72,50 100,80 62,68 50,100 38,68 0,80 28,50 5,20 40,35',
+      moon: '60,10 40,20 30,40 32,62 45,80 65,90 80,85 60,80 45,65 40,45 48,25 60,10',
+      cross: '35,5 65,5 65,35 95,35 95,65 65,65 65,95 35,95 35,65 5,65 5,35 35,35',
+      drop: '50,5 75,40 85,60 75,82 50,95 25,82 15,60 25,40',
+      flower4: '50,5 62,38 95,50 62,62 50,95 38,62 5,50 38,38',
+      tri: '50,6 92,88 8,88',
+      box: '14,14 86,14 86,86 14,86',
+      star6: '50,2 61,25 88,14 78,40 98,50 78,60 88,86 61,75 50,98 39,75 12,86 22,60 2,50 22,40 12,14 39,25',
+      leaf: '50,4 80,30 84,62 62,90 38,90 16,62 20,30',
+      arrow: '50,4 84,40 66,40 66,92 34,92 34,40 16,40',
+      shield: '50,4 88,18 84,60 50,94 16,60 12,18',
+      gem2: '30,8 70,8 92,34 50,94 8,34',
+      sun: '50,2 58,20 76,10 74,30 94,28 84,44 98,50 84,56 94,72 74,70 76,90 58,80 50,98 42,80 24,90 26,70 6,72 16,56 2,50 16,44 6,28 26,30 24,10 42,20',
+      bolt2: '58,2 26,52 46,52 40,98 76,42 54,42',
+      eye: '50,14 82,34 92,50 82,66 50,86 18,66 8,50 18,34'
     };
+    const SHAPE_LABELS = { classic:'Классика', crystal:'Кристалл', spike:'Шипы', round:'Круг', heart:'Сердце', diamond:'Алмаз', hex:'Гексагон', burst:'Взрыв', moon:'Луна', cross:'Крест', drop:'Капля', flower4:'Цветок', tri:'Треугольник', box:'Квадрат', star6:'6 лучей', leaf:'Лист', arrow:'Стрела', shield:'Щит', gem2:'Огранка', sun:'Солнце', bolt2:'Молния', eye:'Око' };
+    const PARTICLES = ['spark','shard','star','heart','square','tri','ring','note','diamond','cross','sparkle4','bubble','rainbow','none'];
+    const PARTICLE_LABELS = { spark:'Искры', shard:'Осколки', star:'Звёзды', heart:'Сердца', square:'Квадраты', tri:'Треугольники', ring:'Кольца', note:'Ноты', diamond:'Ромбы', cross:'Кресты', sparkle4:'Вспышки', bubble:'Пузыри', rainbow:'Радуга', none:'Нет' };
+    const AURAS = ['none','ring','dashed','dotted','double','pulse','glow','rays','neon','orbit','square','triple','wave','halo'];
+    const AURA_LABELS = { none:'Нет', ring:'Кольцо', dashed:'Пунктир', dotted:'Точки', double:'Двойное', pulse:'Пульс', glow:'Свечение', rays:'Лучи', neon:'Неон', orbit:'Орбита', square:'Квадрат', triple:'Тройное', wave:'Волна', halo:'Гало' };
+    const SWATCHES = ['#b380ff','#ff66b2','#66d9ff','#66ff99','#ffe066','#ff9966','#ff4466','#66ffcc','#FFD700','#ffffff','#0a0a0a','#808080','#ff66ff','#00ffcc','#ff3b3b','#4466ff'];
 
     const HEART_SVG = `<svg viewBox="0 0 64 64"><path d="M32 56 C10 40 6 26 12 17 C18 8 30 10 32 20 C34 10 46 8 52 17 C58 26 54 40 32 56 Z" fill="#ff66b2" stroke="#ffd0e8" stroke-width="2.5"/><path d="M21 19 C17 21 15 25 16 29" stroke="#fff" stroke-width="3" fill="none" opacity=".75" stroke-linecap="round"/></svg>`;
 
-    /* ============ СОСТОЯНИЕ ============ */
     let state = {
       count: 0, totalTapsAllTime: 0, exp: 0, coins: 0,
       currentColor: '#b380ff', currentColor2: null, isGradient: false,
       achievements: {}, racesCompleted: {},
       unlockedSkins: ['newbie'], selectedSkin: 'newbie',
-      maxCombo: 0, consoleUnlocked: false, goldSelected: false,
+      maxCombo: 0, consoleUnlocked: false, goldSelected: false, adminVerified: false,
       lastDaily: null, questDate: null, questIds: [], questProgress: {}, questClaimed: {},
-      settings: { showFps: false, quality: 'recommended', glowEffects: true, muted: false },
+      settings: { showFps: false, quality: 'recommended', glowEffects: true, muted: false, adaptive: true, blur: true, stars: true, anims: true, vibration: true, particleSave: false, fabX: 20, fabY: -1 },
+      audio: { clickPreset: 'default', musicVolume: 0.5, clickVolume: 0.7 },
       custom: { aura: null, particle: 'auto', shape: 'classic' },
+      customSkins: [],
+      music: { list: [], currentId: null, playing: false, shuffle: false, repeat: 'all', favOnly: false },
       stats: { candies: 0, questsDone: 0, racesWon: 0 }
     };
+    let audioStore = { clickCustom: null };
 
     let sessionCombo = 0;
     let audioCtx = null, raceActive = false, raceInterval = null, raceTimeLeft = 0, raceTargetCount = 0, raceTaps = 0, currentDiff = null;
@@ -877,30 +1498,86 @@
     let achToastTimeout = null;
     let secretClicks = 0;
     let secretInProgress = false;
+    let appliedCustom = null;
+    let cosmosNodes = null, libAudio = null;
+    let pendingCoverId = null;
+    let activeParticles = 0;
+    const MAX_PARTICLES = 60;
 
-    async function saveState() { await storageSave(STORAGE_KEY, state); }
+    let creator = { name: '', shape: 'classic', particle: 'spark', aura: 'ring', color: '#b380ff', photo: null };
+
     async function loadState() {
       const d = await storageLoad(STORAGE_KEY);
       if (d) {
         Object.assign(state, d);
-        state.settings = Object.assign({ showFps: false, quality: 'recommended', glowEffects: true, muted: false }, d.settings);
+        state.settings = Object.assign({ showFps: false, quality: 'recommended', glowEffects: true, muted: false, adaptive: true, blur: true, stars: true, anims: true, vibration: true, particleSave: false, fabX: 20, fabY: -1 }, d.settings);
+        state.audio = Object.assign({ clickPreset: 'default', musicVolume: 0.5, clickVolume: 0.7 }, d.audio);
         state.custom = Object.assign({ aura: null, particle: 'auto', shape: 'classic' }, d.custom);
         state.stats = Object.assign({ candies: 0, questsDone: 0, racesWon: 0 }, d.stats);
+        state.music = Object.assign({ list: [], currentId: null, playing: false, shuffle: false, repeat: 'all', favOnly: false }, d.music);
+        if (!Array.isArray(state.customSkins)) state.customSkins = [];
         if (typeof state.coins !== 'number') state.coins = 0;
+        if (typeof state.adminVerified !== 'boolean') state.adminVerified = false;
       }
+      const a = await storageLoad(AUDIO_KEY);
+      if (a) audioStore = Object.assign(audioStore, a);
     }
 
-    function detectRecommended() {
+    function deviceProfile() {
       const cores = navigator.hardwareConcurrency || 4;
-      const isMobile = /Mobi|Android/i.test(navigator.userAgent);
       const mem = navigator.deviceMemory || 4;
-      if (isMobile && (cores <= 4 || mem <= 2)) return 'low';
-      if (isMobile) return 'medium';
-      if (cores <= 4) return 'medium';
+      const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+      const dpr = window.devicePixelRatio || 1;
+      let cls = 'desktop';
+      if (isMobile) cls = (cores <= 4 || mem <= 2) ? 'weak-phone' : 'phone';
+      else if (cores <= 4) cls = 'weak-pc';
+      return { cores, mem, isMobile, dpr, cls };
+    }
+    function detectRecommended() {
+      const p = deviceProfile();
+      if (p.cls === 'weak-phone' || p.cls === 'weak-pc') return 'low';
+      if (p.cls === 'phone') return 'medium';
       return 'high';
     }
     function resolveQuality() { let q = state.settings.quality; if (q === 'recommended') q = detectRecommended(); resolvedQuality = QUALITY_PRESETS[q] || QUALITY_PRESETS.medium; return resolvedQuality; }
-    function applyQuality() { const q = resolveQuality(); createBgStars(q.stars); const glowOn = q.glow && state.settings.glowEffects; document.body.classList.toggle('no-glow', !glowOn); }
+    function applyQuality() {
+      const q = resolveQuality();
+      createBgStars(state.settings.stars ? q.stars : 0);
+      const glowOn = q.glow && state.settings.glowEffects;
+      document.body.classList.toggle('no-glow', !glowOn);
+    }
+    function applyPerf() {
+      if (!qoBlurDisabled) {
+        document.body.classList.toggle('no-blur', !state.settings.blur);
+      }
+      document.body.classList.toggle('no-stars', !state.settings.stars);
+      document.body.classList.toggle('no-anim', !state.settings.anims);
+      applyQuality();
+    }
+
+    let fpsHistory = [];
+    setInterval(() => {
+      if (!state.settings.adaptive) return;
+      fpsHistory.push(currentFps);
+      if (fpsHistory.length >= 6) {
+        const avg = fpsHistory.reduce((a, b) => a + b, 0) / fpsHistory.length;
+        fpsHistory = [];
+        if (avg < 28) {
+          const order = ['low', 'medium', 'high'];
+          let cur = state.settings.quality === 'recommended' ? detectRecommended() : state.settings.quality;
+          const idx = order.indexOf(cur);
+          if (idx > 0) {
+            state.settings.quality = order[idx - 1];
+            applyPerf(); saveState();
+            showAchToast(null, 'Авто-оптимизация', 'Качество снижено для плавности');
+          } else if (state.settings.glowEffects) {
+            state.settings.glowEffects = false;
+            applyPerf(); saveState();
+            showAchToast(null, 'Авто-оптимизация', 'Эффекты свечения отключены');
+          }
+        }
+      }
+    }, 1000);
 
     function updateFpsBadge() {
       const badge = $('fpsBadge');
@@ -914,20 +1591,12 @@
     }
     setInterval(updateFpsBadge, 1000);
 
-    /* ============ МОНЕТЫ ============ */
     function updateCoins(pop) {
       $('coinCount').textContent = state.coins.toLocaleString('ru-RU');
-      if (pop) {
-        const b = $('coinBadge');
-        b.classList.remove('pop');
-        void b.offsetWidth;
-        b.classList.add('pop');
-        setTimeout(() => b.classList.remove('pop'), 250);
-      }
+      if (pop) { const b = $('coinBadge'); b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); setTimeout(() => b.classList.remove('pop'), 250); }
     }
     function addCoins(n) { state.coins += n; saveState(); updateCoins(true); }
 
-    /* ============ УРОВНИ ============ */
     function getLevelInfo(exp) { let level = 1, needed = 100, remaining = exp; while (remaining >= needed) { remaining -= needed; level++; needed = Math.floor(needed * 1.4); } return { level, current: remaining, needed }; }
     function getTitle(level) { let t = TITLES[0].name; for (const ti of TITLES) { if (level >= ti.min) t = ti.name; } return t; }
     function addExp(amount) { state.exp += amount; saveState(); updatePlayerBadge(); }
@@ -941,7 +1610,17 @@
     }
 
     function hexToRgb(hex) { const c = hex.replace('#',''), b = parseInt(c,16); return `${(b>>16)&255},${(b>>8)&255},${b&255}`; }
+    function hexToRgba(hex, a) { return `rgba(${hexToRgb(hex)},${a})`; }
     function auraRgb() { return state.custom.aura ? hexToRgb(state.custom.aura) : hexToRgb(state.currentColor); }
+    function hslToHex(h, s, l) {
+      s /= 100; l /= 100;
+      const k = n => (n + h / 30) % 12;
+      const a = s * Math.min(l, 1 - l);
+      const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+      const to = x => Math.round(255 * x).toString(16).padStart(2, '0');
+      return `#${to(f(0))}${to(f(8))}${to(f(4))}`;
+    }
+    function hslRgbStr(h) { return hexToRgb(hslToHex(h, 100, 60)); }
 
     function setColor(hex, hex2, isGradient) {
       state.currentColor = hex; state.currentColor2 = hex2 || hex; state.isGradient = !!isGradient;
@@ -995,54 +1674,92 @@
         b.dataset.color = c.hex;
         b.dataset.color2 = c.hex2 || '';
         b.title = c.name;
-        const h = e => { e.preventDefault(); setColor(c.hex, c.hex2, c.gradient); saveState(); navigator.vibrate?.(5); };
-        b.addEventListener('click', h);
-        b.addEventListener('touchstart', h, { passive: false });
+        onTap(b, (e) => { e.preventDefault(); setColor(c.hex, c.hex2, c.gradient); saveState(); vib(5); });
         p.appendChild(b);
       });
     }
 
-    /* ============ КАСТОМ ============ */
-    function applyCustom() {
-      const pts = SHAPES[state.custom.shape] || SHAPES.classic;
-      document.querySelectorAll('.game-star-shape').forEach(p => p.setAttribute('points', pts));
-      const auraEl = document.querySelector('.skin-aura');
-      if (auraEl) {
-        if (state.custom.aura) {
-          auraEl.style.borderColor = state.custom.aura;
-          auraEl.style.boxShadow = `0 0 40px ${state.custom.aura} inset, 0 0 25px ${state.custom.aura}`;
-        } else { auraEl.style.borderColor = ''; auraEl.style.boxShadow = ''; }
-      }
+    function setAuraInline(el, auraId, color) {
+      if (!el) return;
+      el.style.cssText = '';
+      el.classList.remove('aura-double');
+      el.style.borderRadius = '50%';
+      if (!auraId || auraId === 'none' || auraId === 'css') { el.style.opacity = '0'; return; }
+      const c = color || '#ffffff';
+      el.style.opacity = '1';
+      el.style.borderColor = c;
+      el.style.color = c;
+      if (auraId === 'ring') { el.style.borderStyle = 'solid'; el.style.borderWidth = '2px'; el.style.animation = 'auraSpin 8s linear infinite'; el.style.boxShadow = `0 0 30px ${c} inset, 0 0 20px ${c}`; }
+      else if (auraId === 'dashed') { el.style.borderStyle = 'dashed'; el.style.borderWidth = '2px'; el.style.animation = 'auraSpinRev 10s linear infinite'; el.style.boxShadow = `0 0 25px ${c} inset, 0 0 16px ${c}`; }
+      else if (auraId === 'dotted') { el.style.borderStyle = 'dotted'; el.style.borderWidth = '3px'; el.style.animation = 'auraWobble 6s ease-in-out infinite'; el.style.boxShadow = `0 0 25px ${c} inset`; }
+      else if (auraId === 'double') { el.style.borderStyle = 'solid'; el.style.borderWidth = '2px'; el.style.animation = 'auraSpin 9s linear infinite'; el.style.boxShadow = `0 0 30px ${c} inset, 0 0 18px ${c}`; el.classList.add('aura-double'); el.style.setProperty('--aura-color', c); }
+      else if (auraId === 'pulse') { el.style.borderStyle = 'solid'; el.style.borderWidth = '2px'; el.style.animation = 'auraPulse 2s ease-in-out infinite'; el.style.boxShadow = `0 0 35px ${c} inset, 0 0 22px ${c}`; }
+      else if (auraId === 'glow') { el.style.borderStyle = 'none'; el.style.animation = 'auraBreathe 3s ease-in-out infinite'; el.style.boxShadow = `0 0 60px ${c} inset, 0 0 45px ${c}`; }
+      else if (auraId === 'rays') { el.style.borderStyle = 'solid'; el.style.borderWidth = '1px'; el.style.animation = 'auraRays 14s linear infinite'; el.style.background = `repeating-conic-gradient(${hexToRgba(c, .13)} 0deg 8deg, transparent 8deg 16deg)`; el.style.boxShadow = `0 0 25px ${c} inset`; }
+      else if (auraId === 'neon') { el.style.borderStyle = 'solid'; el.style.borderWidth = '3px'; el.style.animation = 'auraNeon 1.6s ease-in-out infinite'; }
+      else if (auraId === 'orbit') { el.style.borderStyle = 'dotted'; el.style.borderWidth = '2px'; el.style.animation = 'auraSpin 6s linear infinite'; el.style.boxShadow = `0 0 30px ${c} inset`; el.classList.add('aura-double'); el.style.setProperty('--aura-color', c); }
+      else if (auraId === 'square') { el.style.borderRadius = '18%'; el.style.borderStyle = 'solid'; el.style.borderWidth = '2px'; el.style.animation = 'auraSpin 10s linear infinite'; el.style.boxShadow = `0 0 28px ${c} inset, 0 0 18px ${c}`; }
+      else if (auraId === 'triple') { el.style.borderStyle = 'solid'; el.style.borderWidth = '1px'; el.style.animation = 'auraSpinRev 12s linear infinite'; el.style.boxShadow = `0 0 0 6px ${hexToRgba(c,.15)}, 0 0 0 12px ${hexToRgba(c,.1)}, 0 0 30px ${c} inset`; }
+      else if (auraId === 'wave') { el.style.borderStyle = 'dashed'; el.style.borderWidth = '5px'; el.style.animation = 'auraWobble 5s ease-in-out infinite'; el.style.boxShadow = `0 0 22px ${c} inset`; }
+      else if (auraId === 'halo') { el.style.borderStyle = 'none'; el.style.animation = 'auraBreathe 4s ease-in-out infinite'; el.style.boxShadow = `0 0 80px ${hexToRgba(c,.5)} inset, 0 0 60px ${hexToRgba(c,.4)}`; }
     }
 
-    /* ============ СКИНЫ ============ */
+    function applyCustom() { applySkin(state.selectedSkin); }
+
+    /* СКИНЫ */
     function applySkin(skinId) {
       state.selectedSkin = skinId;
-      const wrapper = $('gameStarWrapper');
-      wrapper.classList.remove('skin-newbie', 'skin-crystal', 'skin-gold', 'skin-nebula');
-      if (skinId === 'newbie') wrapper.classList.add('skin-newbie');
-      if (skinId === 'crystal') wrapper.classList.add('skin-crystal');
-      if (skinId === 'nebula') wrapper.classList.add('skin-nebula');
-      if (skinId === 'gold') wrapper.classList.add('skin-gold');
-      applyCustom();
+      const wrap = $('gameStarWrapper');
+      wrap.classList.remove('skin-newbie', 'skin-crystal', 'skin-gold', 'skin-nebula', 'skin-rainbow', 'skin-starry', 'skin-custom');
+      appliedCustom = null;
+      const btn = $('gameStarBtn'), shape = $('gameStarShape'), aura = $('gameAura');
+      btn.style.color = ''; shape.style.stroke = ''; shape.style.fill = '';
+      let pts = SHAPES[state.custom.shape] || SHAPES.classic;
+      const cs = (state.customSkins || []).find(s => s.id === skinId);
+      if (skinId === 'rainbow') { wrap.classList.add('skin-rainbow'); setAuraInline(aura, 'css'); pts = SHAPES.classic; }
+      else if (skinId === 'starry') { wrap.classList.add('skin-starry'); setAuraInline(aura, 'css'); pts = SHAPES.classic; }
+      else if (cs) {
+        wrap.classList.add('skin-custom');
+        appliedCustom = cs;
+        btn.style.color = cs.color;
+        shape.style.stroke = cs.color;
+        shape.style.fill = hexToRgba(cs.color, .15);
+        setAuraInline(aura, cs.aura, cs.color);
+        pts = SHAPES[cs.shape] || SHAPES.classic;
+      } else {
+        setAuraInline(aura, 'css');
+        if (skinId === 'newbie') wrap.classList.add('skin-newbie');
+        if (skinId === 'crystal') wrap.classList.add('skin-crystal');
+        if (skinId === 'nebula') wrap.classList.add('skin-nebula');
+        if (skinId === 'gold') wrap.classList.add('skin-gold');
+      }
+      shape.setAttribute('points', pts);
       trackQuest('use_skin', 1);
       saveState();
     }
+    function allPublicSkins() { return ['newbie', 'crystal', 'nebula', 'gold'].every(s => state.unlockedSkins.includes(s)); }
     function checkSkinUnlocks() {
       if (state.count >= 10000 && !state.unlockedSkins.includes('crystal')) { state.unlockedSkins.push('crystal'); unlockAchievement('skin_buy_crystal'); saveState(); }
       if (state.count >= 50000 && !state.unlockedSkins.includes('nebula')) { state.unlockedSkins.push('nebula'); unlockAchievement('skin_buy_nebula'); saveState(); }
       if (state.count >= 190000 && !state.unlockedSkins.includes('gold')) { state.unlockedSkins.push('gold'); unlockAchievement('skin_buy_gold'); saveState(); }
+      checkBeast();
+    }
+    function checkBeast() {
+      if (state.totalTapsAllTime >= 5000000 && allPublicSkins()) unlockAchievement('the_beast');
     }
     function buildSkinsGrid() {
       $('skinsGrid').innerHTML = '';
       SKINS.forEach(s => {
+        if (s.admin && !state.consoleUnlocked) return;
         const unlocked = state.unlockedSkins.includes(s.id) || s.unlocked;
         const selected = state.selectedSkin === s.id;
         const c = document.createElement('div');
-        c.className = `skin-card ${unlocked ? '' : 'locked'} ${selected ? 'selected' : ''} ${s.event ? 'event-locked' : ''}`;
+        c.className = `skin-card ${unlocked ? '' : 'locked'} ${selected ? 'selected' : ''} ${s.event ? 'event-locked' : ''} ${s.admin ? 'rainbow-card' : ''} ${s.race ? 'starry-card' : ''}`;
         let costHtml = '';
         if (!unlocked && s.cost) costHtml = `<div class="skin-cost">${s.cost.toLocaleString('ru-RU')} касаний</div>`;
+        if (!unlocked && s.race) costHtml = `<div class="skin-cost" style="color:#fff3b0;">Награда: гонка «Сложный»</div>`;
         if (s.event) costHtml = `<div class="skin-cost">Ивент · скоро</div>`;
+        if (s.admin) costHtml = `<div class="skin-cost" style="color:#ff78ff;">Эксклюзив админа</div>`;
         const iconName = (unlocked || !s.event) ? s.icon : 'info';
         c.innerHTML = `
           ${selected ? `<div class="skin-selected-badge">${icon('check', 14)}</div>` : ''}
@@ -1054,9 +1771,31 @@
         if (unlocked && !s.event) { c.onclick = () => { applySkin(s.id); buildSkinsGrid(); }; }
         $('skinsGrid').appendChild(c);
       });
+      (state.customSkins || []).forEach(cs => {
+        const selected = state.selectedSkin === cs.id;
+        const c = document.createElement('div');
+        c.className = `skin-card ${selected ? 'selected' : ''}`;
+        c.innerHTML = `
+          ${selected ? `<div class="skin-selected-badge">${icon('check', 14)}</div>` : ''}
+          <div class="skin-del" data-del="${cs.id}">✕</div>
+          ${cs.photo ? `<img class="skin-photo" src="${cs.photo}" alt="">` : `<div class="skin-color-dot" style="background:${cs.color};color:${cs.color};"></div>`}
+          <div class="skin-name">${cs.name}</div>
+          <div class="skin-desc">Свой скин · креатор</div>
+        `;
+        c.onclick = (e) => {
+          if (e.target.dataset.del) {
+            state.customSkins = state.customSkins.filter(x => x.id !== cs.id);
+            if (state.selectedSkin === cs.id) applySkin('none');
+            saveState(); buildSkinsGrid(); renderCreatorList();
+            return;
+          }
+          applySkin(cs.id); buildSkinsGrid();
+        };
+        $('skinsGrid').appendChild(c);
+      });
     }
 
-    /* ============ ЗАДАНИЯ ============ */
+    /* ЗАДАНИЯ */
     function getTodayStr() { const d = new Date(); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
     function generateDailyQuests() {
       const today = getTodayStr();
@@ -1119,29 +1858,486 @@
       setTimeout(() => showScreen('dailyBonusModal'), 800);
     }
 
-    /* ============ НАСТРОЙКИ ============ */
+    /* ЗВУК */
+    function initAudio() {
+      if (!audioCtx) try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(_){}
+      if (audioCtx?.state === 'suspended') audioCtx.resume();
+      if (state.music.playing && state.music.currentId && (!libAudio || libAudio.paused)) resumeMusic();
+    }
+    function startCosmos() {
+      if (!audioCtx || cosmosNodes) return;
+      const master = audioCtx.createGain();
+      master.gain.value = state.audio.musicVolume * 0.25;
+      master.connect(audioCtx.destination);
+      const freqs = [110, 164.8, 220, 329.6];
+      const oscs = freqs.map((f, i) => {
+        const o = audioCtx.createOscillator();
+        o.type = i % 2 ? 'sine' : 'triangle';
+        o.frequency.value = f;
+        const g = audioCtx.createGain(); g.gain.value = 0.12 / (i + 1);
+        const lfo = audioCtx.createOscillator(); lfo.frequency.value = 0.05 + i * 0.03;
+        const lfoG = audioCtx.createGain(); lfoG.gain.value = 0.06 / (i + 1);
+        lfo.connect(lfoG); lfoG.connect(g.gain);
+        o.connect(g); g.connect(master);
+        o.start(); lfo.start();
+        return { o, g, lfo };
+      });
+      cosmosNodes = { master, oscs };
+    }
+    function stopCosmos() {
+      if (cosmosNodes) {
+        cosmosNodes.oscs.forEach(n => { try { n.o.stop(); n.lfo.stop(); } catch(_){} });
+        cosmosNodes.master.disconnect();
+        cosmosNodes = null;
+      }
+    }
+    function playClick() {
+      if (state.settings.muted) return;
+      let preset = state.audio.clickPreset;
+      if (preset === 'custom' && audioStore.clickCustom) {
+        const a = new Audio(audioStore.clickCustom);
+        a.volume = state.audio.clickVolume;
+        a.play().catch(()=>{});
+        return;
+      }
+      if (preset === 'custom') preset = 'default';
+      if (preset === 'default' && state.selectedSkin === 'rainbow') preset = 'rainbow';
+      if (!audioCtx) return;
+      const V = state.audio.clickVolume;
+      try {
+        const n = audioCtx.currentTime;
+        if (preset === 'rainbow') {
+          [0, 7].forEach((det, i) => {
+            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+            o.type = i === 0 ? 'sine' : 'triangle';
+            const f = 320 + Math.random() * 40 + det * 8;
+            o.frequency.setValueAtTime(f, n);
+            o.frequency.exponentialRampToValueAtTime(f * 0.6, n + .3);
+            g.gain.setValueAtTime(.0001, n);
+            g.gain.exponentialRampToValueAtTime(.05 * V, n + .01);
+            g.gain.exponentialRampToValueAtTime(.0001, n + .32);
+            o.connect(g); g.connect(audioCtx.destination); o.start(n); o.stop(n + .34);
+          });
+          return;
+        }
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        let f0 = 180 + Math.random() * 60 + (comboCount > 10 ? Math.min(comboCount, 50) : 0), f1 = 90, dur = .18, type = 'sine', vol = .06;
+        if (preset === 'soft') { f0 = 140; f1 = 70; dur = .22; vol = .05; }
+        if (preset === 'deep') { f0 = 95; f1 = 45; dur = .26; vol = .07; }
+        if (preset === 'pop') { f0 = 220; f1 = 520; dur = .09; vol = .06; type = 'triangle'; }
+        o.type = type;
+        o.frequency.setValueAtTime(f0, n);
+        o.frequency.exponentialRampToValueAtTime(f1, n + dur * 0.8);
+        g.gain.setValueAtTime(.0001, n);
+        g.gain.exponentialRampToValueAtTime(vol * V, n + .008);
+        g.gain.exponentialRampToValueAtTime(.0001, n + dur);
+        o.connect(g); g.connect(audioCtx.destination); o.start(n); o.stop(n + dur + .02);
+      } catch(_){}
+    }
+
+    /* МУЗЫКА */
+    function coverGradient(name) {
+      let h = 0;
+      for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 360;
+      return `linear-gradient(135deg, hsl(${h},80%,55%), hsl(${(h + 60) % 360},80%,45%))`;
+    }
+    function fmtTime(s) { if (!isFinite(s)) return '0:00'; const m = Math.floor(s / 60); const sec = Math.floor(s % 60); return `${m}:${sec < 10 ? '0' : ''}${sec}`; }
+    function trackList() { return state.music.list || []; }
+    function getMeta(id) { return trackList().find(t => t.id === id); }
+
+    async function playTrack(id) {
+      stopCosmos();
+      if (id === 'cosmos') {
+        state.music.currentId = 'cosmos'; state.music.playing = true; saveState();
+        initAudio(); startCosmos();
+        updatePlayerUI(); updateMusicSettings(); trackQuest('use_music', 1); renderMusicLibrary();
+        return;
+      }
+      const rec = await idbGet(id);
+      if (!rec) return;
+      if (!libAudio) {
+        libAudio = new Audio();
+        libAudio.addEventListener('ended', () => nextTrack(true));
+        libAudio.addEventListener('timeupdate', updatePlayerProgress);
+        libAudio.addEventListener('loadedmetadata', updatePlayerProgress);
+      }
+      libAudio.src = URL.createObjectURL(rec.blob);
+      libAudio.volume = state.audio.musicVolume;
+      state.music.currentId = id; state.music.playing = true; saveState();
+      libAudio.play().catch(()=>{});
+      updatePlayerUI(); updateMusicSettings(); trackQuest('use_music', 1); renderMusicLibrary();
+    }
+    function pauseMusic() {
+      state.music.playing = false; saveState();
+      if (libAudio) libAudio.pause();
+      stopCosmos();
+      updatePlayerUI(); updateMusicSettings(); renderMusicLibrary();
+    }
+    function resumeMusic() {
+      if (state.music.currentId === 'cosmos') { initAudio(); startCosmos(); state.music.playing = true; saveState(); updatePlayerUI(); updateMusicSettings(); renderMusicLibrary(); return; }
+      if (libAudio && state.music.currentId) { initAudio(); libAudio.play().catch(()=>{}); state.music.playing = true; saveState(); updatePlayerUI(); updateMusicSettings(); renderMusicLibrary(); }
+    }
+    function nextTrack(auto) {
+      const list = trackList();
+      if (!list.length) return;
+      if (auto && state.music.repeat === 'one') { playTrack(state.music.currentId); return; }
+      let idx = list.findIndex(t => t.id === state.music.currentId);
+      let next;
+      if (state.music.shuffle) next = list[Math.floor(Math.random() * list.length)];
+      else {
+        idx++;
+        if (idx >= list.length) {
+          if (auto && state.music.repeat === 'off') { pauseMusic(); return; }
+          idx = 0;
+        }
+        next = list[idx];
+      }
+      playTrack(next.id);
+    }
+    function prevTrack() {
+      const list = trackList();
+      if (!list.length) return;
+      let idx = list.findIndex(t => t.id === state.music.currentId);
+      let prev;
+      if (state.music.shuffle) prev = list[Math.floor(Math.random() * list.length)];
+      else { idx--; if (idx < 0) idx = list.length - 1; prev = list[idx]; }
+      playTrack(prev.id);
+    }
+    function updatePlayerUI() {
+      const meta = getMeta(state.music.currentId);
+      const isCosmos = state.music.currentId === 'cosmos';
+      const card = $('playerCard');
+      const fab = $('playerFab');
+      const label = isCosmos ? 'Космос' : (meta ? meta.name : 'музыка');
+      $('gameMusicLabel').textContent = label;
+      $('raceMusicLabel').textContent = label;
+      if (!meta && !isCosmos) {
+        $('playerTitle').textContent = 'Ничего не играет';
+        $('playerAlbum').textContent = 'выбери трек в разделе «Музыка»';
+        card.classList.add('hidden'); fab.classList.add('hidden');
+        return;
+      }
+      fab.classList.remove('hidden');
+      fab.classList.toggle('playing', state.music.playing);
+      $('playerTitle').textContent = isCosmos ? 'Космос (эмбиент)' : meta.name;
+      $('playerAlbum').textContent = isCosmos ? 'Встроенные' : `${meta.artist ? meta.artist + ' · ' : ''}${meta.album}`;
+      $('playerCover').style.background = meta?.cover ? `url(${meta.cover}) center/cover` : coverGradient(isCosmos ? 'cosmos' : meta.name);
+      $('playerPlay').innerHTML = state.music.playing
+        ? '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>'
+        : '<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+      $('playerVol').value = Math.round(state.audio.musicVolume * 100);
+      $('playerShuffle').classList.toggle('on', state.music.shuffle);
+      $('playerRepeat').classList.toggle('on', state.music.repeat !== 'all');
+      $('playerFav').classList.toggle('fav-on', !!meta?.fav);
+      if (isCosmos) { $('playerCur').textContent = '∞'; $('playerDur').textContent = '∞'; $('playerBar').style.width = '100%'; }
+    }
+    function updatePlayerProgress() {
+      if (!libAudio || state.music.currentId === 'cosmos') return;
+      $('playerCur').textContent = fmtTime(libAudio.currentTime);
+      $('playerDur').textContent = fmtTime(libAudio.duration);
+      $('playerBar').style.width = (libAudio.duration ? (libAudio.currentTime / libAudio.duration) * 100 : 0) + '%';
+    }
+    function openPlayer() { $('playerCard').classList.remove('hidden'); updatePlayerUI(); }
+    function togglePlayer() { $('playerCard').classList.toggle('hidden'); updatePlayerUI(); }
+
+    $('playerClose').onclick = () => { $('playerCard').classList.add('hidden'); };
+    $('playerFab').onclick = () => openPlayer();
+    $('playerPlay').onclick = () => { if (state.music.playing) pauseMusic(); else resumeMusic(); };
+    $('playerNext').onclick = () => nextTrack(false);
+    $('playerPrev').onclick = () => prevTrack();
+    $('playerShuffle').onclick = () => { state.music.shuffle = !state.music.shuffle; saveState(); updatePlayerUI(); renderMusicLibrary(); };
+    $('playerRepeat').onclick = () => { state.music.repeat = state.music.repeat === 'all' ? 'one' : (state.music.repeat === 'one' ? 'off' : 'all'); saveState(); updatePlayerUI(); renderMusicLibrary(); };
+    $('playerFav').onclick = () => {
+      const m = getMeta(state.music.currentId);
+      if (!m) return;
+      m.fav = !m.fav; saveState(); updatePlayerUI(); renderMusicLibrary();
+    };
+    $('playerVol').addEventListener('input', () => {
+      state.audio.musicVolume = $('playerVol').value / 100;
+      if (libAudio) libAudio.volume = state.audio.musicVolume;
+      if (cosmosNodes) cosmosNodes.master.gain.value = state.audio.musicVolume * 0.25;
+      saveState();
+    });
+    $('playerProgress').addEventListener('click', (e) => {
+      if (!libAudio || !libAudio.duration || state.music.currentId === 'cosmos') return;
+      const r = $('playerProgress').getBoundingClientRect();
+      libAudio.currentTime = ((e.clientX - r.left) / r.width) * libAudio.duration;
+    });
+    $('gameMusicBtn').onclick = togglePlayer;
+    $('raceMusicBtn').onclick = togglePlayer;
+
+    function startInlineEdit(targetEl, initial, onDone, withList) {
+      if (!targetEl) return;
+      const input = document.createElement('input');
+      input.className = 'creator-input';
+      input.style.cssText = 'padding:3px 8px;font-size:11px;';
+      input.value = initial;
+      if (withList) input.setAttribute('list', 'albumDatalist');
+      targetEl.replaceWith(input);
+      input.focus(); input.select();
+      const finish = () => onDone(input.value);
+      input.addEventListener('blur', finish);
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') input.blur(); });
+    }
+
+    function syncMusicToolbar() {
+      $('musicShuffleBtn').textContent = 'перемешать: ' + (state.music.shuffle ? 'вкл' : 'выкл');
+      $('musicShuffleBtn').classList.toggle('active', state.music.shuffle);
+      $('musicRepeatBtn').textContent = 'повтор: ' + state.music.repeat;
+      $('musicRepeatBtn').classList.toggle('active', state.music.repeat !== 'all');
+      $('musicFavFilter').classList.toggle('active', state.music.favOnly);
+    }
+    function renderMusicLibrary() {
+      const box = $('musicLibrary');
+      box.innerHTML = '';
+      syncMusicToolbar();
+      const dl = $('albumDatalist');
+      dl.innerHTML = '';
+      [...new Set(trackList().map(t => t.album))].forEach(a => { const o = document.createElement('option'); o.value = a; dl.appendChild(o); });
+
+      const q = ($('musicSearch').value || '').trim().toLowerCase();
+
+      const builtIn = document.createElement('div');
+      builtIn.className = 'music-track' + (state.music.currentId === 'cosmos' ? ' playing' : '');
+      builtIn.innerHTML = `<div class="music-cover" style="background:${coverGradient('cosmos')}"></div>
+        <div class="music-track-info"><div class="music-track-name">Космос (эмбиент)</div><div class="music-track-sub">Встроенные</div></div>
+        <div class="track-actions"><button class="music-btn" data-play="cosmos">▶</button></div>`;
+      box.appendChild(builtIn);
+
+      let list = trackList();
+      if (state.music.favOnly) list = list.filter(t => t.fav);
+      if (q) list = list.filter(t => t.name.toLowerCase().includes(q) || t.album.toLowerCase().includes(q) || (t.artist || '').toLowerCase().includes(q));
+
+      const albums = {};
+      list.forEach(t => { (albums[t.album] = albums[t.album] || []).push(t); });
+      Object.keys(albums).forEach(album => {
+        const wrap = document.createElement('div');
+        wrap.className = 'music-album';
+        wrap.innerHTML = `<div class="music-album-title">${icon('layers', 14)}<span class="album-name" data-album="${album}">${album}</span>
+          <button class="music-btn" data-albumplay="${album}" title="Играть альбом">▶</button>
+          <button class="music-btn" data-albumrename="${album}" title="Переименовать альбом">✎</button>
+          <span style="font-size:9px;color:rgba(255,255,255,.35);">${albums[album].length}</span></div>`;
+        albums[album].forEach(t => {
+          const row = document.createElement('div');
+          row.className = 'music-track' + (state.music.currentId === t.id ? ' playing' : '');
+          row.innerHTML = `
+            <div class="music-cover" data-cover="${t.id}" title="Сменить обложку" style="background:${t.cover ? `url(${t.cover}) center/cover` : coverGradient(t.name)}"></div>
+            <div class="music-track-info">
+              <div class="music-track-name ${t.fav ? 'fav' : ''}" data-name="${t.id}">${t.name}</div>
+              <div class="music-track-sub"><span data-artistline="${t.id}">${t.artist ? t.artist + ' · ' : ''}</span><span data-albumline="${t.id}">${t.album}</span></div>
+            </div>
+            <div class="track-actions">
+              <button class="music-btn ${t.fav ? 'on' : ''}" data-fav="${t.id}" title="В избранное">♥</button>
+              <button class="music-btn" data-play="${t.id}" title="Играть">▶</button>
+              <button class="music-btn" data-rename="${t.id}" title="Название">✎</button>
+              <button class="music-btn" data-artist="${t.id}" title="Исполнитель">A</button>
+              <button class="music-btn" data-movealbum="${t.id}" title="В альбом">📁</button>
+              <button class="music-btn" data-up="${t.id}" title="Выше">↑</button>
+              <button class="music-btn" data-down="${t.id}" title="Ниже">↓</button>
+              <button class="music-btn" data-del="${t.id}" title="Удалить">✕</button>
+            </div>`;
+          wrap.appendChild(row);
+        });
+        box.appendChild(wrap);
+      });
+      if (!Object.keys(albums).length && q) box.insertAdjacentHTML('beforeend', '<div style="font-size:11px;color:rgba(255,255,255,.35);text-align:center;padding:10px;">Ничего не найдено</div>');
+
+      box.querySelectorAll('[data-play]').forEach(b => b.onclick = () => playTrack(b.dataset.play));
+      box.querySelectorAll('[data-fav]').forEach(b => b.onclick = () => { const t = getMeta(b.dataset.fav); if (t) { t.fav = !t.fav; saveState(); renderMusicLibrary(); updatePlayerUI(); } });
+      box.querySelectorAll('[data-up]').forEach(b => b.onclick = () => moveTrack(b.dataset.up, -1));
+      box.querySelectorAll('[data-down]').forEach(b => b.onclick = () => moveTrack(b.dataset.down, 1));
+      box.querySelectorAll('[data-rename]').forEach(b => b.onclick = () => {
+        const id = b.dataset.rename; const t = getMeta(id);
+        startInlineEdit(box.querySelector(`[data-name="${id}"]`), t.name, v => { t.name = v.trim() || t.name; saveState(); renderMusicLibrary(); updatePlayerUI(); });
+      });
+      box.querySelectorAll('[data-artist]').forEach(b => b.onclick = () => {
+        const id = b.dataset.artist; const t = getMeta(id);
+        startInlineEdit(box.querySelector(`[data-artistline="${id}"]`), t.artist || '', v => { t.artist = v.trim(); saveState(); renderMusicLibrary(); updatePlayerUI(); });
+      });
+      box.querySelectorAll('[data-movealbum]').forEach(b => b.onclick = () => {
+        const id = b.dataset.movealbum; const t = getMeta(id);
+        startInlineEdit(box.querySelector(`[data-albumline="${id}"]`), t.album, v => { t.album = v.trim() || t.album; saveState(); renderMusicLibrary(); updatePlayerUI(); }, true);
+      });
+      box.querySelectorAll('[data-cover]').forEach(b => b.onclick = () => { pendingCoverId = b.dataset.cover; $('trackCoverInput').click(); });
+      box.querySelectorAll('[data-albumplay]').forEach(b => b.onclick = () => { const first = trackList().find(t => t.album === b.dataset.albumplay); if (first) playTrack(first.id); });
+      box.querySelectorAll('[data-albumrename]').forEach(b => b.onclick = () => {
+        const old = b.dataset.albumrename;
+        startInlineEdit(box.querySelector(`[data-album="${old}"]`), old, v => {
+          const newName = v.trim() || old;
+          trackList().forEach(t => { if (t.album === old) t.album = newName; });
+          saveState(); renderMusicLibrary(); updatePlayerUI();
+        });
+      });
+      box.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
+        const id = b.dataset.del;
+        state.music.list = state.music.list.filter(t => t.id !== id);
+        await idbDel(id);
+        if (state.music.currentId === id) { pauseMusic(); state.music.currentId = null; }
+        saveState(); renderMusicLibrary(); updatePlayerUI();
+      });
+    }
+    function moveTrack(id, dir) {
+      const list = state.music.list;
+      const t = list.find(x => x.id === id);
+      if (!t) return;
+      const siblings = list.filter(x => x.album === t.album);
+      const pos = siblings.indexOf(t);
+      const target = siblings[pos + dir];
+      if (!target) return;
+      const i1 = list.indexOf(t), i2 = list.indexOf(target);
+      [list[i1], list[i2]] = [list[i2], list[i1]];
+      saveState(); renderMusicLibrary();
+    }
+    $('trackCoverInput').addEventListener('change', (e) => {
+      const f = e.target.files[0];
+      if (!f || !pendingCoverId) return;
+      const t = getMeta(pendingCoverId);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const S = 128;
+          canvas.width = S; canvas.height = S;
+          const ctx = canvas.getContext('2d');
+          const min = Math.min(img.width, img.height);
+          ctx.drawImage(img, (img.width - min) / 2, (img.height - min) / 2, min, min, 0, 0, S, S);
+          if (t) { t.cover = canvas.toDataURL('image/jpeg', 0.75); saveState(); renderMusicLibrary(); updatePlayerUI(); }
+          pendingCoverId = null;
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(f);
+      e.target.value = '';
+    });
+    $('musicSearch').addEventListener('input', renderMusicLibrary);
+    $('musicFavFilter').onclick = () => { state.music.favOnly = !state.music.favOnly; saveState(); renderMusicLibrary(); };
+    $('musicShuffleBtn').onclick = () => { state.music.shuffle = !state.music.shuffle; saveState(); renderMusicLibrary(); updatePlayerUI(); };
+    $('musicRepeatBtn').onclick = () => { state.music.repeat = state.music.repeat === 'all' ? 'one' : (state.music.repeat === 'one' ? 'off' : 'all'); saveState(); renderMusicLibrary(); updatePlayerUI(); };
+    $('musicUploadBtn').onclick = () => $('musicUploadInput').click();
+    $('musicUploadInput').addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+      const album = $('musicAlbumInput').value.trim() || 'Мой альбом';
+      const artist = $('musicArtistInput').value.trim() || '';
+      for (const f of files) {
+        const id = 't_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+        await idbPut({ id, blob: f });
+        state.music.list.push({ id, name: f.name.replace(/\.[^.]+$/, ''), album, artist, cover: null, fav: false });
+      }
+      saveState();
+      unlockAchievement('music_first');
+      if (state.music.list.length >= 10) unlockAchievement('music_10');
+      trackQuest('add_music', files.length);
+      renderMusicLibrary();
+      showAchToast(null, 'Треки добавлены!', `Альбом «${album}» пополнен`);
+      e.target.value = '';
+    });
+    $('musicButton').onclick = () => { showScreen('musicModal'); renderMusicLibrary(); };
+    $('closeMusicBtn').onclick = () => showScreen('menuScreen');
+
+    /* НАСТРОЙКИ */
+    function updateMusicSettings() {
+      const meta = getMeta(state.music.currentId);
+      const isCosmos = state.music.currentId === 'cosmos';
+      $('musicCurrentLabel').textContent = (meta || isCosmos)
+        ? (isCosmos ? 'Космос (эмбиент)' : `${meta.name}${meta.artist ? ' — ' + meta.artist : ''}`) + (state.music.playing ? ' · играет' : ' · пауза')
+        : 'ничего не играет';
+    }
     function renderSettings() {
       $('fpsToggle').classList.toggle('on', state.settings.showFps);
       $('glowToggle').classList.toggle('on', state.settings.glowEffects);
+      $('adaptiveToggle').classList.toggle('on', state.settings.adaptive);
+      $('blurToggle').classList.toggle('on', state.settings.blur);
+      $('starsToggle').classList.toggle('on', state.settings.stars);
+      $('animToggle').classList.toggle('on', state.settings.anims);
+      $('psaveToggle').classList.toggle('on', state.settings.particleSave);
+      $('vibToggle').classList.toggle('on', state.settings.vibration);
       $('fpsToggleIcon').innerHTML = icon('gauge', 18);
       $('glowToggleIcon').innerHTML = icon('sparkles', 18);
+      $('adaptiveIcon').innerHTML = icon('cpu', 18);
+      $('blurToggleIcon').innerHTML = icon('layers', 18);
+      $('starsToggleIcon').innerHTML = icon('star', 18);
+      $('animToggleIcon').innerHTML = icon('zap', 18);
+      $('psaveToggleIcon').innerHTML = icon('sparkles', 18);
+      $('vibToggleIcon').innerHTML = icon('gauge', 18);
       document.querySelectorAll('.quality-btn').forEach(b => b.classList.toggle('active', b.dataset.q === state.settings.quality));
       $('qiLow').innerHTML = icon('bolt', 20);
       $('qiMed').innerHTML = icon('layers', 20);
       $('qiHigh').innerHTML = icon('starBright', 20);
       $('qiRec').innerHTML = icon('cpu', 20);
       $('recIcon').innerHTML = icon('info', 18);
-      $('recText').textContent = `Для твоего устройства рекомендуется «${QUALITY_PRESETS[detectRecommended()].label}» качество. Выбери «Рекомендуемое», чтобы применить его автоматически.`;
+      const p = deviceProfile();
+      $('deviceInfo').textContent = `${p.isMobile ? 'Мобильное' : 'ПК'} · ядер: ${p.cores} · память: ${p.mem} ГБ · класс: ${p.cls}`;
+      $('recText').textContent = `Для твоего устройства рекомендуется «${QUALITY_PRESETS[detectRecommended()].label}» качество. Авто-оптимизация сама подстроится под FPS.`;
+      renderSound();
+      updateMusicSettings();
       updateFpsBadge();
     }
+    function renderSound() {
+      const cp = $('clickPresetGrid'); cp.innerHTML = '';
+      const cl = { default:'Обычный', soft:'Мягкий', deep:'Глубокий', pop:'Поп', rainbow:'Радуга', custom:'Свой' };
+      ['default','soft','deep','pop','rainbow','custom'].forEach(p => {
+        const b = document.createElement('button');
+        b.className = 'creator-opt' + (state.audio.clickPreset === p ? ' active' : '');
+        b.textContent = cl[p];
+        if (p === 'custom' && !audioStore.clickCustom) b.style.opacity = .45;
+        b.onclick = () => {
+          if (p === 'custom' && !audioStore.clickCustom) { $('clickUploadInput').click(); return; }
+          state.audio.clickPreset = p; saveState(); renderSound();
+        };
+        cp.appendChild(b);
+      });
+      $('clickCustomState').textContent = audioStore.clickCustom ? 'установлен ✓' : 'не установлен';
+      $('musicVolume').value = Math.round(state.audio.musicVolume * 100);
+      $('clickVolume').value = Math.round(state.audio.clickVolume * 100);
+    }
     $('fpsToggle').onclick = () => { state.settings.showFps = !state.settings.showFps; saveState(); renderSettings(); };
-    $('glowToggle').onclick = () => { state.settings.glowEffects = !state.settings.glowEffects; saveState(); applyQuality(); renderSettings(); };
-    document.querySelectorAll('.quality-btn').forEach(b => { b.onclick = () => { state.settings.quality = b.dataset.q; saveState(); applyQuality(); renderSettings(); }; });
+    $('glowToggle').onclick = () => { state.settings.glowEffects = !state.settings.glowEffects; saveState(); applyPerf(); renderSettings(); };
+    $('adaptiveToggle').onclick = () => { state.settings.adaptive = !state.settings.adaptive; saveState(); renderSettings(); };
+    $('blurToggle').onclick = () => { state.settings.blur = !state.settings.blur; saveState(); applyPerf(); renderSettings(); };
+    $('starsToggle').onclick = () => { state.settings.stars = !state.settings.stars; saveState(); applyPerf(); renderSettings(); };
+    $('animToggle').onclick = () => { state.settings.anims = !state.settings.anims; saveState(); applyPerf(); renderSettings(); };
+    $('psaveToggle').onclick = () => { state.settings.particleSave = !state.settings.particleSave; saveState(); renderSettings(); };
+    $('vibToggle').onclick = () => { state.settings.vibration = !state.settings.vibration; saveState(); renderSettings(); };
+    $('turboBtn').onclick = () => {
+      state.settings.quality = 'low';
+      state.settings.glowEffects = false;
+      state.settings.blur = false;
+      state.settings.stars = false;
+      state.settings.anims = false;
+      state.settings.particleSave = true;
+      state.settings.adaptive = true;
+      saveState(); applyPerf(); renderSettings();
+      showAchToast(null, 'Турбо-режим!', 'Максимальная производительность включена');
+    };
+    $('resetSettingsBtn').onclick = () => {
+      state.settings = { showFps: false, quality: 'recommended', glowEffects: true, muted: false, adaptive: true, blur: true, stars: true, anims: true, vibration: true, particleSave: false, fabX: 20, fabY: -1 };
+      saveState(); applyPerf(); renderSettings(); positionFab();
+    };
+    document.querySelectorAll('.quality-btn').forEach(b => { b.onclick = () => { state.settings.quality = b.dataset.q; saveState(); applyPerf(); renderSettings(); }; });
     $('settingsButton').onclick = () => { showScreen('settingsModal'); renderSettings(); };
     $('closeSettingsBtn').onclick = () => showScreen('menuScreen');
+    $('musicPickBtn').onclick = () => { showScreen('musicModal'); renderMusicLibrary(); };
+    $('musicCosmosBtn').onclick = () => { initAudio(); playTrack('cosmos'); };
+    $('musicStopBtn').onclick = () => pauseMusic();
+    $('musicVolume').addEventListener('input', () => {
+      state.audio.musicVolume = $('musicVolume').value / 100;
+      if (libAudio) libAudio.volume = state.audio.musicVolume;
+      if (cosmosNodes) cosmosNodes.master.gain.value = state.audio.musicVolume * 0.25;
+      saveState();
+    });
+    $('clickVolume').addEventListener('input', () => { state.audio.clickVolume = $('clickVolume').value / 100; saveState(); });
+    $('clickUploadBtn').onclick = () => $('clickUploadInput').click();
+    $('clickUploadInput').addEventListener('change', (e) => {
+      const f = e.target.files[0]; if (!f) return;
+      const r = new FileReader();
+      r.onload = () => { audioStore.clickCustom = r.result; saveAudioStore(); state.audio.clickPreset = 'custom'; saveState(); renderSound(); };
+      r.readAsDataURL(f);
+    });
 
-    /* ============ ЭКРАНЫ ============ */
-    const screens = ['menuScreen','gameScreen','raceScreen','secretClickerScreen','aboutModal','raceSelectModal','raceResultModal','achievementsModal','skinsModal','questsModal','dailyBonusModal','settingsModal'];
+    /* ЭКРАНЫ */
+    const screens = ['menuScreen','gameScreen','raceScreen','secretClickerScreen','aboutModal','raceSelectModal','raceResultModal','achievementsModal','skinsModal','questsModal','dailyBonusModal','settingsModal','creatorModal','musicModal'];
     function showScreen(id) { screens.forEach(s => $(s).classList.add('hidden')); $(id).classList.remove('hidden'); }
 
     $('playButton').onclick = () => { initAudio(); showScreen('gameScreen'); };
@@ -1163,15 +2359,63 @@
     $('achievementsButton').onclick = () => { showScreen('achievementsModal'); buildAchGrid(); };
     $('closeAchievementsBtn').onclick = () => showScreen('menuScreen');
     $('closeBonusBtn').onclick = () => showScreen('menuScreen');
+    $('creatorButton').onclick = () => { openCreator(); };
+    $('creatorClose').onclick = () => showScreen('menuScreen');
 
-    /* ============ СЕКРЕТ ============ */
+    /* ОКНА */
+    const menuWin = $('menuWindow');
+    $('windowBtn').onclick = () => { menuWin.classList.remove('hidden'); };
+    $('winClose').onclick = () => menuWin.classList.add('hidden');
+    $('winMin').onclick = () => menuWin.classList.toggle('win-min');
+    $('winMax').onclick = () => menuWin.classList.toggle('win-max');
+    (function() {
+      const bar = $('menuWinBar');
+      let drag = null, raf = null;
+      bar.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('.win-btns')) return;
+        if (menuWin.classList.contains('win-max')) return;
+        drag = { x: e.clientX, y: e.clientY, l: menuWin.offsetLeft, t: menuWin.offsetTop };
+        menuWin.style.transform = 'none';
+        menuWin.style.left = drag.l + 'px';
+        menuWin.style.top = drag.t + 'px';
+        bar.setPointerCapture(e.pointerId);
+      });
+      bar.addEventListener('pointermove', (e) => {
+        if (!drag) return;
+        const nx = Math.max(0, Math.min(window.innerWidth - 60, drag.l + e.clientX - drag.x));
+        const ny = Math.max(0, Math.min(window.innerHeight - 40, drag.t + e.clientY - drag.y));
+        if (raf) return;
+        raf = requestAnimationFrame(() => { raf = null; menuWin.style.left = nx + 'px'; menuWin.style.top = ny + 'px'; });
+      });
+      bar.addEventListener('pointerup', () => drag = null);
+      bar.addEventListener('pointercancel', () => drag = null);
+    })();
+    $('menuWinBody').querySelectorAll('[data-nav]').forEach(b => {
+      b.onclick = () => {
+        const target = b.dataset.nav;
+        menuWin.classList.add('hidden');
+        initAudio();
+        showScreen(target);
+        if (target === 'skinsModal') buildSkinsGrid();
+        if (target === 'questsModal') buildQuestsList();
+        if (target === 'achievementsModal') buildAchGrid();
+        if (target === 'raceSelectModal') buildDiffGrid();
+        if (target === 'settingsModal') renderSettings();
+        if (target === 'creatorModal') openCreator();
+        if (target === 'musicModal') renderMusicLibrary();
+      };
+    });
+
+    /* СЕКРЕТ */
     const secretStarBtn = $('secretStarBtn2');
     const secretProgress = $('secretStarProgress');
-    let holdInterval = null, holdStartTime = 0;
+    let holdInterval = null, holdStartTime = 0, lastHoldTouch = 0;
     const HOLD_DURATION = 1000;
 
     function startHold(e) {
       e.preventDefault();
+      if (e.type === 'touchstart') lastHoldTouch = Date.now();
+      else if (Date.now() - lastHoldTouch < 700) return;
       if (secretInProgress) return;
       holdStartTime = Date.now();
       secretStarBtn.classList.add('holding');
@@ -1180,7 +2424,7 @@
       holdInterval = setInterval(() => {
         const elapsed = Date.now() - holdStartTime;
         secretProgress.style.height = Math.min(100, (elapsed / HOLD_DURATION) * 100) + '%';
-        if (elapsed >= HOLD_DURATION) { endHold(); navigator.vibrate?.(30); startSecretSequence(); }
+        if (elapsed >= HOLD_DURATION) { endHold(); vib(30); startSecretSequence(); }
       }, 30);
     }
     function endHold() {
@@ -1221,7 +2465,7 @@
     function handleSecretClick(e) {
       e.preventDefault();
       secretClicks++;
-      navigator.vibrate?.(8);
+      vib(8);
       $('secretClickCounter').textContent = secretClicks + ' / 10';
       const g = document.createElement('div');
       g.className = 'aura-glow';
@@ -1230,14 +2474,13 @@
       const rgb = auraRgb();
       g.style.background = `radial-gradient(circle, rgba(${rgb},.25), rgba(${rgb},.08) 45%, transparent 75%)`;
       $('secretAuraWrap').appendChild(g);
-      setTimeout(() => g.remove(), 850);
+      setTimeout(() => g.remove(), 1400);
       const counter = $('secretClickCounter');
       counter.style.transform = 'scale(1.2)';
       setTimeout(() => { counter.style.transform = 'scale(1)'; }, 150);
       if (secretClicks >= 10) setTimeout(() => { showScreen('menuScreen'); showCodePanel(); }, 500);
     }
-    $('secretStarBtn').addEventListener('click', handleSecretClick);
-    $('secretStarBtn').addEventListener('touchstart', (e) => { e.preventDefault(); handleSecretClick(e); }, { passive: false });
+    onTap($('secretStarBtn'), handleSecretClick);
 
     function showCodePanel() {
       $('codePanel').classList.remove('hidden');
@@ -1249,14 +2492,15 @@
       if ($('codeInput').value === '113456') {
         $('codePanel').classList.add('hidden');
         state.consoleUnlocked = true;
-        saveState();
+        saveState(); flushSave();
         secretInProgress = false;
         unlockConsole();
         showScreen('menuScreen');
+        maybeCheckAdmin();
       } else {
         $('codeError').classList.add('show');
         $('codeInput').value = '';
-        navigator.vibrate?.([50, 50, 50]);
+        vib([50, 50, 50]);
         setTimeout(() => $('codeError').classList.remove('show'), 2000);
       }
     }
@@ -1264,22 +2508,99 @@
     $('codeInput').addEventListener('input', () => { if ($('codeInput').value.length >= 6) checkCode(); });
     $('codeCancel').onclick = () => { $('codePanel').classList.add('hidden'); secretInProgress = false; showScreen('menuScreen'); };
 
-    /* ============ КОНСОЛЬ ============ */
-    const fab = $('consoleFab'), overlay = $('consoleOverlay'), logEl = $('consoleLog'), inputEl = $('consoleInput');
-    let isDragging = false, dragStartX, dragStartY, fabStartX, fabStartY;
+    function maybeCheckAdmin() {
+      if (state.consoleUnlocked && !state.adminVerified) startAdminVerify();
+    }
+    function startAdminVerify() {
+      const el = $('adminLoad');
+      el.classList.add('active');
+      const msgs = [
+        'Проверка занимает время... пожалуйста подождите',
+        'Проверяем статус администратора...',
+        'Подтверждение эксклюзивного доступа...',
+        'Синхронизация с QuadroOS...',
+        'Открываем радужный скин...',
+        'Почти готово... пожалуйста подождите'
+      ];
+      let mi = 0;
+      $('adminLoadText').textContent = msgs[0];
+      const rot = setInterval(() => {
+        mi = (mi + 1) % msgs.length;
+        const t = $('adminLoadText');
+        t.style.opacity = '0';
+        setTimeout(() => { t.textContent = msgs[mi]; t.style.opacity = '1'; }, 300);
+      }, 6000);
+      let elapsed = 0;
+      const iv = setInterval(() => {
+        elapsed += 0.1;
+        $('adminLoadPercent').textContent = Math.min(100, Math.floor((elapsed / 40) * 100)) + '%';
+        if (elapsed >= 40) {
+          clearInterval(iv); clearInterval(rot);
+          el.classList.remove('active');
+          grantAdmin();
+        }
+      }, 100);
+    }
+    function grantAdmin() {
+      state.adminVerified = true;
+      if (!state.unlockedSkins.includes('rainbow')) state.unlockedSkins.push('rainbow');
+      saveState(); flushSave();
+      const seq = ['ach_admin_verified', 'ach_rainbow', 'ach_rainbow_particles', 'ach_exclusive', 'ach_admin_elite'];
+      seq.forEach((id, i) => setTimeout(() => unlockAchievement(id), 800 + i * 3400));
+    }
 
+    /* КОНСОЛЬ + ОПТИМИЗИРОВАННОЕ ПЕРЕТАСКИВАНИЕ */
+    const fab = $('consoleFab'), overlay = $('consoleOverlay'), logEl = $('consoleLog'), inputEl = $('consoleInput');
+    let isDragging = false, dragStartX = 0, dragStartY = 0, fabX = 20, fabY = 0, fabRaf = null;
+
+    function positionFab() {
+      if (state.settings.fabY < 0) state.settings.fabY = window.innerHeight / 2;
+      fabX = state.settings.fabX; fabY = state.settings.fabY;
+      fab.style.transform = `translate3d(${fabX}px, ${fabY}px, 0)`;
+    }
+    function scheduleFab() {
+      if (fabRaf) return;
+      fabRaf = requestAnimationFrame(() => {
+        fabRaf = null;
+        fab.style.transform = `translate3d(${fabX}px, ${fabY}px, 0)`;
+      });
+    }
     function unlockConsole() {
       fab.classList.remove('hidden');
-      if (!fab.style.left) { fab.style.left = '20px'; fab.style.top = '50%'; }
+      positionFab();
     }
     function logLine(type, text) { const d = document.createElement('div'); d.className = `log-line log-${type}`; d.textContent = text; logEl.appendChild(d); logEl.scrollTop = logEl.scrollHeight; }
 
     fab.addEventListener('click', () => { if (!isDragging) { overlay.classList.remove('hidden'); inputEl.focus(); } });
     $('consoleClose').onclick = () => overlay.classList.add('hidden');
 
-    function onDragStart(e) { const p = e.touches ? e.touches[0] : e; isDragging = false; dragStartX = p.clientX; dragStartY = p.clientY; const r = fab.getBoundingClientRect(); fabStartX = r.left; fabStartY = r.top; document.addEventListener('mousemove', onDragMove); document.addEventListener('mouseup', onDragEnd); document.addEventListener('touchmove', onDragMove, { passive: false }); document.addEventListener('touchend', onDragEnd); }
-    function onDragMove(e) { e.preventDefault(); const p = e.touches ? e.touches[0] : e; const dx = p.clientX - dragStartX, dy = p.clientY - dragStartY; if (Math.abs(dx) > 5 || Math.abs(dy) > 5) isDragging = true; fab.style.left = Math.max(0, Math.min(window.innerWidth - 50, fabStartX + dx)) + 'px'; fab.style.top = Math.max(0, Math.min(window.innerHeight - 50, fabStartY + dy)) + 'px'; }
-    function onDragEnd() { document.removeEventListener('mousemove', onDragMove); document.removeEventListener('mouseup', onDragEnd); document.removeEventListener('touchmove', onDragMove); document.removeEventListener('touchend', onDragEnd); setTimeout(() => { isDragging = false; }, 50); }
+    function onDragStart(e) {
+      const p = e.touches ? e.touches[0] : e;
+      isDragging = false;
+      dragStartX = p.clientX; dragStartY = p.clientY;
+      document.addEventListener('mousemove', onDragMove);
+      document.addEventListener('mouseup', onDragEnd);
+      document.addEventListener('touchmove', onDragMove, { passive: false });
+      document.addEventListener('touchend', onDragEnd);
+    }
+    function onDragMove(e) {
+      if (e.cancelable) e.preventDefault();
+      const p = e.touches ? e.touches[0] : e;
+      const dx = p.clientX - dragStartX, dy = p.clientY - dragStartY;
+      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) isDragging = true;
+      fabX = Math.max(0, Math.min(window.innerWidth - 50, state.settings.fabX + dx));
+      fabY = Math.max(0, Math.min(window.innerHeight - 50, state.settings.fabY + dy));
+      scheduleFab();
+    }
+    function onDragEnd() {
+      document.removeEventListener('mousemove', onDragMove);
+      document.removeEventListener('mouseup', onDragEnd);
+      document.removeEventListener('touchmove', onDragMove);
+      document.removeEventListener('touchend', onDragEnd);
+      state.settings.fabX = fabX; state.settings.fabY = fabY;
+      saveState();
+      setTimeout(() => { isDragging = false; }, 50);
+    }
     fab.addEventListener('mousedown', onDragStart);
     fab.addEventListener('touchstart', onDragStart, { passive: false });
 
@@ -1291,14 +2612,24 @@
       const parts = cmd.split(' '), c = parts[0], arg = parts.slice(1).join(' ');
       switch(c) {
         case 'help':
-          logLine('info', 'help · stats · about · set taps|exp|color|skin · add exp|coins <n> · unlock all|skins|ach <id> · reset · godmode · fps · mute · quality <q> · hearts · custom aura|particle|shape|reset · clear');
+          logLine('info', 'help · stats · about · set taps|exp|coins|color|skin · add exp|coins <n> · unlock all|skins|ach <id> · reset · godmode · fps · mute · turbo · quality <q> · hearts · play <id|cosmos> · stop · custom aura|particle|shape|reset · clear');
           break;
-        case 'about': logLine('info', 'Неоновая звезда v4.1 «Сердца и Монеты» · QuadroOS FastFPS + AppStorage'); break;
-        case 'stats': logLine('ok', `Тапы: ${state.count} | EXP: ${state.exp} | Монеты: ${state.coins} | Ур: ${getLevelInfo(state.exp).level} | Комбо: ${state.maxCombo} | Сердец: ${state.stats.candies} | FPS: ${currentFps}`); break;
+        case 'about': logLine('info', 'Неоновая звезда v5.4 «QuadroOS GameMode» · QuadroOS FastFPS + FOS Engine + Visual Graphics'); break;
+        case 'stats': logLine('ok', `Тапы: ${state.count} | Всего: ${state.totalTapsAllTime} | EXP: ${state.exp} | Монеты: ${state.coins} | Ур: ${getLevelInfo(state.exp).level} | Комбо: ${state.maxCombo} | Треков: ${trackList().length} | FPS: ${currentFps}`); break;
         case 'fps': state.settings.showFps = !state.settings.showFps; saveState(); updateFpsBadge(); logLine('ok', `FPS: ${state.settings.showFps ? 'ВКЛ' : 'ВЫКЛ'}`); break;
         case 'mute': state.settings.muted = !state.settings.muted; saveState(); logLine('ok', `Звук: ${state.settings.muted ? 'ВЫКЛ' : 'ВКЛ'}`); break;
+        case 'turbo':
+          state.settings.quality = 'low'; state.settings.glowEffects = false; state.settings.blur = false; state.settings.stars = false; state.settings.anims = false; state.settings.particleSave = true;
+          saveState(); applyPerf(); logLine('ok', 'Турбо-режим включён');
+          break;
+        case 'play':
+          if (arg === 'cosmos') { playTrack('cosmos'); logLine('ok', 'Играет: Космос'); }
+          else if (getMeta(arg)) { playTrack(arg); logLine('ok', 'Играет: ' + getMeta(arg).name); }
+          else logLine('err', 'play <id трека|cosmos>');
+          break;
+        case 'stop': pauseMusic(); logLine('ok', 'Музыка остановлена'); break;
         case 'quality':
-          if (['low','medium','high','recommended'].includes(arg)) { state.settings.quality = arg; saveState(); applyQuality(); renderSettings(); logLine('ok', 'Качество: ' + arg); }
+          if (['low','medium','high','recommended'].includes(arg)) { state.settings.quality = arg; saveState(); applyPerf(); logLine('ok', 'Качество: ' + arg); }
           else logLine('err', 'quality low|medium|high|recommended');
           break;
         case 'hearts': case 'candy': spawnHeartRain(); logLine('ok', 'Дождь сердец заспавнен'); break;
@@ -1312,12 +2643,12 @@
           else if (parts[1] === 'exp' && !isNaN(parts[2])) { state.exp = parseInt(parts[2]); updatePlayerBadge(); saveState(); logLine('ok', `EXP: ${state.exp}`); }
           else if (parts[1] === 'coins' && !isNaN(parts[2])) { state.coins = parseInt(parts[2]); updateCoins(true); saveState(); logLine('ok', `Монеты: ${state.coins}`); }
           else if (parts[1] === 'color' && /^#[0-9a-f]{6}$/i.test(parts[2])) { setColor(parts[2]); saveState(); logLine('ok', `Цвет: ${parts[2]}`); }
-          else if (parts[1] === 'skin') { const sk = SKINS.find(s => s.id === parts[2]); if (sk && (state.unlockedSkins.includes(sk.id) || sk.unlocked)) { applySkin(sk.id); logLine('ok', 'Скин: ' + sk.id); } else logLine('err', 'Скин недоступен'); }
+          else if (parts[1] === 'skin') { const sk = SKINS.find(s => s.id === parts[2]); if (sk && (state.unlockedSkins.includes(sk.id) || sk.unlocked) && (!sk.admin || state.consoleUnlocked)) { applySkin(sk.id); logLine('ok', 'Скин: ' + sk.id); } else logLine('err', 'Скин недоступен'); }
           else logLine('err', 'set taps|exp|coins|color|skin <значение>');
           break;
         case 'unlock':
-          if (arg === 'all') { Object.keys(ACHIEVEMENTS).forEach(id => state.achievements[id] = Date.now()); saveState(); logLine('ok', 'Все достижения'); }
-          else if (arg === 'skins') { state.unlockedSkins = ['newbie','crystal','nebula','gold']; saveState(); logLine('ok', 'Все скины разблокированы'); }
+          if (arg === 'all') { Object.keys(ACHIEVEMENTS).forEach(id => { if (!ACHIEVEMENTS[id].admin || state.consoleUnlocked) state.achievements[id] = Date.now(); }); saveState(); logLine('ok', 'Все достижения'); }
+          else if (arg === 'skins') { state.unlockedSkins = ['newbie','crystal','nebula','gold','starry']; if (state.consoleUnlocked) state.unlockedSkins.push('rainbow'); saveState(); logLine('ok', 'Скины разблокированы'); }
           else if (parts[1] === 'ach' && ACHIEVEMENTS[parts[2]]) { unlockAchievement(parts[2]); logLine('ok', 'Достижение: ' + parts[2]); }
           else logLine('err', 'unlock all|skins|ach <id>');
           break;
@@ -1327,63 +2658,160 @@
             if (val === 'reset') state.custom.aura = null;
             else if (/^#[0-9a-f]{6}$/i.test(val)) state.custom.aura = val;
             else { logLine('err', 'custom aura <#hex|reset>'); break; }
-            applyCustom(); unlockAchievement('creator'); saveState(); logLine('ok', 'Аура: ' + (state.custom.aura || 'авто'));
+            applyCustom(); saveState(); logLine('ok', 'Аура: ' + (state.custom.aura || 'авто'));
           } else if (sub === 'particle') {
-            if (['auto','spark','shard','star','heart','none'].includes(val)) { state.custom.particle = val; unlockAchievement('creator'); saveState(); logLine('ok', 'Частицы: ' + val); }
-            else logLine('err', 'custom particle auto|spark|shard|star|heart|none');
+            if (PARTICLES.includes(val)) { state.custom.particle = val; saveState(); logLine('ok', 'Частицы: ' + val); }
+            else logLine('err', 'custom particle <тип|auto|reset>');
           } else if (sub === 'shape') {
             if (val === 'reset') state.custom.shape = 'classic';
             else if (SHAPES[val]) state.custom.shape = val;
-            else { logLine('err', 'custom shape classic|crystal|spike|round|heart|reset'); break; }
-            applyCustom(); unlockAchievement('creator'); saveState(); logLine('ok', 'Форма: ' + state.custom.shape);
+            else { logLine('err', 'custom shape <имя|reset>'); break; }
+            applyCustom(); saveState(); logLine('ok', 'Форма: ' + state.custom.shape);
           } else if (sub === 'reset') {
             state.custom = { aura: null, particle: 'auto', shape: 'classic' };
             applyCustom(); saveState(); logLine('ok', 'Кастомизация сброшена');
           } else logLine('err', 'custom aura|particle|shape|reset');
           break;
-        case 'reset': state.count = 0; state.exp = 0; state.coins = 0; state.achievements = {}; state.racesCompleted = {}; state.unlockedSkins = ['newbie']; state.selectedSkin = 'newbie'; state.maxCombo = 0; state.totalTapsAllTime = 0; state.stats = { candies: 0, questsDone: 0, racesWon: 0 }; saveState(); updateDisplay(false); updatePlayerBadge(); updateCoins(false); logLine('ok', 'Полный сброс'); break;
+        case 'reset': state.count = 0; state.exp = 0; state.coins = 0; state.achievements = {}; state.racesCompleted = {}; state.unlockedSkins = state.consoleUnlocked ? ['newbie','rainbow'] : ['newbie']; state.selectedSkin = 'newbie'; state.maxCombo = 0; state.totalTapsAllTime = 0; state.customSkins = []; state.stats = { candies: 0, questsDone: 0, racesWon: 0 }; saveState(); flushSave(); updateDisplay(false); updatePlayerBadge(); updateCoins(false); logLine('ok', 'Полный сброс'); break;
         case 'godmode': godMode = !godMode; logLine('ok', `Режим бога: ${godMode ? 'ВКЛ' : 'ВЫКЛ'}`); break;
         case 'clear': logEl.innerHTML = ''; break;
         default: logLine('err', `Неизвестно: ${c}`);
       }
     }
 
-    /* ============ ЧАСТИЦЫ ============ */
+    /* ЧАСТИЦЫ с лимитом */
     function spawnParticles(wrap, rgbStr, type, count) {
       if (type === 'none') return;
+      if (state.settings.particleSave) count = Math.max(1, Math.round(count * 0.5));
       for (let i = 0; i < count; i++) {
+        if (activeParticles >= MAX_PARTICLES) return;
+        let color = rgbStr;
+        if (type === 'rainbow') color = hslRgbStr(Math.floor(Math.random() * 360));
         const el = document.createElement('div');
         el.className = 'shard';
+        el.style.opacity = '0';
+        activeParticles++;
         const angle = Math.random() * Math.PI * 2;
-        const dist = 50 + Math.random() * 70;
+        const dist = 40 + Math.random() * 50;
         const size = 5 + Math.random() * 7;
+        const glow = resolvedQuality.glow ? `0 0 10px rgba(${color},.9)` : 'none';
+        const dur = 1200 + Math.random() * 600;
+        let kf = [];
+        const drift = (mult) => [
+          { transform: 'translate(-50%,-50%) scale(.6) rotate(0deg)', opacity: 0 },
+          { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.4*mult}px), calc(-50% + ${Math.sin(angle)*dist*0.4*mult}px)) scale(1) rotate(90deg)`, opacity: .95, offset: .35 },
+          { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*mult}px), calc(-50% + ${Math.sin(angle)*dist*mult - 14}px)) scale(.2) rotate(180deg)`, opacity: 0 }
+        ];
         if (type === 'shard') {
           el.style.width = size + 'px'; el.style.height = size + 'px';
-          el.style.background = `rgba(${rgbStr},.8)`;
+          el.style.background = `rgba(${color},.8)`;
           el.style.clipPath = 'polygon(50% 0%,100% 50%,50% 100%,0% 50%)';
-          el.style.boxShadow = resolvedQuality.glow ? `0 0 10px rgba(${rgbStr},.8)` : 'none';
+          el.style.boxShadow = glow;
+          kf = drift(1);
         } else if (type === 'star') {
           el.style.width = size + 7 + 'px'; el.style.height = size + 7 + 'px';
-          el.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="rgba(${rgbStr},.9)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+          el.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="rgba(${color},.9)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+          kf = [
+            { transform: 'translate(-50%,-50%) rotate(0deg) scale(.5)', opacity: 0 },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.5}px), calc(-50% + ${Math.sin(angle)*dist*0.5}px)) rotate(120deg) scale(1.1)`, opacity: .95, offset: .5 },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist - 18}px)) rotate(240deg) scale(.3)`, opacity: 0 }
+          ];
         } else if (type === 'heart') {
           el.style.width = size + 7 + 'px'; el.style.height = size + 7 + 'px';
-          el.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="rgba(${rgbStr},.85)"><path d="M12 21s-8-4.5-8-11a4 4 0 0 1 8-2 4 4 0 0 1 8 2c0 6.5-8 11-8 11z"/></svg>`;
+          el.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="rgba(${color},.85)"><path d="M12 21s-8-4.5-8-11a4 4 0 0 1 8-2 4 4 0 0 1 8 2c0 6.5-8 11-8 11z"/></svg>`;
+          kf = [
+            { transform: 'translate(-50%,-50%) scale(.6)', opacity: 0 },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.4}px), calc(-50% + ${Math.sin(angle)*dist*0.4 - 16}px)) scale(1.15)`, opacity: .95, offset: .45 },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.8}px), calc(-50% + ${Math.sin(angle)*dist*0.8 - 34}px)) scale(.4)`, opacity: 0 }
+          ];
+        } else if (type === 'square') {
+          el.style.width = size + 'px'; el.style.height = size + 'px';
+          el.style.background = `rgba(${color},.85)`;
+          el.style.boxShadow = glow;
+          kf = [
+            { transform: 'translate(-50%,-50%) rotate(0deg) scale(.6)', opacity: 0 },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.5}px), calc(-50% + ${Math.sin(angle)*dist*0.5}px)) rotate(270deg) scale(1)`, opacity: .9, offset: .5 },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) rotate(540deg) scale(.2)`, opacity: 0 }
+          ];
+        } else if (type === 'tri') {
+          el.style.width = size + 2 + 'px'; el.style.height = size + 2 + 'px';
+          el.style.background = `rgba(${color},.85)`;
+          el.style.clipPath = 'polygon(50% 0%,100% 100%,0% 100%)';
+          el.style.boxShadow = glow;
+          kf = drift(-1);
+        } else if (type === 'ring') {
+          el.style.width = size + 6 + 'px'; el.style.height = size + 6 + 'px';
+          el.style.border = `2px solid rgba(${color},.9)`;
+          el.style.borderRadius = '50%';
+          el.style.boxShadow = glow;
+          kf = [
+            { transform: 'translate(-50%,-50%) scale(.3)', opacity: 0 },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.5}px), calc(-50% + ${Math.sin(angle)*dist*0.5}px)) scale(1)`, opacity: .9, offset: .5 },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) scale(1.5)`, opacity: 0 }
+          ];
+        } else if (type === 'note') {
+          el.style.width = size + 8 + 'px'; el.style.height = size + 8 + 'px';
+          el.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="rgba(${color},.9)" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`;
+          kf = [
+            { transform: 'translate(-50%,-50%) rotate(-10deg) scale(.6)', opacity: 0 },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.4}px), calc(-50% + ${Math.sin(angle)*dist*0.4 - 20}px)) rotate(8deg) scale(1)`, opacity: .95, offset: .5 },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.7}px), calc(-50% + ${Math.sin(angle)*dist*0.7 - 40}px)) rotate(-8deg) scale(.4)`, opacity: 0 }
+          ];
+        } else if (type === 'diamond') {
+          el.style.width = size + 'px'; el.style.height = size + 'px';
+          el.style.background = `rgba(${color},.85)`;
+          el.style.clipPath = 'polygon(50% 0%,100% 50%,50% 100%,0% 50%)';
+          el.style.boxShadow = glow;
+          kf = drift(1.2);
+        } else if (type === 'cross') {
+          el.style.width = size + 2 + 'px'; el.style.height = size + 2 + 'px';
+          el.style.background = `rgba(${color},.85)`;
+          el.style.clipPath = 'polygon(35% 0,65% 0,65% 35%,100% 35%,100% 65%,65% 65%,65% 100%,35% 100%,35% 65%,0 65%,0 35%,35% 35%)';
+          el.style.boxShadow = glow;
+          kf = drift(0.9);
+        } else if (type === 'sparkle4') {
+          el.style.width = size + 8 + 'px'; el.style.height = size + 8 + 'px';
+          el.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="rgba(${color},.9)"><path d="M12 2l2 8 8 2-8 2-2 8-2-8-8-2 8-2z"/></svg>`;
+          kf = [
+            { transform: 'translate(-50%,-50%) scale(.3) rotate(0deg)', opacity: 0 },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.5}px), calc(-50% + ${Math.sin(angle)*dist*0.5}px)) scale(1.2) rotate(90deg)`, opacity: 1, offset: .4 },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) scale(.2) rotate(180deg)`, opacity: 0 }
+          ];
+        } else if (type === 'bubble') {
+          el.style.width = size + 6 + 'px'; el.style.height = size + 6 + 'px';
+          el.style.border = `1.5px solid rgba(${color},.8)`;
+          el.style.background = `rgba(${color},.12)`;
+          el.style.borderRadius = '50%';
+          kf = [
+            { transform: 'translate(-50%,-50%) scale(.5)', opacity: 0 },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.4}px), calc(-50% + ${Math.sin(angle)*dist*0.4 - 24}px)) scale(1.1)`, opacity: .9, offset: .55 },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.7}px), calc(-50% + ${Math.sin(angle)*dist*0.7 - 48}px)) scale(1.3)`, opacity: 0 }
+          ];
+        } else if (type === 'rainbow') {
+          el.style.width = size + 'px'; el.style.height = size + 'px';
+          el.style.background = `rgba(${color},.9)`;
+          el.style.borderRadius = '50%';
+          el.style.boxShadow = glow;
+          kf = [
+            { transform: 'translate(-50%,-50%) scale(.6)', opacity: 0, filter: 'hue-rotate(0deg)' },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.5}px), calc(-50% + ${Math.sin(angle)*dist*0.5}px)) scale(1)`, opacity: .95, offset: .5, filter: 'hue-rotate(180deg)' },
+            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) scale(.2)`, opacity: 0, filter: 'hue-rotate(360deg)' }
+          ];
         } else {
           el.style.width = size + 'px'; el.style.height = size + 'px';
-          el.style.background = `rgba(${rgbStr},.9)`;
+          el.style.background = `rgba(${color},.9)`;
           el.style.borderRadius = '50%';
-          el.style.boxShadow = resolvedQuality.glow ? `0 0 10px rgba(${rgbStr},.9)` : 'none';
+          el.style.boxShadow = glow;
+          kf = drift(1);
         }
-        el.animate([
-          { transform: 'translate(-50%,-50%) scale(1)', opacity: 1 },
-          { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) scale(0)`, opacity: 0 }
-        ], { duration: 600 + Math.random() * 200, easing: 'ease-out' });
+        const anim = el.animate(kf, { duration: dur, easing: 'ease-out', fill: 'forwards' });
+        anim.onfinish = () => { activeParticles--; el.remove(); };
         wrap.appendChild(el);
-        setTimeout(() => el.remove(), 850);
+        setTimeout(() => { if (el.parentNode) { activeParticles--; el.remove(); } }, dur + 150);
       }
     }
 
-    /* ============ КОМБО ============ */
+    /* КОМБО */
     function startCombo() {
       comboCount++;
       clearTimeout(comboTimer);
@@ -1392,20 +2820,21 @@
       if (comboCount > sessionCombo) sessionCombo = comboCount;
       $('comboDisplay').classList.add('active');
       $('comboValue').textContent = `x${comboCount}`;
-      $('comboBarFill').style.width = '100%';
       clearInterval(comboBarInterval);
       let bw = 100;
-      comboBarInterval = setInterval(() => { bw -= 100 / (COMBO_WINDOW / 50); if (bw <= 0) { bw = 0; clearInterval(comboBarInterval); } $('comboBarFill').style.width = bw + '%'; }, 50);
+      $('comboBarFill').style.transform = `scaleX(1)`;
+      comboBarInterval = setInterval(() => { bw -= 100 / (COMBO_WINDOW / 50); if (bw <= 0) { bw = 0; clearInterval(comboBarInterval); } $('comboBarFill').style.transform = `scaleX(${bw/100})`; }, 50);
       if (comboCount === 25) unlockAchievement('combo_25');
       if (comboCount === 50) { unlockAchievement('combo_50'); addExp(20); }
       if (comboCount === 75) unlockAchievement('combo_75');
       if (comboCount === 100) unlockAchievement('combo_100');
+      if (comboCount === 1000) unlockAchievement('combo_1000');
       trackQuest('combo', comboCount);
-      if (comboCount % 25 === 0 && comboCount > 0) spawnParticles($('gameStarWrapper'), auraRgb(), 'spark', Math.min(6, resolvedQuality.tapParticles + 2));
+      if (comboCount % 25 === 0 && comboCount > 0) spawnParticles($('gameStarWrapper'), auraRgb(), 'spark', Math.min(5, resolvedQuality.tapParticles + 1));
     }
     function resetCombo() { comboCount = 0; clearTimeout(comboTimer); clearInterval(comboBarInterval); $('comboDisplay').classList.remove('active'); }
 
-    /* ============ СЕРДЕЧКИ (МУТАЦИЯ 0.1%) ============ */
+    /* СЕРДЕЧКИ */
     function spawnHeartRain() {
       showAchToast(null, 'Мутация!', 'Дождь сердец! Лови сердечки!');
       for (let i = 0; i < 3; i++) setTimeout(createHeart, i * 700);
@@ -1418,8 +2847,7 @@
       const dur = 6 + Math.random() * 3;
       c.style.animationDuration = dur + 's';
       c.innerHTML = `<div class="candy-sway">${HEART_SVG}</div>`;
-      c.addEventListener('click', () => catchHeart(c));
-      c.addEventListener('touchstart', (e) => { e.preventDefault(); catchHeart(c); }, { passive: false });
+      onTap(c, (e) => { e.preventDefault(); catchHeart(c); });
       layer.appendChild(c);
       setTimeout(() => { if (c.parentNode && !c.dataset.caught) c.remove(); }, dur * 1000);
     }
@@ -1430,15 +2858,15 @@
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       for (let i = 0; i < 8; i++) {
         const p = document.createElement('div');
-        p.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;width:6px;height:6px;border-radius:50%;background:#ff66b2;box-shadow:0 0 10px #ff66b2;z-index:12003;pointer-events:none;`;
+        p.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;width:6px;height:6px;border-radius:50%;background:#ff66b2;box-shadow:0 0 10px #ff66b2;z-index:12003;pointer-events:none;opacity:0;`;
         const angle = (i / 8) * Math.PI * 2;
         const dist = 50 + Math.random() * 40;
         p.animate([
           { transform: 'translate(-50%,-50%) scale(1)', opacity: 1 },
           { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) scale(0)`, opacity: 0 }
-        ], { duration: 600, easing: 'ease-out' });
+        ], { duration: 700, easing: 'ease-out', fill: 'forwards' });
         document.body.appendChild(p);
-        setTimeout(() => p.remove(), 650);
+        setTimeout(() => p.remove(), 800);
       }
       const f = document.createElement('div');
       f.className = 'exp-float';
@@ -1452,10 +2880,10 @@
       if (state.stats.candies === 1) unlockAchievement('candy_1');
       if (state.stats.candies >= 3) unlockAchievement('candy_3');
       saveState();
-      navigator.vibrate?.(40);
+      vib(40);
     }
 
-    /* ============ ДОСТИЖЕНИЯ ============ */
+    /* ДОСТИЖЕНИЯ */
     function unlockAchievement(id) {
       if (state.achievements[id]) return;
       state.achievements[id] = Date.now();
@@ -1465,10 +2893,9 @@
       checkCollector();
     }
     function checkCollector() {
-      const allSkins = ['newbie', 'crystal', 'nebula', 'gold'].every(s => state.unlockedSkins.includes(s));
-      const core = Object.keys(ACHIEVEMENTS).filter(id => id !== 'collector' && !id.startsWith('candy') && id !== 'creator');
+      const core = Object.keys(ACHIEVEMENTS).filter(id => id !== 'collector' && !ACHIEVEMENTS[id].admin && !ACHIEVEMENTS[id].beast && !id.startsWith('candy') && id !== 'creator' && id !== 'the_beast');
       const allCore = core.every(id => !!state.achievements[id]);
-      if (allSkins && allCore && !state.achievements['collector']) setTimeout(() => unlockAchievement('collector'), 1500);
+      if (allPublicSkins() && allCore && !state.achievements['collector']) setTimeout(() => unlockAchievement('collector'), 1500);
     }
     function showAchToast(id, customTitle, customDesc) {
       const t = $('achToast');
@@ -1491,52 +2918,192 @@
       bar.style.animation = 'achBar 3s linear forwards';
       if (achToastTimeout) clearTimeout(achToastTimeout);
       t.classList.add('show');
-      navigator.vibrate?.(30);
+      vib(30);
       achToastTimeout = setTimeout(() => { t.classList.remove('show'); }, 3000);
     }
     function buildAchGrid() {
       $('achievementsGrid').innerHTML = '';
       Object.keys(ACHIEVEMENTS).forEach(id => {
-        const a = ACHIEVEMENTS[id], u = !!state.achievements[id];
+        const a = ACHIEVEMENTS[id];
+        if (a.admin && !state.consoleUnlocked) return;
+        const u = !!state.achievements[id];
         const c = document.createElement('div');
-        c.className = `achievement-card ${u?'unlocked':'locked'} ${a.gold?'gold-ach':''}`;
+        c.className = `achievement-card ${u?'unlocked':'locked'} ${a.gold?'gold-ach':''} ${a.admin?'admin-ach':''} ${a.beast?'beast-ach':''}`;
         c.innerHTML = `<div class="achievement-icon">${icon(a.icon, 30)}</div><div class="achievement-name">${a.name}</div><div class="achievement-desc">${a.desc}</div>`;
         $('achievementsGrid').appendChild(c);
       });
     }
 
-    /* ============ ИГРА ============ */
+    /* КРЕАТОР */
+    function openCreator() {
+      showScreen('creatorModal');
+      renderCreatorOptions();
+      renderCreatorPreview();
+      renderCreatorList();
+      $('creatorName').value = creator.name;
+      $('creatorHex').value = creator.color;
+      const pp = $('creatorPhotoPreview');
+      if (creator.photo) { pp.src = creator.photo; pp.classList.remove('hidden-img'); }
+      else { pp.classList.add('hidden-img'); }
+    }
+    function renderCreatorOptions() {
+      const mk = (container, items, labels, key) => {
+        $(container).innerHTML = '';
+        items.forEach(it => {
+          const b = document.createElement('button');
+          b.className = 'creator-opt' + (creator[key] === it ? ' active' : '');
+          b.textContent = labels[it] || it;
+          b.onclick = () => { creator[key] = it; renderCreatorOptions(); renderCreatorPreview(); };
+          $(container).appendChild(b);
+        });
+      };
+      mk('creatorShapes', Object.keys(SHAPES), SHAPE_LABELS, 'shape');
+      mk('creatorParticles', PARTICLES, PARTICLE_LABELS, 'particle');
+      mk('creatorAuras', AURAS, AURA_LABELS, 'aura');
+      const sw = $('creatorSwatches');
+      sw.innerHTML = '';
+      SWATCHES.forEach(col => {
+        const s = document.createElement('div');
+        s.className = 'swatch' + (creator.color === col ? ' active' : '');
+        s.style.background = col;
+        s.onclick = () => { creator.color = col; $('creatorHex').value = col; renderCreatorOptions(); renderCreatorPreview(); };
+        sw.appendChild(s);
+      });
+    }
+    function renderCreatorPreview() {
+      const shape = $('creatorPreviewShape');
+      const btn = $('creatorPreviewBtn');
+      shape.setAttribute('points', SHAPES[creator.shape] || SHAPES.classic);
+      btn.style.color = creator.color;
+      shape.style.stroke = creator.color;
+      shape.style.fill = hexToRgba(creator.color, .15);
+      setAuraInline($('creatorAura'), creator.aura, creator.color);
+    }
+    $('creatorPreviewBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      spawnParticles($('creatorPreviewWrap'), hexToRgb(creator.color), creator.particle, 8);
+    });
+    $('colorWheel').addEventListener('click', (e) => {
+      const r = $('colorWheel').getBoundingClientRect();
+      const dx = e.clientX - (r.left + r.width / 2);
+      const dy = e.clientY - (r.top + r.height / 2);
+      let hue = Math.atan2(dy, dx) * 180 / Math.PI;
+      hue = (hue + 360) % 360;
+      creator.color = hslToHex(hue, 100, 55);
+      $('creatorHex').value = creator.color;
+      renderCreatorOptions(); renderCreatorPreview();
+    });
+    $('creatorHex').addEventListener('change', () => {
+      const v = $('creatorHex').value.trim();
+      if (/^#[0-9a-f]{6}$/i.test(v)) { creator.color = v; renderCreatorOptions(); renderCreatorPreview(); }
+      else $('creatorHex').value = creator.color;
+    });
+    $('creatorName').addEventListener('input', () => { creator.name = $('creatorName').value; });
+    $('creatorPhotoBtn').onclick = () => $('creatorPhotoInput').click();
+    $('creatorPhotoInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const S = 96;
+          canvas.width = S; canvas.height = S;
+          const ctx = canvas.getContext('2d');
+          const min = Math.min(img.width, img.height);
+          ctx.drawImage(img, (img.width - min) / 2, (img.height - min) / 2, min, min, 0, 0, S, S);
+          creator.photo = canvas.toDataURL('image/jpeg', 0.7);
+          const pp = $('creatorPhotoPreview');
+          pp.src = creator.photo; pp.classList.remove('hidden-img');
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+    $('creatorSave').onclick = () => {
+      const skin = {
+        id: 'c_' + Date.now(),
+        name: creator.name.trim() || 'Моя звезда',
+        shape: creator.shape, particle: creator.particle, aura: creator.aura,
+        color: creator.color, photo: creator.photo
+      };
+      if (!state.customSkins) state.customSkins = [];
+      state.customSkins.push(skin);
+      saveState();
+      unlockAchievement('creator_skin');
+      if (creator.photo) unlockAchievement('creator_photo');
+      trackQuest('use_creator', 1);
+      showAchToast(null, 'Скин сохранён!', `«${skin.name}» добавлен в коллекцию`);
+      renderCreatorList();
+      buildSkinsGrid();
+    };
+    function renderCreatorList() {
+      const list = $('creatorList');
+      list.innerHTML = '';
+      (state.customSkins || []).forEach(cs => {
+        const card = document.createElement('div');
+        card.className = 'creator-list-card' + (state.selectedSkin === cs.id ? ' selected' : '');
+        card.innerHTML = `
+          ${cs.photo ? `<img src="${cs.photo}" alt="">` : `<div class="skin-color-dot" style="background:${cs.color};color:${cs.color};width:40px;height:40px;"></div>`}
+          <div class="creator-list-name">${cs.name}</div>
+        `;
+        card.onclick = () => { applySkin(cs.id); renderCreatorList(); };
+        list.appendChild(card);
+      });
+      if (!(state.customSkins || []).length) list.innerHTML = '<div style="font-size:11px;color:rgba(255,255,255,.35);">Пока нет своих скинов — создай первый!</div>';
+    }
+
+    /* ИГРА */
     function updateDisplay(anim) {
       $('tapNumber').textContent = state.count.toLocaleString('ru-RU');
       if (anim) { $('tapNumber').classList.remove('pop'); void $('tapNumber').offsetWidth; $('tapNumber').classList.add('pop'); }
     }
-    function initAudio() { if (!audioCtx) try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(_){} if (audioCtx?.state === 'suspended') audioCtx.resume(); }
-    function playSoftTap() {
-      if (!audioCtx || state.settings.muted) return;
-      try {
-        const n = audioCtx.currentTime, o = audioCtx.createOscillator(), g = audioCtx.createGain();
-        o.type = 'sine';
-        const baseFreq = 180 + Math.random() * 60 + (comboCount > 10 ? Math.min(comboCount, 50) : 0);
-        o.frequency.setValueAtTime(baseFreq, n);
-        o.frequency.exponentialRampToValueAtTime(90, n + .14);
-        g.gain.setValueAtTime(.0001, n);
-        g.gain.exponentialRampToValueAtTime(.06, n + .008);
-        g.gain.exponentialRampToValueAtTime(.0001, n + .18);
-        o.connect(g); g.connect(audioCtx.destination); o.start(n); o.stop(n + .2);
-      } catch(_){}
-    }
     function spawnGlow(wrap) {
       if (!resolvedQuality.glow) return;
+      if (wrap.childElementCount > 6) return;
       const g = document.createElement('div'); g.className = 'aura-glow';
       const s = 200 + Math.random() * 120; g.style.width = s+'px'; g.style.height = s+'px';
       const rgb = auraRgb();
       g.style.background = `radial-gradient(circle, rgba(${rgb},.25), rgba(${rgb},.08) 45%, transparent 75%)`;
-      wrap.appendChild(g); setTimeout(() => g.remove(), 850);
+      wrap.appendChild(g); setTimeout(() => g.remove(), 1400);
     }
     function spawnSkinAura(wrap) {
       const skin = state.selectedSkin;
       if (skin === 'none') return;
       const limit = resolvedQuality.tapParticles;
+      if (skin === 'rainbow') {
+        spawnParticles(wrap, '', 'rainbow', limit + 2);
+        if (resolvedQuality.glow) {
+          const g = document.createElement('div'); g.className = 'aura-glow';
+          g.style.width = '170px'; g.style.height = '170px';
+          g.style.background = 'conic-gradient(from 0deg, rgba(255,59,59,.25), rgba(255,233,59,.25), rgba(84,255,59,.25), rgba(59,212,255,.25), rgba(122,59,255,.25), rgba(255,59,59,.25))';
+          wrap.appendChild(g); setTimeout(() => g.remove(), 1400);
+        }
+        return;
+      }
+      if (skin === 'starry') {
+        spawnParticles(wrap, '255,243,176', 'star', limit + 3);
+        if (resolvedQuality.glow) {
+          const g = document.createElement('div'); g.className = 'aura-glow';
+          g.style.width = '170px'; g.style.height = '170px';
+          g.style.background = 'radial-gradient(circle, rgba(255,243,176,.35), rgba(255,243,176,.1) 50%, transparent 75%)';
+          wrap.appendChild(g); setTimeout(() => g.remove(), 1400);
+        }
+        return;
+      }
+      if (appliedCustom) {
+        const rgb = hexToRgb(appliedCustom.color);
+        const type = state.custom.particle !== 'auto' ? state.custom.particle : appliedCustom.particle;
+        spawnParticles(wrap, rgb, type, limit + 1);
+        if (resolvedQuality.glow) {
+          const g = document.createElement('div'); g.className = 'aura-glow';
+          g.style.width = '150px'; g.style.height = '150px';
+          g.style.background = `radial-gradient(circle, rgba(${rgb},.35), transparent 70%)`;
+          wrap.appendChild(g); setTimeout(() => g.remove(), 1400);
+        }
+        return;
+      }
       const type = state.custom.particle !== 'auto' ? state.custom.particle : (skin === 'crystal' ? 'shard' : (skin === 'nebula' ? 'star' : 'spark'));
       if (skin === 'newbie') {
         const rgb = state.custom.aura ? hexToRgb(state.custom.aura) : '255,34,119';
@@ -1544,7 +3111,7 @@
           const g = document.createElement('div'); g.className = 'aura-glow';
           const s = 180 + Math.random() * 80; g.style.width = s+'px'; g.style.height = s+'px';
           g.style.background = `radial-gradient(circle, rgba(${rgb},.3), rgba(${rgb},.08) 45%, transparent 75%)`;
-          wrap.appendChild(g); setTimeout(() => g.remove(), 850);
+          wrap.appendChild(g); setTimeout(() => g.remove(), 1400);
         }
         spawnParticles(wrap, rgb, type, limit);
       } else if (skin === 'crystal') {
@@ -1554,7 +3121,7 @@
           const flash = document.createElement('div'); flash.className = 'aura-glow';
           flash.style.width = '140px'; flash.style.height = '140px';
           flash.style.background = `radial-gradient(circle, rgba(${rgb},.4), transparent 70%)`;
-          wrap.appendChild(flash); setTimeout(() => flash.remove(), 850);
+          wrap.appendChild(flash); setTimeout(() => flash.remove(), 1400);
         }
       } else if (skin === 'nebula') {
         const rgb = state.custom.aura ? hexToRgb(state.custom.aura) : '255,102,255';
@@ -1563,7 +3130,7 @@
           const flash = document.createElement('div'); flash.className = 'aura-glow';
           flash.style.width = '160px'; flash.style.height = '160px';
           flash.style.background = `radial-gradient(circle, rgba(${rgb},.35), rgba(${rgb},.1) 50%, transparent 75%)`;
-          wrap.appendChild(flash); setTimeout(() => flash.remove(), 850);
+          wrap.appendChild(flash); setTimeout(() => flash.remove(), 1400);
         }
       } else if (skin === 'gold') {
         const rgb = state.custom.aura ? hexToRgb(state.custom.aura) : '255,215,0';
@@ -1576,10 +3143,12 @@
       if (state.count >= 10000) unlockAchievement('taps_10000');
       if (state.count >= 50000) unlockAchievement('taps_50000');
       if (state.count >= 190000) unlockAchievement('taps_190000');
+      checkBeast();
     }
     function handleTap(e) {
       e.preventDefault();
-      initAudio(); playSoftTap();
+      initAudio();
+      playClick();
       spawnGlow($('auraWrap'));
       spawnSkinAura($('auraWrap'));
       state.count++; state.totalTapsAllTime++;
@@ -1589,22 +3158,21 @@
       checkTapAchievements();
       checkSkinUnlocks();
       trackQuest('taps', 1);
-      navigator.vibrate?.(6);
+      vib(6);
       if (state.count === 1 && $('hint')) { $('hint').style.opacity = '0'; $('hint').style.transition = 'opacity .6s'; }
       if (state.goldSelected && Math.random() < 0.25) spawnGoldIcon();
       if (Math.random() < 0.001) spawnHeartRain();
     }
-    $('gameStarBtn').addEventListener('click', handleTap);
-    $('gameStarBtn').addEventListener('touchstart', handleTap, { passive: false });
+    onTap($('gameStarBtn'), handleTap);
 
     $('resetButton').onclick = (e) => {
-      e.preventDefault(); state.count = 0; saveState(); updateDisplay(true); resetCombo(); navigator.vibrate?.(15);
+      e.preventDefault(); state.count = 0; saveState(); updateDisplay(true); resetCombo(); vib(15);
       $('gameStarBtn').style.transition = 'transform .4s var(--ease)';
       $('gameStarBtn').style.transform = 'scale(.85) rotate(-15deg)';
       setTimeout(() => { $('gameStarBtn').style.transform = ''; setTimeout(() => { $('gameStarBtn').style.transition = ''; }, 400); }, 120);
     };
 
-    /* ============ ГОНКИ ============ */
+    /* ГОНКИ */
     function buildDiffGrid() {
       $('difficultyGrid').innerHTML = '';
       DIFFICULTIES.forEach(d => {
@@ -1638,11 +3206,17 @@
           state.racesCompleted[currentDiff.id] = (state.racesCompleted[currentDiff.id]||0)+1;
           state.stats.racesWon++;
           addCoins(10);
+          if (currentDiff.id === 'hard' && !state.unlockedSkins.includes('starry')) {
+            state.unlockedSkins.push('starry');
+            unlockAchievement('skin_race_starry');
+          }
           if (DIFFICULTIES.every(d => (state.racesCompleted[d.id]||0) >= 1)) unlockAchievement('race_all');
           saveState();
           $('raceResult').className = 'race-result success';
           $('raceResultTitle').innerHTML = `${icon('party', 28)} Победа!`;
-          $('raceResultDescription').textContent = `Ты прошёл "${currentDiff.name}" и получил "${ACHIEVEMENTS[currentDiff.achievementId].name}"! +10 монет`;
+          $('raceResultDescription').textContent = currentDiff.id === 'hard'
+            ? `Ты прошёл "${currentDiff.name}"! Получен скин «Звёздный» и достижение!`
+            : `Ты прошёл "${currentDiff.name}" и получил "${ACHIEVEMENTS[currentDiff.achievementId].name}"! +10 монет`;
         } else {
           $('raceResult').className = 'race-result failed';
           $('raceResultTitle').innerHTML = `${icon('brokenHeart', 28)} Не хватило`;
@@ -1654,22 +3228,21 @@
     }
     function handleRaceTap(e) {
       e.preventDefault(); if (!raceActive) return;
-      initAudio(); playSoftTap(); spawnGlow($('raceAuraWrap'));
-      raceTaps++; $('raceTapNumber').textContent = raceTaps; navigator.vibrate?.(6);
+      initAudio(); playClick(); spawnGlow($('raceAuraWrap'));
+      raceTaps++; $('raceTapNumber').textContent = raceTaps; vib(6);
       if (raceTaps >= raceTargetCount) endRace(true);
     }
-    $('raceStarBtn').addEventListener('click', handleRaceTap);
-    $('raceStarBtn').addEventListener('touchstart', handleRaceTap, { passive: false });
+    onTap($('raceStarBtn'), handleRaceTap);
 
-    /* ============ ФОН ============ */
+    /* ФОН */
     function createBgStars(count) {
       const container = $('starsBg');
       container.innerHTML = '';
-      const n = count || 70;
+      const n = count || 0;
       for (let i = 0; i < n; i++) {
         const s = document.createElement('div'); s.className = 'bg-star';
         s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%';
-        const sz = 1.5+Math.random()*2.5; s.style.width = sz+'px'; s.style.height = sz+'px';
+        const sz = 2+Math.random()*3; s.style.width = sz+'px'; s.style.height = sz+'px';
         s.style.setProperty('--duration', `${2.5+Math.random()*4}s`);
         s.style.setProperty('--delay', `${Math.random()*5}s`);
         s.style.setProperty('--opacity', `${.25+Math.random()*.6}`);
@@ -1677,7 +3250,7 @@
       }
     }
 
-    /* ============ ЗАГРУЗКА ============ */
+    /* ЗАГРУЗКА */
     function startLoading() {
       const total = 70;
       let elapsed = 0, finished = false;
@@ -1708,14 +3281,14 @@
         clearInterval(interval); clearInterval(factInterval);
         const ls = $('loadScreen');
         ls.classList.add('done');
-        setTimeout(() => { ls.style.display = 'none'; showScreen('menuScreen'); checkDailyBonus(); }, 800);
+        setTimeout(() => { ls.style.display = 'none'; showScreen('menuScreen'); checkDailyBonus(); maybeCheckAdmin(); }, 800);
       }
       const skipBtn = $('loadSkip');
       skipBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); finishLoading(); });
       skipBtn.addEventListener('touchend', (e) => { e.preventDefault(); finishLoading(); }, { passive: false });
     }
 
-    /* ============ СТАРТ ============ */
+    /* СТАРТ */
     async function init() {
       await loadState();
       if (state.unlockedSkins.includes('crystal') && !state.achievements.skin_buy_crystal) state.achievements.skin_buy_crystal = Date.now();
@@ -1727,12 +3300,12 @@
       updatePlayerBadge();
       updateCoins(false);
       applySkin(state.selectedSkin || 'newbie');
-      applyCustom();
-      applyQuality();
+      applyPerf();
       generateDailyQuests();
       if (state.consoleUnlocked) unlockConsole();
       if (!state.achievements['skin_newbie']) unlockAchievement('skin_newbie');
       updateFpsBadge();
+      updatePlayerUI();
       document.addEventListener('touchstart', initAudio, { once: true });
       document.addEventListener('mousedown', initAudio, { once: true });
       startLoading();
@@ -1742,4 +3315,4 @@
   })();
   </script>
 </body>
-    </html>
+</html>
