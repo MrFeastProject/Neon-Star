@@ -7,7 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,8 61,38 94,38 67,56 77,86 50,68 23,86 33,56 6,38 39,38' fill='%23b380ff' stroke='%23fff' stroke-width='2' stroke-linejoin='round'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;900&family=Manrope:wght@300;400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&family=Manrope:wght@300;400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -15,10 +15,9 @@
       --neon2: #b380ff; --neon2-rgb: 179, 128, 255;
       --bg: #06030f;
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
-      --font-head: "Unbounded", sans-serif;
+      --font-head: "Outfit", sans-serif;
       --font-body: "Manrope", sans-serif;
       --font-pixel: "Press Start 2P", monospace;
-      --visual-filter: none;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; outline: none; }
     button { border: none; background: none; cursor: pointer; font-family: inherit; }
@@ -31,11 +30,8 @@
         var(--bg);
       color: #fff; font-family: var(--font-body); touch-action: manipulation;
       transition: background 1s var(--ease);
-      filter: var(--visual-filter);
     }
-    .icon-svg { display: inline-block; vertical-align: middle; flex-shrink: 0; }
 
-    /* ОПТИМИЗАЦИЯ: отключение стекла / звёзд / анимаций */
     body.no-blur * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
     body.no-stars .stars-bg { display: none; }
     body.no-anim .menu-button::before,
@@ -47,12 +43,12 @@
     body.no-anim .load-bar,
     body.no-anim .game-btn-small,
     body.no-anim .skin-aura { animation: none !important; }
-    body.no-anim .menu-button, body.no-anim .game-btn-small { transition: none !important; }
 
-    /* QuadroOS Visual Modes */
     body.visual-fps { filter: brightness(1.05) contrast(1.02); }
     body.visual-visualplus { filter: saturate(1.15) contrast(1.08) brightness(1.03); }
     body.visual-cinema { filter: saturate(1.1) contrast(1.05) brightness(0.98); }
+
+    .icon-svg { display: inline-block; vertical-align: middle; flex-shrink: 0; }
 
     #loadScreen { position: fixed; inset: 0; z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg); transition: opacity .8s var(--ease); }
     #loadScreen.done { opacity: 0; pointer-events: none; }
@@ -61,8 +57,8 @@
     .load-star svg { width: 100%; height: 100%; filter: drop-shadow(0 0 20px var(--neon)) drop-shadow(0 0 40px rgba(var(--neon-rgb), .5)); }
     .load-star polygon { fill: rgba(var(--neon-rgb), .2); stroke: var(--neon); stroke-width: 2; stroke-linejoin: round; }
     @keyframes loadSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .load-title { position: relative; font-family: var(--font-head); font-size: clamp(26px, 7vw, 44px); font-weight: 600; color: var(--neon); text-shadow: 0 0 20px rgba(var(--neon-rgb), .7); margin-bottom: 10px; letter-spacing: 3px; z-index: 2; text-align: center; }
-    .load-word { position: relative; font-family: var(--font-head); font-size: 11px; letter-spacing: 10px; text-transform: lowercase; color: rgba(255,255,255,.4); margin-bottom: 40px; z-index: 2; }
+    .load-title { position: relative; font-family: var(--font-head); font-size: clamp(30px, 8vw, 52px); font-weight: 700; color: var(--neon); text-shadow: 0 0 20px rgba(var(--neon-rgb), .7), 0 2px 0 rgba(var(--neon-rgb), .1); margin-bottom: 10px; letter-spacing: 1px; z-index: 2; text-align: center; }
+    .load-word { position: relative; font-family: var(--font-head); font-size: 12px; letter-spacing: 12px; text-transform: lowercase; color: rgba(255,255,255,.4); margin-bottom: 40px; z-index: 2; font-weight: 300; }
     .load-word span { display: inline-block; animation: loadDots 1.5s ease-in-out infinite; }
     .load-word span:nth-child(2) { animation-delay: .15s; } .load-word span:nth-child(3) { animation-delay: .3s; }
     .load-word span:nth-child(4) { animation-delay: .45s; } .load-word span:nth-child(5) { animation-delay: .6s; }
@@ -72,17 +68,17 @@
     .load-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--neon), var(--neon2), var(--neon)); background-size: 200% 100%; animation: loadBarShine 2s linear infinite; border-radius: 10px; box-shadow: 0 0 18px var(--neon); transition: width .25s linear; }
     @keyframes loadBarShine { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
     .load-stats { position: relative; display: flex; justify-content: space-between; align-items: center; width: min(320px, 85vw); margin-bottom: 24px; z-index: 2; }
-    .load-percent { font-family: var(--font-head); font-size: 18px; color: var(--neon); text-shadow: 0 0 12px rgba(var(--neon-rgb), .6); font-weight: 700; }
-    .load-timer { font-size: 12px; color: rgba(255,255,255,.4); letter-spacing: 1px; }
-    .load-fact { position: relative; font-size: 13px; color: rgba(255,255,255,.45); text-align: center; max-width: 320px; min-height: 44px; line-height: 1.6; transition: opacity .4s; z-index: 2; padding: 0 20px; font-weight: 500; }
-    .load-skip { position: relative; margin-top: 24px; font-family: var(--font-head); font-size: 10px; letter-spacing: 3px; color: rgba(255,255,255,.5); padding: 12px 28px; border: 1px solid rgba(255,255,255,.15); border-radius: 24px; transition: all .3s var(--ease); z-index: 3; font-weight: 500; }
+    .load-percent { font-family: var(--font-head); font-size: 18px; color: var(--neon); text-shadow: 0 0 12px rgba(var(--neon-rgb), .6); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .load-timer { font-size: 12px; color: rgba(255,255,255,.4); letter-spacing: 1px; font-weight: 400; }
+    .load-fact { position: relative; font-size: 13px; color: rgba(255,255,255,.45); text-align: center; max-width: 320px; min-height: 44px; line-height: 1.6; transition: opacity .4s; z-index: 2; padding: 0 20px; font-weight: 400; }
+    .load-skip { position: relative; margin-top: 24px; font-family: var(--font-head); font-size: 11px; letter-spacing: 3px; color: rgba(255,255,255,.5); padding: 12px 28px; border: 1px solid rgba(255,255,255,.15); border-radius: 24px; transition: all .3s var(--ease); z-index: 3; font-weight: 500; }
     .load-skip:hover { color: var(--neon); border-color: var(--neon); box-shadow: 0 0 20px rgba(var(--neon-rgb), .3); transform: translateY(-2px); }
 
     #adminLoad { position: fixed; inset: 0; z-index: 20001; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; background: rgba(3,1,9,.98); opacity: 0; pointer-events: none; transition: opacity .6s var(--ease); }
     #adminLoad.active { opacity: 1; pointer-events: auto; }
     .admin-spinner { width: 80px; height: 80px; border-radius: 50%; border: 4px solid rgba(255,255,255,.12); border-top-color: #fff; animation: secretSpin .9s linear infinite, hueSpin 3s linear infinite; box-shadow: 0 0 40px rgba(255,255,255,.15); }
     @keyframes hueSpin { to { filter: hue-rotate(360deg); } }
-    .admin-load-text { font-family: var(--font-head); font-size: 12px; font-weight: 500; letter-spacing: 2px; color: rgba(255,255,255,.75); text-align: center; max-width: 320px; line-height: 1.7; transition: opacity .3s; padding: 0 20px; }
+    .admin-load-text { font-family: var(--font-head); font-size: 12px; font-weight: 400; letter-spacing: 2px; color: rgba(255,255,255,.75); text-align: center; max-width: 320px; line-height: 1.7; transition: opacity .3s; padding: 0 20px; }
     .admin-load-percent { font-family: var(--font-head); font-size: 22px; font-weight: 700; background: linear-gradient(90deg,#ff3b3b,#ffe93b,#54ff3b,#3bd4ff,#7a3bff); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
     .fps-badge { position: fixed; top: 12px; right: 12px; z-index: 15000; padding: 5px 12px; border-radius: 10px; background: rgba(6,3,15,.7); border: 1px solid rgba(255,255,255,.08); font-family: var(--font-head); font-size: 11px; font-weight: 600; letter-spacing: 1px; pointer-events: none; display: none; align-items: center; gap: 6px; }
@@ -112,13 +108,13 @@
     .screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; transition: opacity .6s var(--ease), transform .6s var(--ease), visibility .6s; z-index: 10; }
     .screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; transform: scale(.96); }
 
-    .title { font-family: var(--font-head); font-size: clamp(30px, 6vw, 56px); font-weight: 600; line-height: 1.1; letter-spacing: 2px; color: var(--neon); text-shadow: 0 0 8px rgba(var(--neon-rgb), .75), 0 0 22px rgba(var(--neon-rgb), .55), 0 0 55px rgba(var(--neon-rgb), .28); margin-bottom: 10px; text-align: center; }
+    .title { font-family: var(--font-head); font-size: clamp(32px, 7vw, 60px); font-weight: 700; line-height: 1.05; letter-spacing: 1px; color: var(--neon); text-shadow: 0 0 8px rgba(var(--neon-rgb), .75), 0 0 22px rgba(var(--neon-rgb), .55), 0 0 55px rgba(var(--neon-rgb), .28); margin-bottom: 10px; text-align: center; }
     .title::after { content: ''; display: block; width: 140px; height: 2px; margin: 16px auto 0; background: linear-gradient(90deg, transparent, var(--neon), transparent); box-shadow: 0 0 14px var(--neon); border-radius: 2px; animation: lineGlow 3s ease-in-out infinite; }
     @keyframes lineGlow { 0%,100% { opacity: .6; transform: scaleX(.9); } 50% { opacity: 1; transform: scaleX(1.05); } }
-    .subtitle { color: rgba(255,255,255,.5); font-family: var(--font-head); font-size: 10px; font-weight: 400; letter-spacing: 8px; text-transform: lowercase; margin-bottom: 26px; }
+    .subtitle { color: rgba(255,255,255,.5); font-family: var(--font-head); font-size: 11px; font-weight: 300; letter-spacing: 8px; text-transform: lowercase; margin-bottom: 26px; }
 
     .player-badge { display: flex; align-items: center; gap: 14px; padding: 12px 26px; border: 1px solid rgba(var(--neon-rgb), .3); border-radius: 50px; background: linear-gradient(135deg, rgba(var(--neon-rgb), .1), rgba(var(--neon-rgb), .03)); backdrop-filter: blur(12px); margin-bottom: 28px; box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 6px 20px rgba(0,0,0,.25); }
-    .player-level { font-family: var(--font-head); font-size: 22px; font-weight: 700; color: var(--neon); text-shadow: 0 0 15px rgba(var(--neon-rgb), .6); }
+    .player-level { font-family: var(--font-head); font-size: 22px; font-weight: 700; color: var(--neon); text-shadow: 0 0 15px rgba(var(--neon-rgb), .6); font-variant-numeric: tabular-nums; }
     .player-info { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
     .player-title { font-family: var(--font-head); font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,.75); font-weight: 500; }
     .exp-bar { width: 130px; height: 4px; background: rgba(255,255,255,.08); border-radius: 4px; overflow: hidden; }
@@ -129,13 +125,13 @@
     @keyframes coinSpin { 0%,100% { transform: rotateY(0deg); } 50% { transform: rotateY(180deg); } }
 
     .menu-buttons { width: min(380px, 100%); display: flex; flex-direction: column; gap: 12px; }
-    .menu-button { position: relative; width: 100%; height: 56px; border: 1px solid rgba(var(--neon-rgb), .3); border-radius: 18px; background: linear-gradient(135deg, rgba(var(--neon-rgb), .08), rgba(255,255,255,.03)); backdrop-filter: blur(16px); color: rgba(255,255,255,.92); font-family: var(--font-head); font-size: 13px; font-weight: 500; letter-spacing: 1.5px; text-transform: lowercase; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 4px 15px rgba(0,0,0,.2); transition: transform .35s var(--ease), background .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease), color .35s var(--ease); }
+    .menu-button { position: relative; width: 100%; height: 56px; border: 1px solid rgba(var(--neon-rgb), .3); border-radius: 18px; background: linear-gradient(135deg, rgba(var(--neon-rgb), .08), rgba(255,255,255,.03)); backdrop-filter: blur(16px); color: rgba(255,255,255,.92); font-family: var(--font-head); font-size: 14px; font-weight: 500; letter-spacing: 1.5px; text-transform: lowercase; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 4px 15px rgba(0,0,0,.2); transition: transform .35s var(--ease), background .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease), color .35s var(--ease); }
     .menu-button::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); transition: left .6s var(--ease); }
     .menu-button:hover::before { left: 100%; }
     .menu-button:hover { transform: translateY(-3px); color: #fff; border-color: rgba(var(--neon-rgb), .8); background: linear-gradient(135deg, rgba(var(--neon-rgb), .15), rgba(255,255,255,.05)); box-shadow: 0 0 20px rgba(var(--neon-rgb), .25), 0 10px 30px rgba(0,0,0,.3), inset 0 0 20px rgba(var(--neon-rgb), .05); }
     .menu-button:active { transform: translateY(-1px) scale(.98); }
     .menu-button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: .85; }
-    .menu-button.primary { height: 62px; color: #fff; font-size: 14px; border-color: rgba(var(--neon-rgb), .6); background: linear-gradient(135deg, rgba(var(--neon-rgb), .22), rgba(var(--neon-rgb), .05)); box-shadow: 0 0 25px rgba(var(--neon-rgb), .2), inset 0 0 20px rgba(var(--neon-rgb), .08); }
+    .menu-button.primary { height: 62px; color: #fff; font-size: 15px; border-color: rgba(var(--neon-rgb), .6); background: linear-gradient(135deg, rgba(var(--neon-rgb), .22), rgba(var(--neon-rgb), .05)); box-shadow: 0 0 25px rgba(var(--neon-rgb), .2), inset 0 0 20px rgba(var(--neon-rgb), .08); }
     .menu-button.hidden { display: none; }
     .menu-button.creator-btn { border-color: rgba(255,120,255,.5); background: linear-gradient(135deg, rgba(255,60,170,.14), rgba(60,200,255,.10)); color: #fff; }
     .menu-button.creator-btn:hover { border-color: #ff78ff; box-shadow: 0 0 25px rgba(255,120,255,.35); }
@@ -145,15 +141,15 @@
     .menu-row .menu-button { flex: 1; }
 
     .game-header { position: absolute; top: 0; left: 0; right: 0; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 20; }
-    .game-btn-small { height: 42px; padding: 0 14px; border: 1px solid rgba(var(--neon-rgb), .25); border-radius: 12px; background: rgba(18, 9, 35, .4); backdrop-filter: blur(12px); color: rgba(255,255,255,.75); font-family: var(--font-head); font-size: 10px; font-weight: 500; letter-spacing: 1px; text-transform: lowercase; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0,0,0,.2); transition: all .3s var(--ease); max-width: 30vw; }
+    .game-btn-small { height: 42px; padding: 0 14px; border: 1px solid rgba(var(--neon-rgb), .25); border-radius: 12px; background: rgba(18, 9, 35, .4); backdrop-filter: blur(12px); color: rgba(255,255,255,.75); font-family: var(--font-head); font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: lowercase; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0,0,0,.2); transition: all .3s var(--ease); max-width: 30vw; }
     .game-btn-small:hover { color: #fff; border-color: rgba(var(--neon-rgb), .6); background: rgba(var(--neon-rgb), .1); transform: translateY(-2px); }
     .game-btn-small svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
     .game-btn-small .btn-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     .game-star-wrapper { position: relative; display: flex; align-items: center; justify-content: center; width: 260px; height: 260px; margin-bottom: 20px; }
-    .game-star-btn { width: 180px; height: 180px; position: relative; z-index: 5; color: var(--neon); transition: transform .15s var(--ease); }
+    .game-star-btn { width: 180px; height: 180px; position: relative; z-index: 5; color: var(--neon); transition: transform .15s var(--ease); cursor: pointer; }
     .game-star-btn:active { transform: scale(.9); }
-    .game-star-svg { width: 100%; height: 100%; animation: glowPulse 3s ease-in-out infinite alternate; }
+    .game-star-svg { width: 100%; height: 100%; animation: glowPulse 3s ease-in-out infinite alternate; pointer-events: none; }
     .game-star-shape { fill: rgba(var(--neon-rgb), .15); stroke: currentColor; stroke-width: 2; stroke-linejoin: round; transition: fill .4s, stroke .4s; }
     @keyframes glowPulse { 0% { filter: drop-shadow(0 0 15px currentColor) drop-shadow(0 0 40px rgba(var(--neon-rgb), .4)); } 100% { filter: drop-shadow(0 0 25px currentColor) drop-shadow(0 0 60px rgba(var(--neon-rgb), .7)); } }
 
@@ -211,23 +207,23 @@
     .shard { position: absolute; top: 50%; left: 50%; pointer-events: none; z-index: 6; opacity: 0; }
 
     .tap-counter { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .tap-number { font-family: var(--font-head); font-size: clamp(3rem, 11vw, 4.5rem); font-weight: 900; line-height: 1; letter-spacing: 2px; color: var(--neon); text-shadow: 0 0 30px rgba(var(--neon-rgb), .6), 0 0 60px rgba(var(--neon-rgb), .3); }
+    .tap-number { font-family: var(--font-head); font-size: clamp(3rem, 11vw, 4.5rem); font-weight: 800; line-height: 1; letter-spacing: 1px; color: var(--neon); text-shadow: 0 0 30px rgba(var(--neon-rgb), .6), 0 0 60px rgba(var(--neon-rgb), .3); font-variant-numeric: tabular-nums; }
     .tap-number.pop { animation: counterPop .3s var(--ease); }
     @keyframes counterPop { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
     .tap-label { font-family: var(--font-head); font-size: 9px; letter-spacing: 6px; text-transform: uppercase; color: rgba(255,255,255,.35); font-weight: 500; }
-    .hint { margin-top: 12px; font-family: var(--font-head); font-size: 10px; letter-spacing: 3px; text-transform: lowercase; color: rgba(255,255,255,.28); animation: hintPulse 3s ease-in-out infinite; font-weight: 400; }
+    .hint { margin-top: 12px; font-family: var(--font-head); font-size: 11px; letter-spacing: 3px; text-transform: lowercase; color: rgba(255,255,255,.28); animation: hintPulse 3s ease-in-out infinite; font-weight: 300; }
     @keyframes hintPulse { 0%,100% { opacity: .3; } 50% { opacity: .7; } }
 
     .combo-display { position: absolute; top: 75px; left: 50%; transform: translateX(-50%); z-index: 20; text-align: center; transition: opacity .3s; opacity: 0; pointer-events: none; }
     .combo-display.active { opacity: 1; }
-    .combo-value { font-family: var(--font-head); font-size: 1.6rem; font-weight: 900; color: var(--neon); text-shadow: 0 0 20px rgba(var(--neon-rgb), .7); }
+    .combo-value { font-family: var(--font-head); font-size: 1.6rem; font-weight: 800; color: var(--neon); text-shadow: 0 0 20px rgba(var(--neon-rgb), .7); }
     .combo-label { font-family: var(--font-head); font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,.35); font-weight: 500; }
     .combo-bar { width: 120px; height: 3px; background: rgba(255,255,255,.08); border-radius: 3px; margin-top: 6px; overflow: hidden; }
     .combo-bar-fill { height: 100%; width: 100%; background: var(--neon); border-radius: 3px; box-shadow: 0 0 8px var(--neon); transform-origin: left; transform: scaleX(1); }
 
     .race-info { position: absolute; top: 80px; left: 50%; transform: translateX(-50%); display: flex; gap: 30px; align-items: center; z-index: 20; }
     .race-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .race-stat-value { font-family: var(--font-head); font-size: 2rem; font-weight: 700; color: var(--neon); text-shadow: 0 0 20px rgba(var(--neon-rgb), .6); }
+    .race-stat-value { font-family: var(--font-head); font-size: 2rem; font-weight: 700; color: var(--neon); text-shadow: 0 0 20px rgba(var(--neon-rgb), .6); font-variant-numeric: tabular-nums; }
     .race-stat-label { font-family: var(--font-head); font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,.4); font-weight: 500; }
     .race-timer.warning { color: #ff4466 !important; text-shadow: 0 0 20px rgba(255,68,102,.8) !important; animation: pulse .5s ease-in-out infinite; }
     @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .6; } }
@@ -245,24 +241,24 @@
     .color-btn.gradient { background-size: 300% 300%; animation: goldShimmer 3s linear infinite; }
 
     .modal-content { width: min(550px, 100%); max-height: 85vh; overflow-y: auto; padding: 36px 30px 28px; border: 1px solid rgba(var(--neon-rgb), .3); border-radius: 28px; background: linear-gradient(145deg, rgba(var(--neon-rgb), .09), rgba(14,7,29,.95)); backdrop-filter: blur(30px); text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06); }
-    .modal-title { font-family: var(--font-head); font-size: 26px; font-weight: 600; color: var(--neon); text-shadow: 0 0 12px rgba(var(--neon-rgb), .65); margin-bottom: 16px; letter-spacing: 1px; }
-    .modal-text { color: rgba(255,255,255,.7); font-size: 14px; line-height: 1.8; margin-bottom: 24px; font-weight: 500; }
+    .modal-title { font-family: var(--font-head); font-size: 28px; font-weight: 700; color: var(--neon); text-shadow: 0 0 12px rgba(var(--neon-rgb), .65); margin-bottom: 16px; letter-spacing: .5px; }
+    .modal-text { color: rgba(255,255,255,.7); font-size: 14px; line-height: 1.8; margin-bottom: 24px; font-weight: 400; }
 
     .settings-group { margin: 22px 0; text-align: left; }
-    .settings-label { font-family: var(--font-head); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 10px; font-weight: 600; }
+    .settings-label { font-family: var(--font-head); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 10px; font-weight: 600; }
     .settings-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 14px 16px; border: 1px solid rgba(var(--neon-rgb), .15); border-radius: 14px; background: rgba(var(--neon-rgb), .04); margin-bottom: 10px; }
-    .settings-row-title { font-family: var(--font-head); font-size: 11px; color: rgba(255,255,255,.88); display: flex; align-items: center; gap: 10px; font-weight: 500; }
-    .settings-row-desc { font-size: 10px; color: rgba(255,255,255,.35); margin-top: 3px; }
+    .settings-row-title { font-family: var(--font-head); font-size: 12px; color: rgba(255,255,255,.88); display: flex; align-items: center; gap: 10px; font-weight: 500; }
+    .settings-row-desc { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 3px; font-weight: 400; }
     .toggle { position: relative; width: 48px; height: 26px; border-radius: 20px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1); cursor: pointer; transition: all .3s var(--ease); flex-shrink: 0; }
     .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,.5); transition: all .3s var(--ease); }
     .toggle.on { background: rgba(var(--neon-rgb), .3); border-color: rgba(var(--neon-rgb), .6); box-shadow: 0 0 12px rgba(var(--neon-rgb), .2); }
     .toggle.on::after { left: 24px; background: var(--neon); box-shadow: 0 0 8px var(--neon); }
     .quality-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .quality-btn { padding: 14px 10px; border: 1px solid rgba(var(--neon-rgb), .2); border-radius: 14px; background: rgba(var(--neon-rgb), .04); color: rgba(255,255,255,.75); font-family: var(--font-head); font-size: 11px; font-weight: 500; letter-spacing: 1px; transition: all .3s var(--ease); display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .quality-btn { padding: 14px 10px; border: 1px solid rgba(var(--neon-rgb), .2); border-radius: 14px; background: rgba(var(--neon-rgb), .04); color: rgba(255,255,255,.75); font-family: var(--font-head); font-size: 12px; font-weight: 500; letter-spacing: 1px; transition: all .3s var(--ease); display: flex; flex-direction: column; align-items: center; gap: 6px; }
     .quality-btn:hover { border-color: rgba(var(--neon-rgb), .5); background: rgba(var(--neon-rgb), .08); }
     .quality-btn.active { border-color: var(--neon); background: rgba(var(--neon-rgb), .15); color: #fff; box-shadow: 0 0 15px rgba(var(--neon-rgb), .2); }
     .quality-btn svg { width: 20px; height: 20px; }
-    .quality-sub { font-size: 9px; color: rgba(255,255,255,.35); letter-spacing: .5px; font-weight: 500; }
+    .quality-sub { font-size: 9px; color: rgba(255,255,255,.4); letter-spacing: .5px; font-weight: 400; }
     .recommend-box { padding: 14px 16px; border: 1px solid rgba(102,255,153,.25); border-radius: 14px; background: rgba(102,255,153,.05); margin-top: 16px; font-size: 12px; color: rgba(255,255,255,.6); line-height: 1.6; display: flex; gap: 10px; align-items: flex-start; text-align: left; }
     .recommend-box svg { width: 18px; height: 18px; color: #66ff99; flex-shrink: 0; margin-top: 1px; }
     input[type=range] { accent-color: var(--neon); }
@@ -283,8 +279,8 @@
     @keyframes secretTextPulse { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
     .secret-load-percent { font-family: var(--font-head); font-size: 20px; font-weight: 700; color: var(--neon); text-shadow: 0 0 15px rgba(var(--neon-rgb), .5); }
 
-    .secret-clicker-hint { font-family: var(--font-head); font-size: 10px; letter-spacing: 4px; text-transform: lowercase; color: rgba(255,255,255,.22); margin-top: 16px; font-weight: 400; }
-    .secret-click-counter { font-family: var(--font-head); font-size: 15px; font-weight: 600; color: rgba(var(--neon-rgb), .8); letter-spacing: 3px; margin-bottom: 20px; text-shadow: 0 0 12px rgba(var(--neon-rgb), .4); transition: transform .15s; }
+    .secret-clicker-hint { font-family: var(--font-head); font-size: 10px; letter-spacing: 4px; text-transform: lowercase; color: rgba(255,255,255,.22); margin-top: 16px; font-weight: 300; }
+    .secret-click-counter { font-family: var(--font-head); font-size: 15px; font-weight: 600; color: rgba(var(--neon-rgb), .8); letter-spacing: 3px; margin-bottom: 20px; text-shadow: 0 0 12px rgba(var(--neon-rgb), .4); transition: transform .15s; font-variant-numeric: tabular-nums; }
 
     .code-panel { position: fixed; inset: 0; z-index: 19500; display: flex; align-items: center; justify-content: center; background: rgba(3, 1, 9, .95); backdrop-filter: blur(16px); transition: opacity .5s var(--ease), visibility .5s; }
     .code-panel.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
@@ -292,12 +288,12 @@
     @keyframes codeBoxPop { 0% { transform: scale(.85) translateY(20px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
     .code-icon { margin-bottom: 20px; color: var(--neon); filter: drop-shadow(0 0 15px rgba(var(--neon-rgb), .5)); }
     .code-title { font-family: var(--font-head); font-size: 20px; font-weight: 600; color: var(--neon); margin-bottom: 8px; letter-spacing: 1px; }
-    .code-subtitle { font-family: var(--font-head); font-size: 10px; color: rgba(255,255,255,.4); margin-bottom: 28px; letter-spacing: 2px; }
-    .code-input { width: 240px; padding: 14px 20px; border: 1px solid rgba(var(--neon-rgb), .4); border-radius: 14px; background: rgba(var(--neon-rgb), .06); color: #fff; font-family: var(--font-head); font-size: 24px; text-align: center; letter-spacing: 10px; outline: none; -webkit-user-select: text; user-select: text; transition: all .3s; }
+    .code-subtitle { font-family: var(--font-head); font-size: 11px; color: rgba(255,255,255,.4); margin-bottom: 28px; letter-spacing: 2px; font-weight: 300; }
+    .code-input { width: 240px; padding: 14px 20px; border: 1px solid rgba(var(--neon-rgb), .4); border-radius: 14px; background: rgba(var(--neon-rgb), .06); color: #fff; font-family: var(--font-head); font-size: 24px; text-align: center; letter-spacing: 10px; outline: none; -webkit-user-select: text; user-select: text; transition: all .3s; font-variant-numeric: tabular-nums; }
     .code-input:focus { border-color: var(--neon); box-shadow: 0 0 25px rgba(var(--neon-rgb), .3); }
     .code-error { color: #ff4466; font-size: 12px; margin-top: 14px; opacity: 0; transition: opacity .3s; font-weight: 600; }
     .code-error.show { opacity: 1; }
-    .code-cancel { margin-top: 24px; color: rgba(255,255,255,.35); font-size: 12px; cursor: pointer; letter-spacing: 3px; transition: color .3s; font-weight: 600; }
+    .code-cancel { margin-top: 24px; color: rgba(255,255,255,.35); font-size: 12px; cursor: pointer; letter-spacing: 3px; transition: color .3s; font-weight: 500; }
     .code-cancel:hover { color: rgba(255,255,255,.7); }
 
     .skins-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; margin: 24px 0; }
@@ -311,8 +307,8 @@
     .skin-card.starry-card { border-color: rgba(255,243,176,.5); background: linear-gradient(135deg, rgba(255,243,176,.1), rgba(255,255,255,.04)); }
     .skin-card.starry-card.selected { box-shadow: 0 0 30px rgba(255,243,176,.4); }
     .skin-icon { margin-bottom: 10px; color: var(--neon); }
-    .skin-name { font-family: var(--font-head); font-size: 12px; font-weight: 600; color: var(--neon); margin-bottom: 4px; }
-    .skin-desc { font-size: 10px; color: rgba(255,255,255,.5); line-height: 1.4; }
+    .skin-name { font-family: var(--font-head); font-size: 13px; font-weight: 600; color: var(--neon); margin-bottom: 4px; }
+    .skin-desc { font-size: 11px; color: rgba(255,255,255,.5); line-height: 1.4; }
     .skin-cost { font-size: 10px; color: rgba(255,215,0,.8); margin-top: 6px; font-weight: 600; }
     .skin-selected-badge { position: absolute; top: 8px; right: 8px; color: var(--neon); }
     .skin-photo { width: 54px; height: 54px; border-radius: 14px; object-fit: cover; margin: 0 auto 10px; display: block; border: 1px solid rgba(var(--neon-rgb), .4); }
@@ -323,11 +319,11 @@
     .quests-list { display: flex; flex-direction: column; gap: 12px; margin: 24px 0; text-align: left; }
     .quest-card { padding: 16px 18px; border: 1px solid rgba(var(--neon-rgb), .2); border-radius: 14px; background: rgba(var(--neon-rgb), .05); }
     .quest-card.done { border-color: rgba(102,255,153,.4); background: rgba(102,255,153,.06); }
-    .quest-title { font-family: var(--font-head); font-size: 11px; font-weight: 500; color: rgba(255,255,255,.9); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .quest-title { font-family: var(--font-head); font-size: 12px; font-weight: 500; color: rgba(255,255,255,.9); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
     .quest-title svg { color: #66ff99; }
     .quest-progress-bar { width: 100%; height: 4px; background: rgba(255,255,255,.06); border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
     .quest-progress-fill { height: 100%; background: linear-gradient(90deg, var(--neon), var(--neon2)); box-shadow: 0 0 6px var(--neon); transition: width .3s; border-radius: 4px; }
-    .quest-info { display: flex; justify-content: space-between; font-size: 10px; color: rgba(255,255,255,.4); }
+    .quest-info { display: flex; justify-content: space-between; font-size: 11px; color: rgba(255,255,255,.4); }
     .quest-reward { color: var(--neon); font-weight: 700; }
 
     .achievements-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; margin: 24px 0; }
@@ -342,20 +338,20 @@
     .achievement-card.gold-ach.unlocked .achievement-icon { color: #FFD700; }
     .achievement-card.admin-ach.unlocked .achievement-icon { color: #ff78ff; }
     .achievement-card.beast-ach.unlocked .achievement-icon { color: #ff4444; }
-    .achievement-name { font-family: var(--font-head); font-size: 10px; font-weight: 600; color: var(--neon); margin-bottom: 4px; }
-    .achievement-desc { font-size: 9px; color: rgba(255,255,255,.5); line-height: 1.4; }
+    .achievement-name { font-family: var(--font-head); font-size: 11px; font-weight: 600; color: var(--neon); margin-bottom: 4px; }
+    .achievement-desc { font-size: 10px; color: rgba(255,255,255,.5); line-height: 1.4; }
 
     .difficulty-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 24px 0; }
     .difficulty-card { padding: 18px; border: 1px solid rgba(var(--neon-rgb), .2); border-radius: 16px; background: rgba(var(--neon-rgb), .05); cursor: pointer; transition: all .3s var(--ease); text-align: left; }
     .difficulty-card:hover { border-color: rgba(var(--neon-rgb), .6); background: rgba(var(--neon-rgb), .1); transform: translateY(-2px); }
-    .difficulty-name { font-family: var(--font-head); font-size: 16px; font-weight: 600; color: var(--neon); margin-bottom: 6px; }
+    .difficulty-name { font-family: var(--font-head); font-size: 17px; font-weight: 600; color: var(--neon); margin-bottom: 6px; }
     .difficulty-desc { font-size: 12px; color: rgba(255,255,255,.5); line-height: 1.6; margin-bottom: 10px; }
-    .difficulty-stats { display: flex; gap: 20px; font-size: 11px; color: rgba(255,255,255,.6); }
+    .difficulty-stats { display: flex; gap: 20px; font-size: 12px; color: rgba(255,255,255,.6); }
     .difficulty-stats strong { color: var(--neon); }
     .race-result { padding: 28px; border: 2px solid rgba(var(--neon-rgb), .4); border-radius: 20px; background: rgba(var(--neon-rgb), .08); margin: 18px 0; }
     .race-result.success { border-color: #66ff99; background: rgba(102,255,153,.08); }
     .race-result.failed { border-color: #ff4466; background: rgba(255,68,102,.08); }
-    .race-result-title { font-family: var(--font-head); font-size: 22px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+    .race-result-title { font-family: var(--font-head); font-size: 24px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 12px; }
     .race-result.success .race-result-title { color: #66ff99; text-shadow: 0 0 20px rgba(102,255,153,.6); }
     .race-result.failed .race-result-title { color: #ff4466; text-shadow: 0 0 20px rgba(255,68,102,.6); }
     .race-result-stats { display: flex; justify-content: center; gap: 40px; margin: 18px 0; }
@@ -363,7 +359,7 @@
     .bonus-box { padding: 30px; border: 2px solid rgba(var(--neon-rgb), .4); border-radius: 20px; background: rgba(var(--neon-rgb), .08); margin: 20px 0; animation: bonusPop .5s var(--ease); }
     @keyframes bonusPop { 0% { transform: scale(.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     .bonus-icon { margin-bottom: 12px; color: var(--neon); }
-    .bonus-title { font-family: var(--font-head); font-size: 22px; color: var(--neon); margin-bottom: 8px; font-weight: 700; }
+    .bonus-title { font-family: var(--font-head); font-size: 24px; color: var(--neon); margin-bottom: 8px; font-weight: 700; }
     .bonus-desc { font-size: 13px; color: rgba(255,255,255,.6); }
 
     .ach-toast { position: fixed; top: 24px; right: 24px; z-index: 16000; display: flex; align-items: center; gap: 16px; padding: 16px 22px; min-width: 300px; max-width: 420px; border-radius: 16px; background: linear-gradient(135deg, rgba(20, 12, 40, .95), rgba(10, 6, 20, .95)); border: 1px solid rgba(var(--neon-rgb), .5); backdrop-filter: blur(20px); box-shadow: 0 15px 50px rgba(0,0,0,.6), 0 0 40px rgba(var(--neon-rgb), .25), inset 0 1px 0 rgba(255,255,255,.08); transform: translateX(140%); transition: transform .5s var(--ease), opacity .5s; opacity: 0; pointer-events: none; }
@@ -371,8 +367,8 @@
     .ach-toast-icon { width: 54px; height: 54px; border-radius: 12px; flex-shrink: 0; background: linear-gradient(135deg, rgba(var(--neon-rgb), .25), rgba(var(--neon-rgb), .08)); border: 1px solid rgba(var(--neon-rgb), .4); display: flex; align-items: center; justify-content: center; color: var(--neon); box-shadow: 0 0 20px rgba(var(--neon-rgb), .3), inset 0 0 15px rgba(var(--neon-rgb), .1); }
     .ach-toast-body { display: flex; flex-direction: column; gap: 6px; text-align: left; min-width: 0; }
     .ach-toast-header { font-family: var(--font-pixel); font-size: 8px; font-weight: 400; letter-spacing: 1px; text-transform: uppercase; color: rgba(var(--neon-rgb), .95); text-shadow: 0 0 10px rgba(var(--neon-rgb), .5); }
-    .ach-toast-name { font-family: var(--font-pixel); font-size: 11px; font-weight: 400; color: #fff; line-height: 1.7; }
-    .ach-toast-desc { font-size: 11px; color: rgba(255,255,255,.45); font-weight: 500; line-height: 1.4; }
+    .ach-toast-name { font-family: var(--font-head); font-size: 13px; font-weight: 600; color: #fff; line-height: 1.4; }
+    .ach-toast-desc { font-size: 11px; color: rgba(255,255,255,.45); font-weight: 400; line-height: 1.4; }
     .ach-toast-bar { position: absolute; bottom: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--neon), var(--neon2)); border-radius: 0 0 16px 16px; box-shadow: 0 0 10px var(--neon); width: 100%; transform-origin: left; animation: achBar 3s linear forwards; }
     @keyframes achBar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 
@@ -382,21 +378,21 @@
     @keyframes candyFall { from { transform: translateY(0); } to { transform: translateY(125vh); } }
     @keyframes candySway { 0%,100% { transform: translateX(-12px) rotate(-14deg); } 50% { transform: translateX(12px) rotate(14deg); } }
     @keyframes heartBeat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.15); } 45% { transform: scale(1.05); } 60% { transform: scale(1.12); } }
-    .exp-float { position: fixed; z-index: 12002; font-family: var(--font-pixel); font-size: 12px; color: #ff66b2; text-shadow: 0 0 10px rgba(255,102,178,.8); pointer-events: none; animation: expFloat 1.2s ease-out forwards; }
+    .exp-float { position: fixed; z-index: 12002; font-family: var(--font-head); font-size: 14px; color: #ff66b2; text-shadow: 0 0 10px rgba(255,102,178,.8); pointer-events: none; animation: expFloat 1.2s ease-out forwards; font-weight: 700; }
     @keyframes expFloat { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-60px); opacity: 0; } }
 
     .creator-content { text-align: center; }
     .creator-preview-wrap { width: 210px; height: 210px; margin: 0 auto; position: relative; display: flex; align-items: center; justify-content: center; }
     .creator-preview-btn { width: 160px; height: 160px; }
-    .creator-hint { font-size: 10px; color: rgba(255,255,255,.35); margin-bottom: 18px; }
+    .creator-hint { font-size: 11px; color: rgba(255,255,255,.4); margin-bottom: 18px; }
     .creator-field { margin-bottom: 18px; text-align: left; }
-    .creator-field label { font-size: 11px; color: rgba(255,255,255,.5); display: block; margin-bottom: 6px; font-family: var(--font-head); }
+    .creator-field label { font-size: 12px; color: rgba(255,255,255,.5); display: block; margin-bottom: 6px; font-family: var(--font-head); font-weight: 500; }
     .creator-input { background: rgba(var(--neon-rgb), .06); border: 1px solid rgba(var(--neon-rgb), .3); border-radius: 12px; padding: 10px 14px; color: #fff; font-family: var(--font-body); font-size: 14px; outline: none; -webkit-user-select: text; user-select: text; width: 100%; }
     .creator-input:focus { border-color: var(--neon); }
     .hex-input { font-family: 'Courier New', monospace; letter-spacing: 2px; }
     .creator-section { margin: 20px 0; text-align: left; }
     .creator-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-    .creator-opt { padding: 9px 14px; border-radius: 12px; border: 1px solid rgba(var(--neon-rgb), .2); background: rgba(var(--neon-rgb), .04); color: rgba(255,255,255,.7); font-family: var(--font-head); font-size: 10px; font-weight: 500; letter-spacing: .5px; transition: all .25s var(--ease); }
+    .creator-opt { padding: 9px 14px; border-radius: 12px; border: 1px solid rgba(var(--neon-rgb), .2); background: rgba(var(--neon-rgb), .04); color: rgba(255,255,255,.7); font-family: var(--font-head); font-size: 11px; font-weight: 500; letter-spacing: .5px; transition: all .25s var(--ease); }
     .creator-opt:hover { border-color: rgba(var(--neon-rgb), .5); }
     .creator-opt.active { border-color: var(--neon); background: rgba(var(--neon-rgb), .16); color: #fff; box-shadow: 0 0 12px rgba(var(--neon-rgb), .25); }
     .creator-color-row { display: flex; gap: 18px; align-items: center; justify-content: center; flex-wrap: wrap; }
@@ -416,22 +412,22 @@
     .creator-list-card:hover { border-color: rgba(var(--neon-rgb), .5); }
     .creator-list-card.selected { border-color: var(--neon); box-shadow: 0 0 18px rgba(var(--neon-rgb), .3); }
     .creator-list-card img { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; }
-    .creator-list-name { font-family: var(--font-head); font-size: 10px; color: var(--neon); }
+    .creator-list-name { font-family: var(--font-head); font-size: 11px; color: var(--neon); font-weight: 500; }
 
     .music-toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
     .music-toolbar .creator-input { flex: 1; min-width: 130px; }
     .music-upload-row { display: flex; gap: 10px; margin-bottom: 16px; }
     .music-upload-row .creator-input { flex: 1; }
     .music-album { margin: 14px 0; text-align: left; }
-    .music-album-title { font-family: var(--font-head); font-size: 12px; color: var(--neon); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .music-album-title { font-family: var(--font-head); font-size: 13px; color: var(--neon); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
     .music-album-title .album-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .music-track { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid rgba(var(--neon-rgb), .15); border-radius: 12px; background: rgba(var(--neon-rgb), .04); margin-bottom: 6px; flex-wrap: wrap; }
     .music-track.playing { border-color: var(--neon); background: rgba(var(--neon-rgb), .12); }
     .music-cover { width: 38px; height: 38px; border-radius: 8px; flex-shrink: 0; background-size: cover; background-position: center; cursor: pointer; }
     .music-track-info { flex: 1; min-width: 90px; }
-    .music-track-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.88); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .music-track-name { font-family: var(--font-head); font-size: 13px; font-weight: 600; color: rgba(255,255,255,.88); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .music-track-name.fav::after { content: ' ♥'; color: #ff66b2; }
-    .music-track-sub { font-size: 9px; color: rgba(255,255,255,.4); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .music-track-sub { font-size: 10px; color: rgba(255,255,255,.4); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .track-actions { display: flex; gap: 4px; flex-wrap: wrap; }
     .music-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(var(--neon-rgb), .25); color: rgba(255,255,255,.7); display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all .2s; flex-shrink: 0; }
     .music-btn:hover { border-color: var(--neon); color: #fff; }
@@ -442,11 +438,11 @@
     .player-card.hidden { opacity: 0; pointer-events: none; transform: translateY(-50%) translateX(120%); }
     .player-cover { width: 120px; height: 120px; border-radius: 16px; background-size: cover; background-position: center; box-shadow: 0 8px 24px rgba(0,0,0,.5), 0 0 20px rgba(var(--neon-rgb), .25); animation: coverFloat 4s ease-in-out infinite; }
     @keyframes coverFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-    .player-title { font-family: var(--font-head); font-size: 11px; font-weight: 600; color: #fff; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .player-album { font-size: 9px; color: rgba(255,255,255,.45); letter-spacing: 1px; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .player-title { font-family: var(--font-head); font-size: 12px; font-weight: 600; color: #fff; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .player-album { font-size: 10px; color: rgba(255,255,255,.5); letter-spacing: 1px; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .player-progress { width: 100%; height: 4px; background: rgba(255,255,255,.1); border-radius: 4px; cursor: pointer; overflow: hidden; }
     .player-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--neon), var(--neon2)); box-shadow: 0 0 8px var(--neon); }
-    .player-times { width: 100%; display: flex; justify-content: space-between; font-size: 9px; color: rgba(255,255,255,.4); font-variant-numeric: tabular-nums; }
+    .player-times { width: 100%; display: flex; justify-content: space-between; font-size: 10px; color: rgba(255,255,255,.4); font-variant-numeric: tabular-nums; font-family: var(--font-head); font-weight: 500; }
     .player-controls { display: flex; align-items: center; gap: 14px; }
     .player-controls button { color: rgba(255,255,255,.85); transition: all .2s; }
     .player-controls button:hover { color: var(--neon); transform: scale(1.1); }
@@ -470,7 +466,7 @@
     .win.hidden { display: none; }
     .win-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: linear-gradient(90deg, rgba(var(--neon-rgb), .18), rgba(var(--neon-rgb), .05)); border-bottom: 1px solid rgba(var(--neon-rgb), .25); cursor: grab; touch-action: none; }
     .win-bar:active { cursor: grabbing; }
-    .win-title { font-family: var(--font-head); font-size: 11px; font-weight: 600; color: var(--neon); letter-spacing: 1px; }
+    .win-title { font-family: var(--font-head); font-size: 12px; font-weight: 600; color: var(--neon); letter-spacing: 1px; }
     .win-btns { display: flex; gap: 6px; }
     .win-btns button { width: 24px; height: 24px; border-radius: 6px; border: 1px solid rgba(255,255,255,.15); color: rgba(255,255,255,.7); font-size: 12px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
     .win-btns button:hover { border-color: var(--neon); color: #fff; }
@@ -498,7 +494,7 @@
     .console-fab svg { width: 26px; height: 26px; fill: none; stroke: var(--neon); stroke-width: 2; filter: drop-shadow(0 0 6px var(--neon)); animation: fabPop .5s var(--ease); }
     @keyframes fabPop { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-    .footer { position: fixed; bottom: 16px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,.15); font-family: var(--font-head); font-size: 8px; letter-spacing: 5px; z-index: 5; pointer-events: none; font-weight: 400; }
+    .footer { position: fixed; bottom: 16px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,.2); font-family: var(--font-head); font-size: 9px; letter-spacing: 5px; z-index: 5; pointer-events: none; font-weight: 300; }
 
     @media (max-width: 500px) {
       .game-star-wrapper { width: 220px; height: 220px; }
@@ -506,19 +502,18 @@
       .menu-buttons { max-width: 340px; }
       .palette { gap: 8px; padding: 12px 16px; bottom: 20px; }
       .color-btn { width: 28px; height: 28px; }
-      .game-btn-small { height: 38px; padding: 0 8px; font-size: 9px; }
+      .game-btn-small { height: 38px; padding: 0 8px; font-size: 10px; }
       .race-info { gap: 20px; }
       .race-stat-value { font-size: 1.5rem; }
       .modal-content { padding: 28px 20px 22px; }
-      .modal-title { font-size: 20px; }
+      .modal-title { font-size: 22px; }
       .skins-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
       .achievements-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
       .player-badge { padding: 8px 16px; gap: 10px; }
-      .coin-badge { padding-left: 10px; font-size: 12px; }
+      .coin-badge { padding-left: 10px; font-size: 13px; }
       .ach-toast { top: 12px; right: 12px; left: 12px; min-width: 0; max-width: none; padding: 12px 16px; gap: 12px; }
       .ach-toast-icon { width: 44px; height: 44px; }
-      .ach-toast-name { font-size: 9px; }
-      .ach-toast-header { font-size: 7px; }
+      .ach-toast-name { font-size: 11px; }
       .code-box { padding: 32px 24px; margin: 0 16px; }
       .code-input { width: 200px; font-size: 20px; }
       .color-wheel { width: 120px; height: 120px; }
@@ -575,7 +570,6 @@
   <div id="candyLayer" style="position:fixed;inset:0;pointer-events:none;z-index:12000;"></div>
   <datalist id="albumDatalist"></datalist>
 
-  <!-- МЕНЮ -->
   <main class="screen hidden" id="menuScreen">
     <h1 class="title">Неоновая звезда</h1>
     <div class="subtitle">asmr · неон · покой</div>
@@ -610,7 +604,6 @@
     </div>
   </main>
 
-  <!-- ИГРА -->
   <main class="screen hidden" id="gameScreen">
     <div class="game-header">
       <button class="game-btn-small" id="backButton"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>назад</button>
@@ -639,7 +632,6 @@
     <div class="hint" id="hint">нажми на звезду</div>
   </main>
 
-  <!-- СЕКРЕТНЫЙ КЛИКЕР -->
   <main class="screen hidden" id="secretClickerScreen">
     <div class="game-star-wrapper">
       <div class="aura-wrap" id="secretAuraWrap"></div>
@@ -651,7 +643,6 @@
     <div class="secret-clicker-hint">нажми на звезду</div>
   </main>
 
-  <!-- ГОНКА -->
   <main class="screen hidden" id="raceScreen">
     <div class="game-header">
       <button class="game-btn-small" id="raceBackButton"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>назад</button>
@@ -671,7 +662,6 @@
 
   <div class="palette" id="palette"><div class="palette-title">цвет свечения</div></div>
 
-  <!-- ОКНО МЕНЮ -->
   <div class="win hidden" id="menuWindow">
     <div class="win-bar" id="menuWinBar">
       <span class="win-title">✦ Меню</span>
@@ -694,7 +684,6 @@
     </div>
   </div>
 
-  <!-- ПЛЕЕР -->
   <div class="player-card hidden" id="playerCard">
     <button class="player-close" id="playerClose">✕</button>
     <div class="player-cover" id="playerCover"></div>
@@ -716,7 +705,6 @@
   </div>
   <button class="player-fab hidden" id="playerFab"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></button>
 
-  <!-- МУЗЫКА -->
   <div class="screen hidden" id="musicModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Музыка</h2>
@@ -739,7 +727,6 @@
   </div>
   <input type="file" id="trackCoverInput" accept="image/*" style="display:none">
 
-  <!-- НАСТРОЙКИ -->
   <div class="screen hidden" id="settingsModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Настройки</h2>
@@ -835,7 +822,6 @@
     </div>
   </div>
 
-  <!-- КРЕАТОР -->
   <div class="screen hidden" id="creatorModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content creator-content">
       <h2 class="modal-title">Креатор звезды</h2>
@@ -875,7 +861,6 @@
     </div>
   </div>
 
-  <!-- СКИНЫ -->
   <div class="screen hidden" id="skinsModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Скины звезды</h2>
@@ -885,7 +870,6 @@
     </div>
   </div>
 
-  <!-- ЗАДАНИЯ -->
   <div class="screen hidden" id="questsModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Задания дня</h2>
@@ -895,7 +879,6 @@
     </div>
   </div>
 
-  <!-- ГОНКИ -->
   <div class="screen hidden" id="raceSelectModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Выбери сложность</h2>
@@ -919,7 +902,6 @@
     </div>
   </div>
 
-  <!-- ДОСТИЖЕНИЯ -->
   <div class="screen hidden" id="achievementsModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Достижения</h2>
@@ -929,7 +911,6 @@
     </div>
   </div>
 
-  <!-- БОНУС -->
   <div class="screen hidden" id="dailyBonusModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">Ежедневный бонус</h2>
@@ -942,7 +923,6 @@
     </div>
   </div>
 
-  <!-- О ИГРЕ -->
   <div class="screen hidden" id="aboutModal" style="background:rgba(3,1,9,.85);z-index:50;">
     <div class="modal-content">
       <h2 class="modal-title">О игре</h2>
@@ -950,7 +930,7 @@
         Неоновая звезда — это ASMR-пространство для расслабления.<br>
         Наблюдайте за свечением, меняйте цвета, проходите гонки.<br><br>
         ✦ Интеграция QuadroOS: FastFPS · FOS Engine · Visual Graphics<br><br>
-        <span style="font-size:12px;opacity:.5;">версия 5.4 «QuadroOS GameMode»</span>
+        <span style="font-size:12px;opacity:.5;">версия 5.5 «Outfit»</span>
       </p>
       <button class="menu-button" id="closeAboutButton" style="max-width:200px;margin:0 auto;">закрыть</button>
     </div>
@@ -991,12 +971,16 @@
     'use strict';
     const $ = id => document.getElementById(id);
 
+    // НАДЁЖНЫЙ onTap с защитой от отсутствующих элементов
     function onTap(el, fn) {
+      if (!el) { console.warn('[onTap] элемент не найден'); return; }
       let lastTouch = 0;
-      el.addEventListener('touchstart', (e) => { lastTouch = Date.now(); fn(e); }, { passive: false });
-      el.addEventListener('click', (e) => { if (Date.now() - lastTouch < 700) return; fn(e); });
+      const touchHandler = (e) => { lastTouch = Date.now(); try { fn(e); } catch(err) { console.error('[tap]', err); } };
+      const clickHandler = (e) => { if (Date.now() - lastTouch < 700) return; try { fn(e); } catch(err) { console.error('[click]', err); } };
+      el.addEventListener('touchstart', touchHandler, { passive: false });
+      el.addEventListener('click', clickHandler);
     }
-    function vib(p) { if (state.settings.vibration) navigator.vibrate?.(p); }
+    function vib(p) { try { if (state && state.settings && state.settings.vibration) navigator.vibrate?.(p); } catch(_){} }
 
     const ICONS = {
       seedling: '<path d="M12 20v-8"/><path d="M12 12c0-4 2.5-6.5 7-6.5 0 4.5-2.5 7-7 6.5z"/><path d="M12 12c0-4-2.5-6.5-7-6.5 0 4.5 2.5 7 7 6.5z"/>',
@@ -1044,182 +1028,141 @@
     }
 
     /* ============================================================
-       QUADROOS GAMEMODE API — полная интеграция
+       QUADROOS GAMEMODE API — обёрнут в try/catch для безопасности
        ============================================================ */
     const QUADROOS_VERSION = '1.0';
     let currentFps = 60, frameCount = 0, lastFpsTime = performance.now();
-    let qoVisualMode = 'default'; // 'default' | 'fps' | 'visualplus' | 'cinema'
     let qoBlurDisabled = false;
     let qoSupportResponded = false;
 
-    // Отправка текущего FPS по протоколу FastFPS
     function sendFastFPS(fps) {
       try {
         window.parent.postMessage({
-          qosApi: 'QuadroOS',
-          qosVersion: QUADROOS_VERSION,
-          protocol: 'FastFPS',
-          action: 'fastfps',
-          fps: Number(fps)
+          qosApi: 'QuadroOS', qosVersion: QUADROOS_VERSION,
+          protocol: 'FastFPS', action: 'fastfps', fps: Number(fps)
         }, '*');
       } catch(_){}
     }
 
-    // Отправка подтверждения FOS Engine
     function sendFOSAcknowledgement(event, enabled) {
       try {
-        event.source?.postMessage({
-          qosApi: 'QuadroOS',
-          qosVersion: QUADROOS_VERSION,
-          protocol: 'FOS Engine',
-          action: 'fos.ack',
-          enabled: enabled,
-          blurDisabled: qoBlurDisabled
-        }, event.origin);
-      } catch(_){}
-    }
-
-    // Отключение тяжёлого blur/post-processing
-    function disableHeavyBlur() {
-      qoBlurDisabled = true;
-      state.settings.blur = false;
-      document.body.classList.add('no-blur');
-      saveState();
-    }
-
-    // Восстановление стандартного blur
-    function restoreHeavyBlur() {
-      qoBlurDisabled = false;
-      state.settings.blur = true;
-      document.body.classList.remove('no-blur');
-      saveState();
-    }
-
-    // Применение визуального режима (fps/visualplus/cinema)
-    function applyVisualMode(mode, enabled) {
-      document.body.classList.remove('visual-fps', 'visual-visualplus', 'visual-cinema');
-      if (!enabled) {
-        qoVisualMode = 'default';
-        return;
-      }
-      if (['fps', 'visualplus', 'cinema'].includes(mode)) {
-        document.body.classList.add('visual-' + mode);
-        qoVisualMode = mode;
-      }
-    }
-
-    // Отправка ответа на запрос поддержки FOS Engine
-    function sendFOSSupportResponse(event) {
-      try {
-        event.source?.postMessage({
-          qosApi: 'QuadroOS',
-          version: QUADROOS_VERSION,
-          qosVersion: QUADROOS_VERSION,
-          protocol: 'FOS Engine',
-          action: 'fos.support.response',
-          supported: true,
-          protocols: ['FastFPS', 'FOS Engine']
-        }, event.origin);
-        qoSupportResponded = true;
-      } catch(_){}
-    }
-
-    // Обработчик команд FOS Engine
-    function handleFOSCommand(data, event) {
-      if (data.action === 'fos.support.request') {
-        sendFOSSupportResponse(event);
-        return;
-      }
-
-      if (data.action === 'fos.enable') {
-        disableHeavyBlur();
-        applyVisualMode(data.mode || 'fps', data.visual === true);
-        sendFOSAcknowledgement(event, true);
-        return;
-      }
-
-      if (data.action === 'fos.disable') {
-        restoreHeavyBlur();
-        applyVisualMode('default', false);
-        sendFOSAcknowledgement(event, false);
-        return;
-      }
-
-      if (data.action === 'fos.visual') {
-        applyVisualMode(data.mode || 'fps', data.enabled === true);
-        sendFOSAcknowledgement(event, true);
-        return;
-      }
-
-      if (data.action === 'fos.visual.mode') {
-        applyVisualMode(data.mode || 'fps', data.enabled === true);
-        sendFOSAcknowledgement(event, true);
-        return;
-      }
-    }
-
-    // Основной обработчик QuadroOS API
-    window.addEventListener('message', (event) => {
-      const data = event.data;
-
-      if (!data || data.qosApi !== 'QuadroOS') return;
-      if (data.qosVersion && data.qosVersion !== QUADROOS_VERSION) return;
-
-      if (data.protocol === 'FastFPS') {
-        if (data.action === 'fastfps.request') {
-          event.source?.postMessage({
-            qosApi: 'QuadroOS',
-            qosVersion: QUADROOS_VERSION,
-            protocol: 'FastFPS',
-            action: 'fastfps.response',
-            fps: Number(currentFps)
+        if (event && event.source) {
+          event.source.postMessage({
+            qosApi: 'QuadroOS', qosVersion: QUADROOS_VERSION,
+            protocol: 'FOS Engine', action: 'fos.ack',
+            enabled: enabled, blurDisabled: qoBlurDisabled
           }, event.origin);
         }
-        return;
-      }
+      } catch(_){}
+    }
 
-      if (data.protocol === 'FOS Engine') {
-        handleFOSCommand(data, event);
-        return;
+    function disableHeavyBlur() {
+      qoBlurDisabled = true;
+      if (state && state.settings) {
+        state.settings.blur = false;
+        document.body.classList.add('no-blur');
       }
+    }
+
+    function restoreHeavyBlur() {
+      qoBlurDisabled = false;
+      if (state && state.settings) {
+        state.settings.blur = true;
+        document.body.classList.remove('no-blur');
+      }
+    }
+
+    function applyVisualMode(mode, enabled) {
+      try {
+        document.body.classList.remove('visual-fps', 'visual-visualplus', 'visual-cinema');
+        if (enabled && ['fps', 'visualplus', 'cinema'].includes(mode)) {
+          document.body.classList.add('visual-' + mode);
+        }
+      } catch(_){}
+    }
+
+    function sendFOSSupportResponse(event) {
+      try {
+        if (event && event.source) {
+          event.source.postMessage({
+            qosApi: 'QuadroOS', version: QUADROOS_VERSION, qosVersion: QUADROOS_VERSION,
+            protocol: 'FOS Engine', action: 'fos.support.response',
+            supported: true, protocols: ['FastFPS', 'FOS Engine']
+          }, event.origin);
+          qoSupportResponded = true;
+        }
+      } catch(_){}
+    }
+
+    function handleFOSCommand(data, event) {
+      try {
+        if (data.action === 'fos.support.request') { sendFOSSupportResponse(event); return; }
+        if (data.action === 'fos.enable') {
+          disableHeavyBlur();
+          applyVisualMode(data.mode || 'fps', data.visual === true);
+          sendFOSAcknowledgement(event, true);
+          return;
+        }
+        if (data.action === 'fos.disable') {
+          restoreHeavyBlur();
+          applyVisualMode('default', false);
+          sendFOSAcknowledgement(event, false);
+          return;
+        }
+        if (data.action === 'fos.visual' || data.action === 'fos.visual.mode') {
+          applyVisualMode(data.mode || 'fps', data.enabled === true);
+          sendFOSAcknowledgement(event, true);
+          return;
+        }
+      } catch(err) { console.error('[FOS]', err); }
+    }
+
+    window.addEventListener('message', (event) => {
+      try {
+        const data = event.data;
+        if (!data || data.qosApi !== 'QuadroOS') return;
+        if (data.qosVersion && data.qosVersion !== QUADROOS_VERSION) return;
+        if (data.protocol === 'FastFPS') {
+          if (data.action === 'fastfps.request' && event.source) {
+            event.source.postMessage({
+              qosApi: 'QuadroOS', qosVersion: QUADROOS_VERSION,
+              protocol: 'FastFPS', action: 'fastfps.response', fps: Number(currentFps)
+            }, event.origin);
+          }
+          return;
+        }
+        if (data.protocol === 'FOS Engine') {
+          handleFOSCommand(data, event);
+        }
+      } catch(err) { console.error('[QuadroOS]', err); }
     });
 
-    // FPS цикл и регулярная отправка FastFPS
     function fpsLoop(now) {
       frameCount++;
       if (now - lastFpsTime >= 1000) {
         currentFps = Math.round(frameCount * 1000 / (now - lastFpsTime));
-        frameCount = 0;
-        lastFpsTime = now;
+        frameCount = 0; lastFpsTime = now;
       }
       requestAnimationFrame(fpsLoop);
     }
     requestAnimationFrame(fpsLoop);
 
-    // Регулярная отправка FPS каждые 500ms
-    setInterval(() => {
-      sendFastFPS(currentFps);
-    }, 500);
+    setInterval(() => { try { sendFastFPS(currentFps); } catch(_){} }, 500);
 
-    // Начальный ответ на поддержку через 100ms
     setTimeout(() => {
       if (!qoSupportResponded) {
         try {
           window.parent.postMessage({
-            qosApi: 'QuadroOS',
-            version: QUADROOS_VERSION,
-            qosVersion: QUADROOS_VERSION,
-            protocol: 'FOS Engine',
-            action: 'fos.support.response',
-            supported: true,
-            protocols: ['FastFPS', 'FOS Engine']
+            qosApi: 'QuadroOS', version: QUADROOS_VERSION, qosVersion: QUADROOS_VERSION,
+            protocol: 'FOS Engine', action: 'fos.support.response',
+            supported: true, protocols: ['FastFPS', 'FOS Engine']
           }, '*');
           qoSupportResponded = true;
         } catch(_){}
       }
     }, 100);
     /* ============================================================
-       КОНЕЦ QUADROOS GAMEMODE API
+       КОНЕЦ QUADROOS — весь код ниже работает независимо
        ============================================================ */
 
     const STORAGE_KEY = 'app_neon_star_progress';
@@ -1227,7 +1170,6 @@
     async function storageSave(key, data) { try { if (window.QOSAppStorage?.save) { await window.QOSAppStorage.save(key, data); return; } } catch(_){} try { localStorage.setItem(key, JSON.stringify(data)); } catch(_){} }
     async function storageLoad(key) { try { if (window.QOSAppStorage?.load) { const d = await window.QOSAppStorage.load(key); if (d) return d; } } catch(_){} try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; } catch(_) { return null; } }
 
-    /* ОПТИМИЗАЦИЯ: дебаунс сохранений */
     let saveTimer = null, saveQueued = false;
     function saveState() {
       saveQueued = true;
@@ -1238,7 +1180,7 @@
       saveTimer = null;
       if (!saveQueued) return;
       saveQueued = false;
-      await storageSave(STORAGE_KEY, state);
+      try { await storageSave(STORAGE_KEY, state); } catch(_){}
     }
     document.addEventListener('visibilitychange', () => { if (document.hidden) flushSave(); });
     window.addEventListener('pagehide', flushSave);
@@ -1425,7 +1367,8 @@
       'Сохранения теперь не тормозят клики',
       'QuadroOS GameMode: FastFPS + FOS Engine + Visual Graphics',
       'Визуальные режимы: FPS, Visual PLUS, Cinema',
-      'FOS Engine отключает тяжёлый blur при необходимости'
+      'FOS Engine отключает тяжёлый blur при необходимости',
+      'Шрифт Outfit — современный и стильный'
     ];
 
     const TITLES = [
@@ -1442,27 +1385,16 @@
 
     const SHAPES = {
       classic: '50,8 61,38 94,38 67,56 77,86 50,68 23,86 33,56 6,38 39,38',
-      crystal: '50,4 78,30 68,92 32,92 22,30',
-      spike: '50,2 58,34 92,20 70,50 98,78 62,66 50,98 38,66 2,78 30,50 8,20 42,34',
-      round: '50,6 76,14 92,38 92,62 76,86 50,94 24,86 8,62 8,38 24,14',
-      heart: '50,88 20,60 8,38 16,16 36,12 50,28 64,12 84,16 92,38 80,60',
-      diamond: '50,2 82,30 82,70 50,98 18,70 18,30',
-      hex: '50,4 90,27 90,73 50,96 10,73 10,27',
-      burst: '50,0 60,35 95,20 72,50 100,80 62,68 50,100 38,68 0,80 28,50 5,20 40,35',
-      moon: '60,10 40,20 30,40 32,62 45,80 65,90 80,85 60,80 45,65 40,45 48,25 60,10',
-      cross: '35,5 65,5 65,35 95,35 95,65 65,65 65,95 35,95 35,65 5,65 5,35 35,35',
-      drop: '50,5 75,40 85,60 75,82 50,95 25,82 15,60 25,40',
-      flower4: '50,5 62,38 95,50 62,62 50,95 38,62 5,50 38,38',
-      tri: '50,6 92,88 8,88',
-      box: '14,14 86,14 86,86 14,86',
-      star6: '50,2 61,25 88,14 78,40 98,50 78,60 88,86 61,75 50,98 39,75 12,86 22,60 2,50 22,40 12,14 39,25',
-      leaf: '50,4 80,30 84,62 62,90 38,90 16,62 20,30',
-      arrow: '50,4 84,40 66,40 66,92 34,92 34,40 16,40',
-      shield: '50,4 88,18 84,60 50,94 16,60 12,18',
-      gem2: '30,8 70,8 92,34 50,94 8,34',
+      crystal: '50,4 78,30 68,92 32,92 22,30', spike: '50,2 58,34 92,20 70,50 98,78 62,66 50,98 38,66 2,78 30,50 8,20 42,34',
+      round: '50,6 76,14 92,38 92,62 76,86 50,94 24,86 8,62 8,38 24,14', heart: '50,88 20,60 8,38 16,16 36,12 50,28 64,12 84,16 92,38 80,60',
+      diamond: '50,2 82,30 82,70 50,98 18,70 18,30', hex: '50,4 90,27 90,73 50,96 10,73 10,27',
+      burst: '50,0 60,35 95,20 72,50 100,80 62,68 50,100 38,68 0,80 28,50 5,20 40,35', moon: '60,10 40,20 30,40 32,62 45,80 65,90 80,85 60,80 45,65 40,45 48,25 60,10',
+      cross: '35,5 65,5 65,35 95,35 95,65 65,65 65,95 35,95 35,65 5,65 5,35 35,35', drop: '50,5 75,40 85,60 75,82 50,95 25,82 15,60 25,40',
+      flower4: '50,5 62,38 95,50 62,62 50,95 38,62 5,50 38,38', tri: '50,6 92,88 8,88', box: '14,14 86,14 86,86 14,86',
+      star6: '50,2 61,25 88,14 78,40 98,50 78,60 88,86 61,75 50,98 39,75 12,86 22,60 2,50 22,40 12,14 39,25', leaf: '50,4 80,30 84,62 62,90 38,90 16,62 20,30',
+      arrow: '50,4 84,40 66,40 66,92 34,92 34,40 16,40', shield: '50,4 88,18 84,60 50,94 16,60 12,18', gem2: '30,8 70,8 92,34 50,94 8,34',
       sun: '50,2 58,20 76,10 74,30 94,28 84,44 98,50 84,56 94,72 74,70 76,90 58,80 50,98 42,80 24,90 26,70 6,72 16,56 2,50 16,44 6,28 26,30 24,10 42,20',
-      bolt2: '58,2 26,52 46,52 40,98 76,42 54,42',
-      eye: '50,14 82,34 92,50 82,66 50,86 18,66 8,50 18,34'
+      bolt2: '58,2 26,52 46,52 40,98 76,42 54,42', eye: '50,14 82,34 92,50 82,66 50,86 18,66 8,50 18,34'
     };
     const SHAPE_LABELS = { classic:'Классика', crystal:'Кристалл', spike:'Шипы', round:'Круг', heart:'Сердце', diamond:'Алмаз', hex:'Гексагон', burst:'Взрыв', moon:'Луна', cross:'Крест', drop:'Капля', flower4:'Цветок', tri:'Треугольник', box:'Квадрат', star6:'6 лучей', leaf:'Лист', arrow:'Стрела', shield:'Щит', gem2:'Огранка', sun:'Солнце', bolt2:'Молния', eye:'Око' };
     const PARTICLES = ['spark','shard','star','heart','square','tri','ring','note','diamond','cross','sparkle4','bubble','rainbow','none'];
@@ -1490,7 +1422,9 @@
     let audioStore = { clickCustom: null };
 
     let sessionCombo = 0;
-    let audioCtx = null, raceActive = false, raceInterval = null, raceTimeLeft = 0, raceTargetCount = 0, raceTaps = 0, currentDiff = null;
+    let audioCtx = null;
+    let raceActive = false; // ГЛАВНЫЙ ФЛАГ ГОНКИ
+    let raceInterval = null, raceTimeLeft = 0, raceTargetCount = 0, raceTaps = 0, currentDiff = null;
     let godMode = false, goldFloatInterval = null;
     let comboCount = 0, comboTimer = null, comboBarInterval = null;
     const COMBO_WINDOW = 600;
@@ -1507,20 +1441,22 @@
     let creator = { name: '', shape: 'classic', particle: 'spark', aura: 'ring', color: '#b380ff', photo: null };
 
     async function loadState() {
-      const d = await storageLoad(STORAGE_KEY);
-      if (d) {
-        Object.assign(state, d);
-        state.settings = Object.assign({ showFps: false, quality: 'recommended', glowEffects: true, muted: false, adaptive: true, blur: true, stars: true, anims: true, vibration: true, particleSave: false, fabX: 20, fabY: -1 }, d.settings);
-        state.audio = Object.assign({ clickPreset: 'default', musicVolume: 0.5, clickVolume: 0.7 }, d.audio);
-        state.custom = Object.assign({ aura: null, particle: 'auto', shape: 'classic' }, d.custom);
-        state.stats = Object.assign({ candies: 0, questsDone: 0, racesWon: 0 }, d.stats);
-        state.music = Object.assign({ list: [], currentId: null, playing: false, shuffle: false, repeat: 'all', favOnly: false }, d.music);
-        if (!Array.isArray(state.customSkins)) state.customSkins = [];
-        if (typeof state.coins !== 'number') state.coins = 0;
-        if (typeof state.adminVerified !== 'boolean') state.adminVerified = false;
-      }
-      const a = await storageLoad(AUDIO_KEY);
-      if (a) audioStore = Object.assign(audioStore, a);
+      try {
+        const d = await storageLoad(STORAGE_KEY);
+        if (d) {
+          Object.assign(state, d);
+          state.settings = Object.assign({ showFps: false, quality: 'recommended', glowEffects: true, muted: false, adaptive: true, blur: true, stars: true, anims: true, vibration: true, particleSave: false, fabX: 20, fabY: -1 }, d.settings);
+          state.audio = Object.assign({ clickPreset: 'default', musicVolume: 0.5, clickVolume: 0.7 }, d.audio);
+          state.custom = Object.assign({ aura: null, particle: 'auto', shape: 'classic' }, d.custom);
+          state.stats = Object.assign({ candies: 0, questsDone: 0, racesWon: 0 }, d.stats);
+          state.music = Object.assign({ list: [], currentId: null, playing: false, shuffle: false, repeat: 'all', favOnly: false }, d.music);
+          if (!Array.isArray(state.customSkins)) state.customSkins = [];
+          if (typeof state.coins !== 'number') state.coins = 0;
+          if (typeof state.adminVerified !== 'boolean') state.adminVerified = false;
+        }
+        const a = await storageLoad(AUDIO_KEY);
+        if (a) audioStore = Object.assign(audioStore, a);
+      } catch(err) { console.error('[loadState]', err); }
     }
 
     function deviceProfile() {
@@ -1706,7 +1642,6 @@
 
     function applyCustom() { applySkin(state.selectedSkin); }
 
-    /* СКИНЫ */
     function applySkin(skinId) {
       state.selectedSkin = skinId;
       const wrap = $('gameStarWrapper');
@@ -1795,7 +1730,6 @@
       });
     }
 
-    /* ЗАДАНИЯ */
     function getTodayStr() { const d = new Date(); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
     function generateDailyQuests() {
       const today = getTodayStr();
@@ -1858,11 +1792,12 @@
       setTimeout(() => showScreen('dailyBonusModal'), 800);
     }
 
-    /* ЗВУК */
     function initAudio() {
-      if (!audioCtx) try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(_){}
-      if (audioCtx?.state === 'suspended') audioCtx.resume();
-      if (state.music.playing && state.music.currentId && (!libAudio || libAudio.paused)) resumeMusic();
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx?.state === 'suspended') audioCtx.resume();
+        if (state.music.playing && state.music.currentId && (!libAudio || libAudio.paused)) resumeMusic();
+      } catch(_){}
     }
     function startCosmos() {
       if (!audioCtx || cosmosNodes) return;
@@ -1935,7 +1870,6 @@
       } catch(_){}
     }
 
-    /* МУЗЫКА */
     function coverGradient(name) {
       let h = 0;
       for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 360;
@@ -2094,20 +2028,16 @@
       const dl = $('albumDatalist');
       dl.innerHTML = '';
       [...new Set(trackList().map(t => t.album))].forEach(a => { const o = document.createElement('option'); o.value = a; dl.appendChild(o); });
-
       const q = ($('musicSearch').value || '').trim().toLowerCase();
-
       const builtIn = document.createElement('div');
       builtIn.className = 'music-track' + (state.music.currentId === 'cosmos' ? ' playing' : '');
       builtIn.innerHTML = `<div class="music-cover" style="background:${coverGradient('cosmos')}"></div>
         <div class="music-track-info"><div class="music-track-name">Космос (эмбиент)</div><div class="music-track-sub">Встроенные</div></div>
         <div class="track-actions"><button class="music-btn" data-play="cosmos">▶</button></div>`;
       box.appendChild(builtIn);
-
       let list = trackList();
       if (state.music.favOnly) list = list.filter(t => t.fav);
       if (q) list = list.filter(t => t.name.toLowerCase().includes(q) || t.album.toLowerCase().includes(q) || (t.artist || '').toLowerCase().includes(q));
-
       const albums = {};
       list.forEach(t => { (albums[t.album] = albums[t.album] || []).push(t); });
       Object.keys(albums).forEach(album => {
@@ -2141,7 +2071,6 @@
         box.appendChild(wrap);
       });
       if (!Object.keys(albums).length && q) box.insertAdjacentHTML('beforeend', '<div style="font-size:11px;color:rgba(255,255,255,.35);text-align:center;padding:10px;">Ничего не найдено</div>');
-
       box.querySelectorAll('[data-play]').forEach(b => b.onclick = () => playTrack(b.dataset.play));
       box.querySelectorAll('[data-fav]').forEach(b => b.onclick = () => { const t = getMeta(b.dataset.fav); if (t) { t.fav = !t.fav; saveState(); renderMusicLibrary(); updatePlayerUI(); } });
       box.querySelectorAll('[data-up]').forEach(b => b.onclick = () => moveTrack(b.dataset.up, -1));
@@ -2236,7 +2165,6 @@
     $('musicButton').onclick = () => { showScreen('musicModal'); renderMusicLibrary(); };
     $('closeMusicBtn').onclick = () => showScreen('menuScreen');
 
-    /* НАСТРОЙКИ */
     function updateMusicSettings() {
       const meta = getMeta(state.music.currentId);
       const isCosmos = state.music.currentId === 'cosmos';
@@ -2269,7 +2197,7 @@
       $('recIcon').innerHTML = icon('info', 18);
       const p = deviceProfile();
       $('deviceInfo').textContent = `${p.isMobile ? 'Мобильное' : 'ПК'} · ядер: ${p.cores} · память: ${p.mem} ГБ · класс: ${p.cls}`;
-      $('recText').textContent = `Для твоего устройства рекомендуется «${QUALITY_PRESETS[detectRecommended()].label}» качество. Авто-оптимизация сама подстроится под FPS.`;
+      $('recText').textContent = `Для твоего устройства рекомендуется «${QUALITY_PRESETS[detectRecommended()].label}» качество.`;
       renderSound();
       updateMusicSettings();
       updateFpsBadge();
@@ -2309,7 +2237,7 @@
       state.settings.particleSave = true;
       state.settings.adaptive = true;
       saveState(); applyPerf(); renderSettings();
-      showAchToast(null, 'Турбо-режим!', 'Максимальная производительность включена');
+      showAchToast(null, 'Турбо-режим!', 'Максимальная производительность');
     };
     $('resetSettingsBtn').onclick = () => {
       state.settings = { showFps: false, quality: 'recommended', glowEffects: true, muted: false, adaptive: true, blur: true, stars: true, anims: true, vibration: true, particleSave: false, fabX: 20, fabY: -1 };
@@ -2336,11 +2264,24 @@
       r.readAsDataURL(f);
     });
 
-    /* ЭКРАНЫ */
     const screens = ['menuScreen','gameScreen','raceScreen','secretClickerScreen','aboutModal','raceSelectModal','raceResultModal','achievementsModal','skinsModal','questsModal','dailyBonusModal','settingsModal','creatorModal','musicModal'];
-    function showScreen(id) { screens.forEach(s => $(s).classList.add('hidden')); $(id).classList.remove('hidden'); }
+    function showScreen(id) {
+      try {
+        screens.forEach(s => { const el = $(s); if (el) el.classList.add('hidden'); });
+        const target = $(id);
+        if (target) target.classList.remove('hidden');
+      } catch(err) { console.error('[showScreen]', err); }
+    }
 
-    $('playButton').onclick = () => { initAudio(); showScreen('gameScreen'); };
+    // КЛИК ПО КНОПКЕ "ИГРАТЬ" — теперь защищён
+    function startGame() {
+      try {
+        initAudio();
+        showScreen('gameScreen');
+      } catch(err) { console.error('[startGame]', err); }
+    }
+    $('playButton').onclick = startGame;
+
     $('paletteMenuButton').onclick = () => { showScreen('gameScreen'); setTimeout(() => $('palette').classList.add('open'), 300); };
     $('aboutButton').onclick = () => showScreen('aboutModal');
     $('closeAboutButton').onclick = () => showScreen('menuScreen');
@@ -2362,7 +2303,6 @@
     $('creatorButton').onclick = () => { openCreator(); };
     $('creatorClose').onclick = () => showScreen('menuScreen');
 
-    /* ОКНА */
     const menuWin = $('menuWindow');
     $('windowBtn').onclick = () => { menuWin.classList.remove('hidden'); };
     $('winClose').onclick = () => menuWin.classList.add('hidden');
@@ -2406,7 +2346,6 @@
       };
     });
 
-    /* СЕКРЕТ */
     const secretStarBtn = $('secretStarBtn2');
     const secretProgress = $('secretStarProgress');
     let holdInterval = null, holdStartTime = 0, lastHoldTouch = 0;
@@ -2549,7 +2488,6 @@
       seq.forEach((id, i) => setTimeout(() => unlockAchievement(id), 800 + i * 3400));
     }
 
-    /* КОНСОЛЬ + ОПТИМИЗИРОВАННОЕ ПЕРЕТАСКИВАНИЕ */
     const fab = $('consoleFab'), overlay = $('consoleOverlay'), logEl = $('consoleLog'), inputEl = $('consoleInput');
     let isDragging = false, dragStartX = 0, dragStartY = 0, fabX = 20, fabY = 0, fabRaf = null;
 
@@ -2611,75 +2549,24 @@
     function processCommand(cmd) {
       const parts = cmd.split(' '), c = parts[0], arg = parts.slice(1).join(' ');
       switch(c) {
-        case 'help':
-          logLine('info', 'help · stats · about · set taps|exp|coins|color|skin · add exp|coins <n> · unlock all|skins|ach <id> · reset · godmode · fps · mute · turbo · quality <q> · hearts · play <id|cosmos> · stop · custom aura|particle|shape|reset · clear');
-          break;
-        case 'about': logLine('info', 'Неоновая звезда v5.4 «QuadroOS GameMode» · QuadroOS FastFPS + FOS Engine + Visual Graphics'); break;
-        case 'stats': logLine('ok', `Тапы: ${state.count} | Всего: ${state.totalTapsAllTime} | EXP: ${state.exp} | Монеты: ${state.coins} | Ур: ${getLevelInfo(state.exp).level} | Комбо: ${state.maxCombo} | Треков: ${trackList().length} | FPS: ${currentFps}`); break;
+        case 'help': logLine('info', 'help · stats · about · set · add · unlock · reset · godmode · fps · mute · turbo · quality · hearts · play · stop · custom · clear'); break;
+        case 'about': logLine('info', 'Неоновая звезда v5.5 «Outfit»'); break;
+        case 'stats': logLine('ok', `Тапы: ${state.count} | EXP: ${state.exp} | Монеты: ${state.coins} | FPS: ${currentFps}`); break;
         case 'fps': state.settings.showFps = !state.settings.showFps; saveState(); updateFpsBadge(); logLine('ok', `FPS: ${state.settings.showFps ? 'ВКЛ' : 'ВЫКЛ'}`); break;
         case 'mute': state.settings.muted = !state.settings.muted; saveState(); logLine('ok', `Звук: ${state.settings.muted ? 'ВЫКЛ' : 'ВКЛ'}`); break;
-        case 'turbo':
-          state.settings.quality = 'low'; state.settings.glowEffects = false; state.settings.blur = false; state.settings.stars = false; state.settings.anims = false; state.settings.particleSave = true;
-          saveState(); applyPerf(); logLine('ok', 'Турбо-режим включён');
-          break;
-        case 'play':
-          if (arg === 'cosmos') { playTrack('cosmos'); logLine('ok', 'Играет: Космос'); }
-          else if (getMeta(arg)) { playTrack(arg); logLine('ok', 'Играет: ' + getMeta(arg).name); }
-          else logLine('err', 'play <id трека|cosmos>');
-          break;
-        case 'stop': pauseMusic(); logLine('ok', 'Музыка остановлена'); break;
-        case 'quality':
-          if (['low','medium','high','recommended'].includes(arg)) { state.settings.quality = arg; saveState(); applyPerf(); logLine('ok', 'Качество: ' + arg); }
-          else logLine('err', 'quality low|medium|high|recommended');
-          break;
-        case 'hearts': case 'candy': spawnHeartRain(); logLine('ok', 'Дождь сердец заспавнен'); break;
-        case 'add':
-          if (parts[1] === 'exp' && !isNaN(parts[2])) { addExp(parseInt(parts[2])); logLine('ok', `+${parts[2]} EXP`); }
-          else if (parts[1] === 'coins' && !isNaN(parts[2])) { addCoins(parseInt(parts[2])); logLine('ok', `+${parts[2]} монет`); }
-          else logLine('err', 'add exp|coins <n>');
-          break;
-        case 'set':
-          if (parts[1] === 'taps' && !isNaN(parts[2])) { state.count = parseInt(parts[2]); updateDisplay(false); checkSkinUnlocks(); saveState(); logLine('ok', `Тапы: ${state.count}`); }
-          else if (parts[1] === 'exp' && !isNaN(parts[2])) { state.exp = parseInt(parts[2]); updatePlayerBadge(); saveState(); logLine('ok', `EXP: ${state.exp}`); }
-          else if (parts[1] === 'coins' && !isNaN(parts[2])) { state.coins = parseInt(parts[2]); updateCoins(true); saveState(); logLine('ok', `Монеты: ${state.coins}`); }
-          else if (parts[1] === 'color' && /^#[0-9a-f]{6}$/i.test(parts[2])) { setColor(parts[2]); saveState(); logLine('ok', `Цвет: ${parts[2]}`); }
-          else if (parts[1] === 'skin') { const sk = SKINS.find(s => s.id === parts[2]); if (sk && (state.unlockedSkins.includes(sk.id) || sk.unlocked) && (!sk.admin || state.consoleUnlocked)) { applySkin(sk.id); logLine('ok', 'Скин: ' + sk.id); } else logLine('err', 'Скин недоступен'); }
-          else logLine('err', 'set taps|exp|coins|color|skin <значение>');
-          break;
-        case 'unlock':
-          if (arg === 'all') { Object.keys(ACHIEVEMENTS).forEach(id => { if (!ACHIEVEMENTS[id].admin || state.consoleUnlocked) state.achievements[id] = Date.now(); }); saveState(); logLine('ok', 'Все достижения'); }
-          else if (arg === 'skins') { state.unlockedSkins = ['newbie','crystal','nebula','gold','starry']; if (state.consoleUnlocked) state.unlockedSkins.push('rainbow'); saveState(); logLine('ok', 'Скины разблокированы'); }
-          else if (parts[1] === 'ach' && ACHIEVEMENTS[parts[2]]) { unlockAchievement(parts[2]); logLine('ok', 'Достижение: ' + parts[2]); }
-          else logLine('err', 'unlock all|skins|ach <id>');
-          break;
-        case 'custom':
-          const sub = parts[1], val = parts.slice(2).join(' ');
-          if (sub === 'aura') {
-            if (val === 'reset') state.custom.aura = null;
-            else if (/^#[0-9a-f]{6}$/i.test(val)) state.custom.aura = val;
-            else { logLine('err', 'custom aura <#hex|reset>'); break; }
-            applyCustom(); saveState(); logLine('ok', 'Аура: ' + (state.custom.aura || 'авто'));
-          } else if (sub === 'particle') {
-            if (PARTICLES.includes(val)) { state.custom.particle = val; saveState(); logLine('ok', 'Частицы: ' + val); }
-            else logLine('err', 'custom particle <тип|auto|reset>');
-          } else if (sub === 'shape') {
-            if (val === 'reset') state.custom.shape = 'classic';
-            else if (SHAPES[val]) state.custom.shape = val;
-            else { logLine('err', 'custom shape <имя|reset>'); break; }
-            applyCustom(); saveState(); logLine('ok', 'Форма: ' + state.custom.shape);
-          } else if (sub === 'reset') {
-            state.custom = { aura: null, particle: 'auto', shape: 'classic' };
-            applyCustom(); saveState(); logLine('ok', 'Кастомизация сброшена');
-          } else logLine('err', 'custom aura|particle|shape|reset');
-          break;
-        case 'reset': state.count = 0; state.exp = 0; state.coins = 0; state.achievements = {}; state.racesCompleted = {}; state.unlockedSkins = state.consoleUnlocked ? ['newbie','rainbow'] : ['newbie']; state.selectedSkin = 'newbie'; state.maxCombo = 0; state.totalTapsAllTime = 0; state.customSkins = []; state.stats = { candies: 0, questsDone: 0, racesWon: 0 }; saveState(); flushSave(); updateDisplay(false); updatePlayerBadge(); updateCoins(false); logLine('ok', 'Полный сброс'); break;
+        case 'turbo': state.settings.quality = 'low'; state.settings.glowEffects = false; state.settings.blur = false; state.settings.stars = false; state.settings.anims = false; state.settings.particleSave = true; saveState(); applyPerf(); logLine('ok', 'Турбо'); break;
+        case 'play': if (arg === 'cosmos') { playTrack('cosmos'); logLine('ok', 'Космос'); } else if (getMeta(arg)) { playTrack(arg); logLine('ok', getMeta(arg).name); } break;
+        case 'stop': pauseMusic(); logLine('ok', 'Стоп'); break;
+        case 'quality': if (['low','medium','high','recommended'].includes(arg)) { state.settings.quality = arg; saveState(); applyPerf(); logLine('ok', arg); } break;
+        case 'hearts': case 'candy': spawnHeartRain(); logLine('ok', 'Дождь сердец'); break;
+        case 'add': if (parts[1] === 'exp' && !isNaN(parts[2])) { addExp(parseInt(parts[2])); logLine('ok', `+${parts[2]} EXP`); } else if (parts[1] === 'coins' && !isNaN(parts[2])) { addCoins(parseInt(parts[2])); logLine('ok', `+${parts[2]} монет`); } break;
+        case 'reset': state.count = 0; state.exp = 0; state.coins = 0; state.achievements = {}; state.racesCompleted = {}; state.unlockedSkins = state.consoleUnlocked ? ['newbie','rainbow'] : ['newbie']; state.selectedSkin = 'newbie'; state.maxCombo = 0; state.totalTapsAllTime = 0; state.customSkins = []; state.stats = { candies: 0, questsDone: 0, racesWon: 0 }; saveState(); flushSave(); updateDisplay(false); updatePlayerBadge(); updateCoins(false); logLine('ok', 'Сброс'); break;
         case 'godmode': godMode = !godMode; logLine('ok', `Режим бога: ${godMode ? 'ВКЛ' : 'ВЫКЛ'}`); break;
         case 'clear': logEl.innerHTML = ''; break;
         default: logLine('err', `Неизвестно: ${c}`);
       }
     }
 
-    /* ЧАСТИЦЫ с лимитом */
     function spawnParticles(wrap, rgbStr, type, count) {
       if (type === 'none') return;
       if (state.settings.particleSave) count = Math.max(1, Math.round(count * 0.5));
@@ -2702,108 +2589,10 @@
           { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.4*mult}px), calc(-50% + ${Math.sin(angle)*dist*0.4*mult}px)) scale(1) rotate(90deg)`, opacity: .95, offset: .35 },
           { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*mult}px), calc(-50% + ${Math.sin(angle)*dist*mult - 14}px)) scale(.2) rotate(180deg)`, opacity: 0 }
         ];
-        if (type === 'shard') {
-          el.style.width = size + 'px'; el.style.height = size + 'px';
-          el.style.background = `rgba(${color},.8)`;
-          el.style.clipPath = 'polygon(50% 0%,100% 50%,50% 100%,0% 50%)';
-          el.style.boxShadow = glow;
-          kf = drift(1);
-        } else if (type === 'star') {
-          el.style.width = size + 7 + 'px'; el.style.height = size + 7 + 'px';
-          el.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="rgba(${color},.9)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
-          kf = [
-            { transform: 'translate(-50%,-50%) rotate(0deg) scale(.5)', opacity: 0 },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.5}px), calc(-50% + ${Math.sin(angle)*dist*0.5}px)) rotate(120deg) scale(1.1)`, opacity: .95, offset: .5 },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist - 18}px)) rotate(240deg) scale(.3)`, opacity: 0 }
-          ];
-        } else if (type === 'heart') {
-          el.style.width = size + 7 + 'px'; el.style.height = size + 7 + 'px';
-          el.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="rgba(${color},.85)"><path d="M12 21s-8-4.5-8-11a4 4 0 0 1 8-2 4 4 0 0 1 8 2c0 6.5-8 11-8 11z"/></svg>`;
-          kf = [
-            { transform: 'translate(-50%,-50%) scale(.6)', opacity: 0 },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.4}px), calc(-50% + ${Math.sin(angle)*dist*0.4 - 16}px)) scale(1.15)`, opacity: .95, offset: .45 },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.8}px), calc(-50% + ${Math.sin(angle)*dist*0.8 - 34}px)) scale(.4)`, opacity: 0 }
-          ];
-        } else if (type === 'square') {
-          el.style.width = size + 'px'; el.style.height = size + 'px';
-          el.style.background = `rgba(${color},.85)`;
-          el.style.boxShadow = glow;
-          kf = [
-            { transform: 'translate(-50%,-50%) rotate(0deg) scale(.6)', opacity: 0 },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.5}px), calc(-50% + ${Math.sin(angle)*dist*0.5}px)) rotate(270deg) scale(1)`, opacity: .9, offset: .5 },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) rotate(540deg) scale(.2)`, opacity: 0 }
-          ];
-        } else if (type === 'tri') {
-          el.style.width = size + 2 + 'px'; el.style.height = size + 2 + 'px';
-          el.style.background = `rgba(${color},.85)`;
-          el.style.clipPath = 'polygon(50% 0%,100% 100%,0% 100%)';
-          el.style.boxShadow = glow;
-          kf = drift(-1);
-        } else if (type === 'ring') {
-          el.style.width = size + 6 + 'px'; el.style.height = size + 6 + 'px';
-          el.style.border = `2px solid rgba(${color},.9)`;
-          el.style.borderRadius = '50%';
-          el.style.boxShadow = glow;
-          kf = [
-            { transform: 'translate(-50%,-50%) scale(.3)', opacity: 0 },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.5}px), calc(-50% + ${Math.sin(angle)*dist*0.5}px)) scale(1)`, opacity: .9, offset: .5 },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) scale(1.5)`, opacity: 0 }
-          ];
-        } else if (type === 'note') {
-          el.style.width = size + 8 + 'px'; el.style.height = size + 8 + 'px';
-          el.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="rgba(${color},.9)" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`;
-          kf = [
-            { transform: 'translate(-50%,-50%) rotate(-10deg) scale(.6)', opacity: 0 },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.4}px), calc(-50% + ${Math.sin(angle)*dist*0.4 - 20}px)) rotate(8deg) scale(1)`, opacity: .95, offset: .5 },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.7}px), calc(-50% + ${Math.sin(angle)*dist*0.7 - 40}px)) rotate(-8deg) scale(.4)`, opacity: 0 }
-          ];
-        } else if (type === 'diamond') {
-          el.style.width = size + 'px'; el.style.height = size + 'px';
-          el.style.background = `rgba(${color},.85)`;
-          el.style.clipPath = 'polygon(50% 0%,100% 50%,50% 100%,0% 50%)';
-          el.style.boxShadow = glow;
-          kf = drift(1.2);
-        } else if (type === 'cross') {
-          el.style.width = size + 2 + 'px'; el.style.height = size + 2 + 'px';
-          el.style.background = `rgba(${color},.85)`;
-          el.style.clipPath = 'polygon(35% 0,65% 0,65% 35%,100% 35%,100% 65%,65% 65%,65% 100%,35% 100%,35% 65%,0 65%,0 35%,35% 35%)';
-          el.style.boxShadow = glow;
-          kf = drift(0.9);
-        } else if (type === 'sparkle4') {
-          el.style.width = size + 8 + 'px'; el.style.height = size + 8 + 'px';
-          el.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="rgba(${color},.9)"><path d="M12 2l2 8 8 2-8 2-2 8-2-8-8-2 8-2z"/></svg>`;
-          kf = [
-            { transform: 'translate(-50%,-50%) scale(.3) rotate(0deg)', opacity: 0 },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.5}px), calc(-50% + ${Math.sin(angle)*dist*0.5}px)) scale(1.2) rotate(90deg)`, opacity: 1, offset: .4 },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) scale(.2) rotate(180deg)`, opacity: 0 }
-          ];
-        } else if (type === 'bubble') {
-          el.style.width = size + 6 + 'px'; el.style.height = size + 6 + 'px';
-          el.style.border = `1.5px solid rgba(${color},.8)`;
-          el.style.background = `rgba(${color},.12)`;
-          el.style.borderRadius = '50%';
-          kf = [
-            { transform: 'translate(-50%,-50%) scale(.5)', opacity: 0 },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.4}px), calc(-50% + ${Math.sin(angle)*dist*0.4 - 24}px)) scale(1.1)`, opacity: .9, offset: .55 },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.7}px), calc(-50% + ${Math.sin(angle)*dist*0.7 - 48}px)) scale(1.3)`, opacity: 0 }
-          ];
-        } else if (type === 'rainbow') {
-          el.style.width = size + 'px'; el.style.height = size + 'px';
-          el.style.background = `rgba(${color},.9)`;
-          el.style.borderRadius = '50%';
-          el.style.boxShadow = glow;
-          kf = [
-            { transform: 'translate(-50%,-50%) scale(.6)', opacity: 0, filter: 'hue-rotate(0deg)' },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.5}px), calc(-50% + ${Math.sin(angle)*dist*0.5}px)) scale(1)`, opacity: .95, offset: .5, filter: 'hue-rotate(180deg)' },
-            { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) scale(.2)`, opacity: 0, filter: 'hue-rotate(360deg)' }
-          ];
-        } else {
-          el.style.width = size + 'px'; el.style.height = size + 'px';
-          el.style.background = `rgba(${color},.9)`;
-          el.style.borderRadius = '50%';
-          el.style.boxShadow = glow;
-          kf = drift(1);
-        }
+        if (type === 'shard') { el.style.width = size + 'px'; el.style.height = size + 'px'; el.style.background = `rgba(${color},.8)`; el.style.clipPath = 'polygon(50% 0%,100% 50%,50% 100%,0% 50%)'; el.style.boxShadow = glow; kf = drift(1); }
+        else if (type === 'star') { el.style.width = size + 7 + 'px'; el.style.height = size + 7 + 'px'; el.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="rgba(${color},.9)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`; kf = [ { transform: 'translate(-50%,-50%) rotate(0deg) scale(.5)', opacity: 0 }, { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.5}px), calc(-50% + ${Math.sin(angle)*dist*0.5}px)) rotate(120deg) scale(1.1)`, opacity: .95, offset: .5 }, { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist - 18}px)) rotate(240deg) scale(.3)`, opacity: 0 } ]; }
+        else if (type === 'heart') { el.style.width = size + 7 + 'px'; el.style.height = size + 7 + 'px'; el.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="rgba(${color},.85)"><path d="M12 21s-8-4.5-8-11a4 4 0 0 1 8-2 4 4 0 0 1 8 2c0 6.5-8 11-8 11z"/></svg>`; kf = [ { transform: 'translate(-50%,-50%) scale(.6)', opacity: 0 }, { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.4}px), calc(-50% + ${Math.sin(angle)*dist*0.4 - 16}px)) scale(1.15)`, opacity: .95, offset: .45 }, { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*0.8}px), calc(-50% + ${Math.sin(angle)*dist*0.8 - 34}px)) scale(.4)`, opacity: 0 } ]; }
+        else { el.style.width = size + 'px'; el.style.height = size + 'px'; el.style.background = `rgba(${color},.9)`; el.style.borderRadius = '50%'; el.style.boxShadow = glow; kf = drift(1); }
         const anim = el.animate(kf, { duration: dur, easing: 'ease-out', fill: 'forwards' });
         anim.onfinish = () => { activeParticles--; el.remove(); };
         wrap.appendChild(el);
@@ -2811,7 +2600,6 @@
       }
     }
 
-    /* КОМБО */
     function startCombo() {
       comboCount++;
       clearTimeout(comboTimer);
@@ -2834,7 +2622,6 @@
     }
     function resetCombo() { comboCount = 0; clearTimeout(comboTimer); clearInterval(comboBarInterval); $('comboDisplay').classList.remove('active'); }
 
-    /* СЕРДЕЧКИ */
     function spawnHeartRain() {
       showAchToast(null, 'Мутация!', 'Дождь сердец! Лови сердечки!');
       for (let i = 0; i < 3; i++) setTimeout(createHeart, i * 700);
@@ -2883,7 +2670,6 @@
       vib(40);
     }
 
-    /* ДОСТИЖЕНИЯ */
     function unlockAchievement(id) {
       if (state.achievements[id]) return;
       state.achievements[id] = Date.now();
@@ -2934,7 +2720,6 @@
       });
     }
 
-    /* КРЕАТОР */
     function openCreator() {
       showScreen('creatorModal');
       renderCreatorOptions();
@@ -3054,7 +2839,6 @@
       if (!(state.customSkins || []).length) list.innerHTML = '<div style="font-size:11px;color:rgba(255,255,255,.35);">Пока нет своих скинов — создай первый!</div>';
     }
 
-    /* ИГРА */
     function updateDisplay(anim) {
       $('tapNumber').textContent = state.count.toLocaleString('ru-RU');
       if (anim) { $('tapNumber').classList.remove('pop'); void $('tapNumber').offsetWidth; $('tapNumber').classList.add('pop'); }
@@ -3107,31 +2891,16 @@
       const type = state.custom.particle !== 'auto' ? state.custom.particle : (skin === 'crystal' ? 'shard' : (skin === 'nebula' ? 'star' : 'spark'));
       if (skin === 'newbie') {
         const rgb = state.custom.aura ? hexToRgb(state.custom.aura) : '255,34,119';
-        if (resolvedQuality.glow) {
-          const g = document.createElement('div'); g.className = 'aura-glow';
-          const s = 180 + Math.random() * 80; g.style.width = s+'px'; g.style.height = s+'px';
-          g.style.background = `radial-gradient(circle, rgba(${rgb},.3), rgba(${rgb},.08) 45%, transparent 75%)`;
-          wrap.appendChild(g); setTimeout(() => g.remove(), 1400);
-        }
+        if (resolvedQuality.glow) { const g = document.createElement('div'); g.className = 'aura-glow'; const s = 180 + Math.random() * 80; g.style.width = s+'px'; g.style.height = s+'px'; g.style.background = `radial-gradient(circle, rgba(${rgb},.3), rgba(${rgb},.08) 45%, transparent 75%)`; wrap.appendChild(g); setTimeout(() => g.remove(), 1400); }
         spawnParticles(wrap, rgb, type, limit);
       } else if (skin === 'crystal') {
         const rgb = state.custom.aura ? hexToRgb(state.custom.aura) : '68,170,255';
         spawnParticles(wrap, rgb, type, limit + 2);
-        if (resolvedQuality.glow) {
-          const flash = document.createElement('div'); flash.className = 'aura-glow';
-          flash.style.width = '140px'; flash.style.height = '140px';
-          flash.style.background = `radial-gradient(circle, rgba(${rgb},.4), transparent 70%)`;
-          wrap.appendChild(flash); setTimeout(() => flash.remove(), 1400);
-        }
+        if (resolvedQuality.glow) { const flash = document.createElement('div'); flash.className = 'aura-glow'; flash.style.width = '140px'; flash.style.height = '140px'; flash.style.background = `radial-gradient(circle, rgba(${rgb},.4), transparent 70%)`; wrap.appendChild(flash); setTimeout(() => flash.remove(), 1400); }
       } else if (skin === 'nebula') {
         const rgb = state.custom.aura ? hexToRgb(state.custom.aura) : '255,102,255';
         spawnParticles(wrap, rgb, type, limit + 2);
-        if (resolvedQuality.glow) {
-          const flash = document.createElement('div'); flash.className = 'aura-glow';
-          flash.style.width = '160px'; flash.style.height = '160px';
-          flash.style.background = `radial-gradient(circle, rgba(${rgb},.35), rgba(${rgb},.1) 50%, transparent 75%)`;
-          wrap.appendChild(flash); setTimeout(() => flash.remove(), 1400);
-        }
+        if (resolvedQuality.glow) { const flash = document.createElement('div'); flash.className = 'aura-glow'; flash.style.width = '160px'; flash.style.height = '160px'; flash.style.background = `radial-gradient(circle, rgba(${rgb},.35), rgba(${rgb},.1) 50%, transparent 75%)`; wrap.appendChild(flash); setTimeout(() => flash.remove(), 1400); }
       } else if (skin === 'gold') {
         const rgb = state.custom.aura ? hexToRgb(state.custom.aura) : '255,215,0';
         spawnParticles(wrap, rgb, type, limit + 1);
@@ -3172,7 +2941,7 @@
       setTimeout(() => { $('gameStarBtn').style.transform = ''; setTimeout(() => { $('gameStarBtn').style.transition = ''; }, 400); }, 120);
     };
 
-    /* ГОНКИ */
+    // ГОНКА — ИСПРАВЛЕННАЯ ВЕРСИЯ
     function buildDiffGrid() {
       $('difficultyGrid').innerHTML = '';
       DIFFICULTIES.forEach(d => {
@@ -3184,19 +2953,29 @@
       });
     }
     function startRace(diff) {
-      currentDiff = diff; raceTimeLeft = diff.time; raceTargetCount = diff.target; raceTaps = 0; raceActive = true;
+      currentDiff = diff;
+      raceTimeLeft = diff.time;
+      raceTargetCount = diff.target;
+      raceTaps = 0;
+      raceActive = true; // КРИТИЧНО: устанавливаем флаг ДО перехода на экран
       trackQuest('race_play', 1);
-      $('raceTimer').textContent = raceTimeLeft; $('raceTimer').classList.remove('warning');
-      $('raceTarget').textContent = raceTargetCount; $('raceTapNumber').textContent = '0';
+      $('raceTimer').textContent = raceTimeLeft;
+      $('raceTimer').classList.remove('warning');
+      $('raceTarget').textContent = raceTargetCount;
+      $('raceTapNumber').textContent = '0';
       showScreen('raceScreen');
       raceInterval = setInterval(() => {
         if (godMode) return;
-        raceTimeLeft--; $('raceTimer').textContent = raceTimeLeft;
+        raceTimeLeft--;
+        $('raceTimer').textContent = raceTimeLeft;
         if (raceTimeLeft <= 5) $('raceTimer').classList.add('warning');
         if (raceTimeLeft <= 0) endRace(false);
       }, 1000);
     }
-    function stopRace() { raceActive = false; if (raceInterval) { clearInterval(raceInterval); raceInterval = null; } }
+    function stopRace() {
+      raceActive = false;
+      if (raceInterval) { clearInterval(raceInterval); raceInterval = null; }
+    }
     function endRace(success) {
       stopRace();
       if (success) trackQuest('race_win', 1);
@@ -3222,19 +3001,28 @@
           $('raceResultTitle').innerHTML = `${icon('brokenHeart', 28)} Не хватило`;
           $('raceResultDescription').textContent = `${raceTaps} из ${raceTargetCount} касаний.`;
         }
-        $('resultTaps').textContent = raceTaps; $('resultTime').textContent = currentDiff.time;
+        $('resultTaps').textContent = raceTaps;
+        $('resultTime').textContent = currentDiff.time;
         showScreen('raceResultModal');
       }, 500);
     }
+    // КЛИК В ГОНКЕ — теперь с явной диагностикой
     function handleRaceTap(e) {
-      e.preventDefault(); if (!raceActive) return;
-      initAudio(); playClick(); spawnGlow($('raceAuraWrap'));
-      raceTaps++; $('raceTapNumber').textContent = raceTaps; vib(6);
+      e.preventDefault();
+      if (!raceActive) {
+        console.warn('[race] клик, но raceActive=false');
+        return;
+      }
+      initAudio();
+      playClick();
+      spawnGlow($('raceAuraWrap'));
+      raceTaps++;
+      $('raceTapNumber').textContent = raceTaps;
+      vib(6);
       if (raceTaps >= raceTargetCount) endRace(true);
     }
     onTap($('raceStarBtn'), handleRaceTap);
 
-    /* ФОН */
     function createBgStars(count) {
       const container = $('starsBg');
       container.innerHTML = '';
@@ -3250,7 +3038,6 @@
       }
     }
 
-    /* ЗАГРУЗКА */
     function startLoading() {
       const total = 70;
       let elapsed = 0, finished = false;
@@ -3288,27 +3075,32 @@
       skipBtn.addEventListener('touchend', (e) => { e.preventDefault(); finishLoading(); }, { passive: false });
     }
 
-    /* СТАРТ */
     async function init() {
-      await loadState();
-      if (state.unlockedSkins.includes('crystal') && !state.achievements.skin_buy_crystal) state.achievements.skin_buy_crystal = Date.now();
-      if (state.unlockedSkins.includes('nebula') && !state.achievements.skin_buy_nebula) state.achievements.skin_buy_nebula = Date.now();
-      if (state.unlockedSkins.includes('gold') && !state.achievements.skin_buy_gold) state.achievements.skin_buy_gold = Date.now();
-      buildPalette();
-      setColor(state.currentColor, state.currentColor2, state.isGradient);
-      updateDisplay(false);
-      updatePlayerBadge();
-      updateCoins(false);
-      applySkin(state.selectedSkin || 'newbie');
-      applyPerf();
-      generateDailyQuests();
-      if (state.consoleUnlocked) unlockConsole();
-      if (!state.achievements['skin_newbie']) unlockAchievement('skin_newbie');
-      updateFpsBadge();
-      updatePlayerUI();
-      document.addEventListener('touchstart', initAudio, { once: true });
-      document.addEventListener('mousedown', initAudio, { once: true });
-      startLoading();
+      try {
+        await loadState();
+        if (state.unlockedSkins.includes('crystal') && !state.achievements.skin_buy_crystal) state.achievements.skin_buy_crystal = Date.now();
+        if (state.unlockedSkins.includes('nebula') && !state.achievements.skin_buy_nebula) state.achievements.skin_buy_nebula = Date.now();
+        if (state.unlockedSkins.includes('gold') && !state.achievements.skin_buy_gold) state.achievements.skin_buy_gold = Date.now();
+        buildPalette();
+        setColor(state.currentColor, state.currentColor2, state.isGradient);
+        updateDisplay(false);
+        updatePlayerBadge();
+        updateCoins(false);
+        applySkin(state.selectedSkin || 'newbie');
+        applyPerf();
+        generateDailyQuests();
+        if (state.consoleUnlocked) unlockConsole();
+        if (!state.achievements['skin_newbie']) unlockAchievement('skin_newbie');
+        updateFpsBadge();
+        updatePlayerUI();
+        document.addEventListener('touchstart', initAudio, { once: true });
+        document.addEventListener('mousedown', initAudio, { once: true });
+        startLoading();
+      } catch(err) {
+        console.error('[init]', err);
+        // Если что-то сломалось — всё равно показываем меню
+        setTimeout(() => showScreen('menuScreen'), 500);
+      }
     }
     init();
 
